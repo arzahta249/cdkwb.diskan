@@ -6,7 +6,7 @@ import path from 'path';
 export async function GET() {
   try {
     const [rows]: any = await pool.query(
-      'SELECT ID_berita, Judul, Slug, isi_berita, status, tanggal, value FROM berita ORDER BY tanggal DESC'
+      'SELECT ID_berita, Judul, Slug, image, isi_berita, status, tanggal FROM berita ORDER BY tanggal DESC'
     );
     return NextResponse.json({ success: true, data: rows });
   } catch (error) {
@@ -60,11 +60,10 @@ export async function POST(request: Request) {
     }
 
     const tanggal = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
-    const valueJson = JSON.stringify({ image: imageUrl });
 
     const [result]: any = await pool.query(
-      'INSERT INTO berita (Judul, Slug, isi_berita, status, tanggal, value) VALUES (?, ?, ?, ?, ?, ?)',
-      [judul, slug, isi_berita, status || 'draft', tanggal, valueJson]
+      'INSERT INTO berita (Judul, Slug, image, isi_berita, status, tanggal) VALUES (?, ?, ?, ?, ?, ?)',
+      [judul, slug, imageUrl, isi_berita, status || 'draft', tanggal]
     );
 
     return NextResponse.json(

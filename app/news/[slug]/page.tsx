@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 
 async function getNewsBySlug(slug: string) {
   const [rows]: any = await pool.query(
-    "SELECT ID_berita, Judul, Slug, isi_berita, tanggal, value FROM berita WHERE Slug = ? AND status = 'published'",
+    "SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal FROM berita WHERE Slug = ? AND status = 'published'",
     [slug]
   );
   return rows[0] || null;
@@ -21,8 +21,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
     notFound();
   }
 
-  const valueData = news.value ? (typeof news.value === 'string' ? JSON.parse(news.value) : news.value) : {};
-  const imageUrl = valueData.image || '/placeholder-news.jpg';
+  const imageUrl = news.image || '/placeholder-news.jpg';
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
