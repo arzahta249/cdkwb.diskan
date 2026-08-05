@@ -7,9 +7,24 @@ import { ArrowRight, PlayCircle, Ship, Waves, ShieldAlert, FileText, LayoutGrid 
 
 async function getPublishedNews() {
   try {
-    // Membaca dari kolom 'image' yang baru saja kita tambahkan
     const [rows]: any = await pool.query(
-      "SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal FROM berita WHERE status = 'published' ORDER BY tanggal DESC LIMIT 2"
+      "SELECT ID_berita, Judul, Slug, image, value, isi_berita, tanggal FROM berita WHERE status = 'published' ORDER BY tanggal DESC LIMIT 2"
+    );
+    return rows;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+async function getPublishedArtikel() {
+  try {
+    const [rows]: any = await pool.query(
+      `SELECT a.ID_artikel, a.Judul, a.Slug, a.value, a.tanggal, k.name_kategori 
+       FROM artikel a 
+       LEFT JOIN kategory_artikel k ON a.id_kategori = k.ID_kategori 
+       WHERE a.status = 'published' 
+       ORDER BY a.tanggal DESC LIMIT 2`
     );
     return rows;
   } catch (err) {
@@ -20,6 +35,7 @@ async function getPublishedNews() {
 
 export default async function HomePage() {
   const news = await getPublishedNews();
+  const artikel = await getPublishedArtikel();
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-800">
@@ -113,45 +129,104 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {news.map((item: any, index: number) => {
-              const badges = ["Operasional", "Konservasi", "Berita", "Informasi"];
-              const badge = badges[index % badges.length]; // Simulasi badge/kategori untuk UI
-              
-              return (
-                <Link href={`/news/${item.Slug}`} key={item.ID_berita} className="group relative block h-80 rounded-2xl overflow-hidden shadow-lg transition-transform hover:-translate-y-1">
-                  <Image 
-                    src={item.image || '/leading/berita.png'} 
-                    alt={item.Judul}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  {/* Gradien dari bawah ke atas */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a3153] via-[#0a3153]/50 to-transparent opacity-90" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {/* Kolom Berita */}
+            <div>
+              <h3 className="text-xl font-bold text-[#0a3153] mb-6 flex items-center gap-2">
+                <span className="w-8 h-1 bg-blue-600 rounded-full inline-block"></span>
+                Berita Utama
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {news.map((item: any, index: number) => {
+                  let imageUrl = item.image || '/leading/berita.png';
+                  if (item.value) {
+                    try {
+                      const parsed = typeof item.value === 'string' ? JSON.parse(item.value) : item.value;
+                      if (parsed.image) imageUrl = parsed.image;
+                    } catch (e) {}
+                  }
                   
-                  {/* Konten Berita */}
-                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="bg-green-600/90 text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded">
-                        {badge}
-                      </span>
-                      <span className="text-white/80 text-xs font-medium">
-                        {new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white leading-tight line-clamp-2">
-                      {item.Judul}
-                    </h3>
+                  return (
+                    <Link href={`/news/${item.Slug}`} key={item.ID_berita} className="group relative block h-64 rounded-2xl overflow-hidden shadow-md transition-transform hover:-translate-y-1">
+                      <Image 
+                        src={imageUrl} 
+                        alt={item.Judul}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a3153] via-[#0a3153]/50 to-transparent opacity-90" />
+                      <div className="absolute inset-0 p-5 flex flex-col justify-end">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="bg-blue-600/90 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded">
+                            Berita
+                          </span>
+                          <span className="text-white/80 text-[10px] font-medium">
+                            {new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-bold text-white leading-tight line-clamp-3">
+                          {item.Judul}
+                        </h3>
+                      </div>
+                    </Link>
+                  );
+                })}
+                {news.length === 0 && (
+                  <div className="col-span-2 text-center py-10 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                    <p className="text-gray-500 text-sm">Belum ada berita terbaru.</p>
                   </div>
-                </Link>
-              );
-            })}
-            
-            {news.length === 0 && (
-              <div className="col-span-2 text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                <p className="text-gray-500">Belum ada berita terbaru.</p>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Kolom Artikel */}
+            <div>
+              <h3 className="text-xl font-bold text-[#0a3153] mb-6 flex items-center gap-2">
+                <span className="w-8 h-1 bg-green-500 rounded-full inline-block"></span>
+                Artikel Terkini
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {artikel.map((item: any) => {
+                  let imageUrl = '/leading/berita.png';
+                  if (item.value) {
+                    try {
+                      const parsed = typeof item.value === 'string' ? JSON.parse(item.value) : item.value;
+                      if (parsed.image) imageUrl = parsed.image;
+                    } catch (e) {}
+                  }
+
+                  return (
+                    <Link href={`/artikel/${item.Slug}`} key={item.ID_artikel} className="group relative block h-64 rounded-2xl overflow-hidden shadow-md transition-transform hover:-translate-y-1">
+                      <Image 
+                        src={imageUrl} 
+                        alt={item.Judul}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a3153] via-[#0a3153]/50 to-transparent opacity-90" />
+                      <div className="absolute inset-0 p-5 flex flex-col justify-end">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="bg-green-600/90 text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded">
+                            {item.name_kategori || 'Artikel'}
+                          </span>
+                          <span className="text-white/80 text-[10px] font-medium">
+                            {new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-bold text-white leading-tight line-clamp-3">
+                          {item.Judul}
+                        </h3>
+                      </div>
+                    </Link>
+                  );
+                })}
+                {artikel.length === 0 && (
+                  <div className="col-span-2 text-center py-10 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                    <p className="text-gray-500 text-sm">Belum ada artikel terbaru.</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>

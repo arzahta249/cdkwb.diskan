@@ -12,7 +12,8 @@ import {
   LogOut, 
   ChevronDown,
   Menu,
-  X
+  X,
+  Image as ImageIcon
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -20,7 +21,8 @@ export default function Sidebar() {
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isNewsOpen, setIsNewsOpen] = useState(pathname.includes('/dashboard/news'));
-  const [isArticleOpen, setIsArticleOpen] = useState(pathname.includes('/dashboard/articles'));
+  const [isArtikelOpen, setIsArtikelOpen] = useState(pathname.includes('/dashboard/artikel'));
+  const [isGaleriOpen, setIsGaleriOpen] = useState(pathname.includes('/dashboard/galeri'));
 
   const handleLogout = async () => {
     try {
@@ -139,10 +141,10 @@ export default function Sidebar() {
           {/* Dropdown Artikel */}
           <div className="space-y-1">
             <button
-              onClick={() => setIsArticleOpen(!isArticleOpen)}
+              onClick={() => setIsArtikelOpen(!isArtikelOpen)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
-                pathname.includes('/dashboard/articles')
-                  ? 'bg-[#6FF3C8]/10 text-[#6FF3C8] font-medium'
+                pathname.includes('/dashboard/artikel')
+                  ? 'bg-blue-600/10 text-blue-500 font-medium'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
               }`}
             >
@@ -150,15 +152,15 @@ export default function Sidebar() {
                 <FileText className="w-5 h-5" />
                 <span>Artikel</span>
               </div>
-              <ChevronDown className={`w-4 h-4 transition-transform ${isArticleOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform ${isArtikelOpen ? 'rotate-180' : ''}`} />
             </button>
             
-            {isArticleOpen && (
+            {isArtikelOpen && (
               <div className="pl-11 pr-2 py-2 space-y-1">
                 <Link 
-                  href="/dashboard/articles/create"
+                  href="/dashboard/artikel/create"
                   className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/articles/create'
+                    pathname === '/dashboard/artikel/create'
                       ? 'text-white bg-white/10'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
@@ -166,14 +168,67 @@ export default function Sidebar() {
                   Buat Artikel
                 </Link>
                 <Link 
-                  href="/dashboard/articles"
+                  href="/dashboard/artikel"
                   className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/articles'
+                    pathname === '/dashboard/artikel'
                       ? 'text-white bg-white/10'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   Lihat Data Artikel
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Dropdown Galeri */}
+          <div className="space-y-1">
+            <button
+              onClick={() => setIsGaleriOpen(!isGaleriOpen)}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
+                pathname.includes('/dashboard/galeri')
+                  ? 'bg-blue-600/10 text-blue-500 font-medium'
+                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <ImageIcon className="w-5 h-5" />
+                <span>Galeri</span>
+              </div>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isGaleriOpen ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {isGaleriOpen && (
+              <div className="pl-11 pr-2 py-2 space-y-1">
+                <Link 
+                  href="/dashboard/galeri/foto"
+                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
+                    pathname === '/dashboard/galeri/foto'
+                      ? 'text-white bg-white/10'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Kelola Foto
+                </Link>
+                <Link 
+                  href="/dashboard/galeri/video"
+                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
+                    pathname === '/dashboard/galeri/video'
+                      ? 'text-white bg-white/10'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Kelola Video
+                </Link>
+                <Link 
+                  href="/dashboard/galeri/infografis"
+                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
+                    pathname === '/dashboard/galeri/infografis'
+                      ? 'text-white bg-white/10'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Kelola Infografis
                 </Link>
               </div>
             )}
