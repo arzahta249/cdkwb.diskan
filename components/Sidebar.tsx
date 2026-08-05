@@ -6,7 +6,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Newspaper, 
+  FileText,
   MessageSquare, 
+  Award,
   LogOut, 
   ChevronDown,
   Menu,
@@ -18,13 +20,16 @@ export default function Sidebar() {
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isNewsOpen, setIsNewsOpen] = useState(pathname.includes('/dashboard/news'));
+  const [isArticleOpen, setIsArticleOpen] = useState(pathname.includes('/dashboard/articles'));
 
   const handleLogout = async () => {
-    // Secara praktis, kita bisa menghapus cookie dari sisi server dengan route API logout
-    // Untuk kesederhanaan, kita bisa menghapus semua local data dan memanggil API yang clear cookie
-    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
     localStorage.removeItem('user');
-    router.push('/login');
+    window.location.href = '/login';
   };
 
   const NavItem = ({ href, icon: Icon, children, exact = false }: any) => {
@@ -88,7 +93,7 @@ export default function Sidebar() {
             Dashboard
           </NavItem>
 
-          {/* Dropdown News */}
+          {/* Dropdown Berita */}
           <div className="space-y-1">
             <button
               onClick={() => setIsNewsOpen(!isNewsOpen)}
@@ -100,7 +105,7 @@ export default function Sidebar() {
             >
               <div className="flex items-center gap-3">
                 <Newspaper className="w-5 h-5" />
-                <span>News</span>
+                <span>Berita</span>
               </div>
               <ChevronDown className={`w-4 h-4 transition-transform ${isNewsOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -115,7 +120,7 @@ export default function Sidebar() {
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  Buat News
+                  Buat Berita
                 </Link>
                 <Link 
                   href="/dashboard/news"
@@ -125,7 +130,50 @@ export default function Sidebar() {
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  Lihat Data News
+                  Lihat Data Berita
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Dropdown Artikel */}
+          <div className="space-y-1">
+            <button
+              onClick={() => setIsArticleOpen(!isArticleOpen)}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
+                pathname.includes('/dashboard/articles')
+                  ? 'bg-[#6FF3C8]/10 text-[#6FF3C8] font-medium'
+                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <FileText className="w-5 h-5" />
+                <span>Artikel</span>
+              </div>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isArticleOpen ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {isArticleOpen && (
+              <div className="pl-11 pr-2 py-2 space-y-1">
+                <Link 
+                  href="/dashboard/articles/create"
+                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
+                    pathname === '/dashboard/articles/create'
+                      ? 'text-white bg-white/10'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Buat Artikel
+                </Link>
+                <Link 
+                  href="/dashboard/articles"
+                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
+                    pathname === '/dashboard/articles'
+                      ? 'text-white bg-white/10'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Lihat Data Artikel
                 </Link>
               </div>
             )}
@@ -133,6 +181,10 @@ export default function Sidebar() {
 
           <NavItem href="/dashboard/aduan" icon={MessageSquare}>
             Aduan
+          </NavItem>
+
+          <NavItem href="/dashboard/kepuasan" icon={Award}>
+            Survei Kepuasan
           </NavItem>
         </nav>
 
