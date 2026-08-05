@@ -54,8 +54,7 @@ export default function DepthGauge() {
 
     // ── Spawn glow particles ──
     if (!reduceMotion) {
-      ['glowLayanan', 'glowBerita', 'glowPortal', 'glowSemuaBerita', 'glowSpotlight',
-       'glowNewsHero', 'glowNewsSidebar', 'glowNewsGrid'].forEach(id => {
+      ['glowLayanan', 'glowPortal', 'glowSpotlight'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         for (let i = 0; i < 14; i++) {
@@ -69,24 +68,6 @@ export default function DepthGauge() {
         }
       });
     }
-
-    // ── Spawn bubbles for news page too ──
-    ['bubblesNews'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el || reduceMotion) return;
-      for (let i = 0; i < 22; i++) {
-        const b = document.createElement('i');
-        const size = 4 + Math.random() * 14;
-        b.style.width  = size + 'px';
-        b.style.height = size + 'px';
-        b.style.left   = Math.random() * 100 + '%';
-        b.style.setProperty('--drift', (Math.random() * 50 - 25) + 'px');
-        const dur = 10 + Math.random() * 14;
-        b.style.animationDuration = dur + 's';
-        b.style.animationDelay   = (-Math.random() * dur) + 's';
-        el.appendChild(b);
-      }
-    });
 
     // ── Scroll → depth update ──
     let ticking = false;

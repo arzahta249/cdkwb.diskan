@@ -9,6 +9,7 @@ import {
   FileText,
   MessageSquare, 
   Award,
+  Image,
   LogOut, 
   ChevronDown,
   Menu,
@@ -21,7 +22,7 @@ export default function Sidebar() {
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isNewsOpen, setIsNewsOpen] = useState(pathname.includes('/dashboard/news'));
-  const [isArtikelOpen, setIsArtikelOpen] = useState(pathname.includes('/dashboard/artikel'));
+  const [isArticleOpen, setIsArticleOpen] = useState(pathname.includes('/dashboard/articles') || pathname.includes('/dashboard/artikel'));
   const [isGaleriOpen, setIsGaleriOpen] = useState(pathname.includes('/dashboard/galeri'));
 
   const handleLogout = async () => {
@@ -208,7 +209,7 @@ export default function Sidebar() {
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  Kelola Foto
+                  Foto
                 </Link>
                 <Link 
                   href="/dashboard/galeri/video"
@@ -218,7 +219,7 @@ export default function Sidebar() {
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  Kelola Video
+                  Video
                 </Link>
                 <Link 
                   href="/dashboard/galeri/infografis"
@@ -228,7 +229,7 @@ export default function Sidebar() {
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  Kelola Infografis
+                  Infografis
                 </Link>
               </div>
             )}
