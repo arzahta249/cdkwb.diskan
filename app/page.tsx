@@ -33,18 +33,27 @@ export default async function HomePage() {
       <div className="ocean-bg">
 
         {/* 1. Hero Section */}
-        <section className="relative min-h-screen flex items-center pt-24 pb-32 overflow-hidden">
-          {/* Light rays */}
-          <div className="rays" aria-hidden="true">
-            <span /><span /><span /><span />
+        <section className="relative min-h-screen flex items-center pt-24 pb-36 overflow-hidden bg-[#093345]">
+          {/* Background image & gradient overlay (placed ON TOP of light rays) */}
+          <div className="absolute inset-0 z-0">
+            {/* Light rays layer behind image */}
+            <div className="rays" aria-hidden="true" style={{ opacity: 0.2 }}>
+              <span /><span /><span /><span />
+            </div>
+
+            {/* Background image on top layer with crisp visibility */}
+            <div
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-65"
+              style={{ backgroundImage: "url('/leading/latar%20belakang.png')" }}
+            />
+
+            {/* Subtle gradient overlay for text readability without darkening image */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#093345]/75 via-[#093345]/35 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#093345]/20 to-[#093345]" />
           </div>
-          {/* Animated bubbles (populated by DepthGauge client component) */}
-          <div className="bubbles" aria-hidden="true" id="bubblesHero" />
-          {/* Background image */}
-          <div
-            className="absolute inset-0 z-0 opacity-20 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: "url('/leading/latar%20belakang.png')" }}
-          />
+
+          {/* Animated bubbles */}
+          <div className="bubbles z-10" aria-hidden="true" id="bubblesHero" />
 
           <div className="container mx-auto px-6 relative z-10 max-w-6xl">
             <div className="max-w-2xl">
@@ -54,7 +63,7 @@ export default async function HomePage() {
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white mt-5 mb-6 leading-[1.08]">
                 Cabang Dinas Kelautan<br />Wilayah Barat
               </h1>
-              <p className="text-lg md:text-xl mb-10 leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,0.7)' }}>
+              <p className="text-lg md:text-xl mb-10 leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,0.75)' }}>
                 Mewujudkan pengelolaan ruang laut yang berkelanjutan, aman, dan sejahtera untuk masa depan maritim Jawa Tengah.
               </p>
               <div className="flex flex-wrap items-center gap-4 mb-14">
@@ -71,6 +80,32 @@ export default async function HomePage() {
                 Selami halaman ini
               </div>
             </div>
+          </div>
+
+          {/* Dynamic Ocean Wave Divider at bottom of Hero (Seamless transition into Section 2) */}
+          <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none overflow-hidden leading-none">
+            <svg
+              className="relative block w-full h-[60px] sm:h-[90px] md:h-[130px]"
+              viewBox="0 0 1440 140"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Back wave layer with cyan glow */}
+              <path
+                d="M0,32 C280,120 520,10 800,80 C1080,150 1280,30 1440,60 L1440,140 L0,140 Z"
+                fill="rgba(111, 243, 200, 0.2)"
+              />
+              {/* Middle wave layer */}
+              <path
+                d="M0,64 C360,-20 620,110 960,30 C1200,-30 1340,70 1440,90 L1440,140 L0,140 Z"
+                fill="rgba(13, 85, 104, 0.6)"
+              />
+              {/* Front main wave layer matching Section 2 ocean-bg gradient seamlessly */}
+              <path
+                d="M0,85 C240,30 480,120 720,65 C960,10 1200,100 1440,50 L1440,140 L0,140 Z"
+                fill="#1A7A8C"
+              />
+            </svg>
           </div>
         </section>
 

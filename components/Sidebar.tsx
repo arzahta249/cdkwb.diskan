@@ -22,7 +22,7 @@ export default function Sidebar() {
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isNewsOpen, setIsNewsOpen] = useState(pathname.includes('/dashboard/news'));
-  const [isArticleOpen, setIsArticleOpen] = useState(pathname.includes('/dashboard/articles') || pathname.includes('/dashboard/artikel'));
+  const [isArtikelOpen, setIsArtikelOpen] = useState(pathname.includes('/dashboard/articles') || pathname.includes('/dashboard/artikel'));
   const [isGaleriOpen, setIsGaleriOpen] = useState(pathname.includes('/dashboard/galeri'));
 
   const handleLogout = async () => {
@@ -144,7 +144,7 @@ export default function Sidebar() {
             <button
               onClick={() => setIsArtikelOpen(!isArtikelOpen)}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
-                pathname.includes('/dashboard/artikel')
+                pathname.includes('/dashboard/articles') || pathname.includes('/dashboard/artikel')
                   ? 'bg-blue-600/10 text-blue-500 font-medium'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
               }`}
@@ -155,23 +155,23 @@ export default function Sidebar() {
               </div>
               <ChevronDown className={`w-4 h-4 transition-transform ${isArtikelOpen ? 'rotate-180' : ''}`} />
             </button>
-            
+
             {isArtikelOpen && (
               <div className="pl-11 pr-2 py-2 space-y-1">
-                <Link 
-                  href="/dashboard/artikel/create"
+                <Link
+                  href="/dashboard/articles/create"
                   className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/artikel/create'
+                    pathname === '/dashboard/articles/create' || pathname === '/dashboard/artikel/create'
                       ? 'text-white bg-white/10'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   Buat Artikel
                 </Link>
-                <Link 
-                  href="/dashboard/artikel"
+                <Link
+                  href="/dashboard/articles"
                   className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/artikel'
+                    pathname === '/dashboard/articles' || pathname === '/dashboard/artikel'
                       ? 'text-white bg-white/10'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}

@@ -21,12 +21,14 @@ export default function Navbar() {
       <div className="container mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 z-50">
-          <div className="relative w-10 h-12">
-            <Image 
+          {/* Placeholder icon — replace with <Image src="/leading/logo.jateng.jpg" ...> once the file is added */}
+          <div className="relative w-10 h-12 flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
               src="/leading/logo.jateng.jpg" 
               alt="Logo Jawa Tengah" 
-              fill
-              className="object-contain"
+              className="w-10 h-12 object-contain"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
           <div className="text-2xl font-bold text-[#0b3b60] tracking-tight">CDKWB</div>
