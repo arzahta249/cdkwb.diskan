@@ -1,19 +1,27 @@
 import { pool } from '@/lib/db';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Calendar, Share2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Share2, Eye } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 async function getNewsBySlug(slug: string) {
+  try {
+    await pool.query(
+      "UPDATE berita SET views = COALESCE(views, 0) + 1 WHERE Slug = ?",
+      [slug]
+    );
+  } catch (err) {
+    console.error('Error incrementing view count:', err);
+  }
+
   const [rows]: any = await pool.query(
-    "SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal FROM berita WHERE Slug = ? AND status = 'published'",
+    "SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal, penulis, views FROM berita WHERE Slug = ? AND status = 'published'",
     [slug]
   );
   return rows[0] || null;
 }
 
 export default async function NewsDetailPage({ params }: { params: { slug: string } }) {
-  // Tunggu params (perubahan Next.js 15)
   const resolvedParams = await params;
   const news = await getNewsBySlug(resolvedParams.slug);
 
@@ -28,9 +36,9 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
       {/* Navbar Minimalis */}
       <nav className="fixed top-0 inset-x-0 h-20 bg-[#0a0a0a]/80 backdrop-blur-md z-50 border-b border-white/5 flex items-center px-6">
         <div className="container mx-auto max-w-4xl flex items-center justify-between">
-          <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+          <Link href="/news" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
             <ArrowLeft className="w-5 h-5" />
-            <span>Kembali ke Beranda</span>
+            <span>Kembali ke Berita & Artikel</span>
           </Link>
           <div className="text-xl font-bold tracking-tight">Diskan Portal</div>
         </div>
@@ -40,11 +48,20 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
         <div className="container mx-auto px-6 max-w-3xl">
           {/* Header Berita */}
           <header className="mb-10 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center justify-center gap-2 text-blue-400 text-sm font-medium mb-6">
-              <Calendar className="w-4 h-4" />
-              {new Date(news.tanggal).toLocaleDateString('id-ID', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-              })}
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm font-medium mb-6">
+              <span className="text-[#6FF3C8] flex items-center gap-1.5 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                Oleh: {news.penulis || 'Reynard'}
+              </span>
+              <span className="text-gray-400 flex items-center gap-1">
+                <Calendar className="w-4 h-4 text-blue-400" />
+                {new Date(news.tanggal).toLocaleDateString('id-ID', {
+                  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                })}
+              </span>
+              <span className="text-gray-400 flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                <Eye className="w-4 h-4 text-emerald-400" />
+                {news.views || 1} x dibaca
+              </span>
             </div>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-8 leading-tight">
               {news.Judul}

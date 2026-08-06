@@ -3,34 +3,47 @@
 import Link from 'next/link';
 import { MapPin, Mail, ChevronRight, ArrowUp } from 'lucide-react';
 
+const InstagramIcon = ({ className = "w-5 h-5", style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+);
+
 export default function Footer() {
   return (
-    <footer className="bg-[#f0f2f5] pt-16 pb-8 border-t border-gray-200">
+    <footer className="pt-16 pb-8" style={{ background: 'rgba(3,11,20,0.85)', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Column 1: Brand */}
           <div>
-            <h3 className="text-2xl font-bold text-[#0b3b60] mb-4">CDKWB</h3>
-            <p className="text-sm text-gray-600 leading-relaxed mb-4">
+            <h3 className="text-2xl font-bold text-white mb-4">CDKWB</h3>
+            <p className="text-sm leading-relaxed mb-2" style={{ color: 'rgba(255,255,255,0.5)' }}>
               Dinas Kelautan dan Perikanan Provinsi Jawa Tengah.
             </p>
-            <p className="text-sm text-gray-600 leading-relaxed">
+            <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
               Membangun maritim yang tangguh dan berkelanjutan.
             </p>
           </div>
 
           {/* Column 2: Tautan Penting */}
           <div>
-            <h4 className="text-sm font-bold text-[#0b3b60] mb-6">Tautan Penting</h4>
+            <h4 className="text-xs font-bold mb-6 tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>Tautan Penting</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-sm text-gray-600 hover:text-[#0b3b60] flex items-center gap-2">
-                  <ChevronRight className="w-3 h-3 text-gray-400" /> Privacy Policy
+                <Link href="/pengaduan" className="text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  <ChevronRight className="w-3 h-3" style={{ color: '#6FF3C8' }} /> Pengaduan & Kepuasan Pengguna
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm text-gray-600 hover:text-[#0b3b60] flex items-center gap-2">
-                  <ChevronRight className="w-3 h-3 text-gray-400" /> Terms of Service
+                <Link href="#" className="text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  <ChevronRight className="w-3 h-3" style={{ color: '#6FF3C8' }} /> Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  <ChevronRight className="w-3 h-3" style={{ color: '#6FF3C8' }} /> Terms of Service
                 </Link>
               </li>
             </ul>
@@ -38,16 +51,16 @@ export default function Footer() {
 
           {/* Column 3: Instansi Terkait */}
           <div>
-            <h4 className="text-sm font-bold text-[#0b3b60] mb-6">Instansi Terkait</h4>
+            <h4 className="text-xs font-bold mb-6 tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>Instansi Terkait</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-sm text-gray-600 hover:text-[#0b3b60] flex items-center gap-2">
-                  <ChevronRight className="w-3 h-3 text-gray-400" /> DKP Provinsi Jawa Tengah
+                <Link href="#" className="text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  <ChevronRight className="w-3 h-3" style={{ color: '#6FF3C8' }} /> DKP Provinsi Jawa Tengah
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm text-gray-600 hover:text-[#0b3b60] flex items-center gap-2">
-                  <ChevronRight className="w-3 h-3 text-gray-400" /> Kementerian Kelautan dan Perikanan
+                <Link href="#" className="text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  <ChevronRight className="w-3 h-3" style={{ color: '#6FF3C8' }} /> Kementerian Kelautan dan Perikanan
                 </Link>
               </li>
             </ul>
@@ -55,30 +68,37 @@ export default function Footer() {
 
           {/* Column 4: Kontak */}
           <div>
-            <h4 className="text-sm font-bold text-[#0b3b60] mb-6">Kontak</h4>
+            <h4 className="text-xs font-bold mb-6 tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>Kontak</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
-                <span className="text-sm text-gray-600">Jl. Maritim Barat No. 12, Jawa Tengah</span>
+                <MapPin className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#6FF3C8' }} />
+                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>Jl. Maritim Barat No. 12, Jawa Tengah</span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gray-400 shrink-0" />
-                <span className="text-sm text-gray-600">info.cdkwb@jateng.go.id</span>
+                <Mail className="w-5 h-5 shrink-0" style={{ color: '#6FF3C8' }} />
+                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>info.cdkwb@jateng.go.id</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <InstagramIcon className="w-5 h-5 shrink-0" style={{ color: '#6FF3C8' }} />
+                <a href="https://www.instagram.com/cdkwbjateng/" target="_blank" rel="noopener noreferrer" className="text-sm transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  @cdkwbjateng
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-300 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-500">
-            &copy; {new Date().getFullYear()} Cabang Dinas Kelautan Wilayah Barat, Provinsi Jawa Tengah. All Rights Reserved.
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <p className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            © {new Date().getFullYear()} CDKWB · ZONA ABISAL, −4.500 M · Semua Hak Dilindungi
           </p>
-          <button 
+          <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors"
+            className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-105"
+            style={{ background: 'rgba(111,243,200,0.12)', border: '1px solid rgba(111,243,200,0.3)' }}
           >
-            <ArrowUp className="w-4 h-4 text-gray-600" />
+            <ArrowUp className="w-4 h-4" style={{ color: '#6FF3C8' }} />
           </button>
         </div>
       </div>

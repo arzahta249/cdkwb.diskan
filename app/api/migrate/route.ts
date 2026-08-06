@@ -114,6 +114,164 @@ export async function GET() {
       results.push(`INFO: error tabel survei_kepuasan (${err.message})`);
     }
 
+    // ── Galeri Tables ────────────────────────────────────────────────
+
+    // kategory_foto
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS kategory_foto (
+          ID_kategori INT AUTO_INCREMENT PRIMARY KEY,
+          name_kategori VARCHAR(100) NOT NULL UNIQUE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      // Seed default categories
+      await pool.query(`
+        INSERT IGNORE INTO kategory_foto (name_kategori)
+        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi');
+      `);
+      results.push('SUCCESS: tabel kategory_foto siap');
+    } catch (err: any) {
+      results.push(`INFO: error kategory_foto (${err.message})`);
+    }
+
+    // kategory_video
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS kategory_video (
+          ID_kategori INT AUTO_INCREMENT PRIMARY KEY,
+          name_kategori VARCHAR(100) NOT NULL UNIQUE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      await pool.query(`
+        INSERT IGNORE INTO kategory_video (name_kategori)
+        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi');
+      `);
+      results.push('SUCCESS: tabel kategory_video siap');
+    } catch (err: any) {
+      results.push(`INFO: error kategory_video (${err.message})`);
+    }
+
+    // kategory_infografis
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS kategory_infografis (
+          ID_kategori INT AUTO_INCREMENT PRIMARY KEY,
+          name_kategori VARCHAR(100) NOT NULL UNIQUE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      await pool.query(`
+        INSERT IGNORE INTO kategory_infografis (name_kategori)
+        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi');
+      `);
+      results.push('SUCCESS: tabel kategory_infografis siap');
+    } catch (err: any) {
+      results.push(`INFO: error kategory_infografis (${err.message})`);
+    }
+
+    // foto
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS foto (
+          ID_foto INT AUTO_INCREMENT PRIMARY KEY,
+          Judul VARCHAR(255) NOT NULL,
+          Slug VARCHAR(255) NOT NULL UNIQUE,
+          URL_image VARCHAR(500) NULL,
+          status VARCHAR(50) DEFAULT 'Aktif',
+          tanggal DATE NULL,
+          id_kategory INT NULL,
+          value JSON NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (id_kategory) REFERENCES kategory_foto(ID_kategori) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      results.push('SUCCESS: tabel foto siap');
+    } catch (err: any) {
+      results.push(`INFO: error tabel foto (${err.message})`);
+    }
+
+    // video
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS video (
+          ID_video INT AUTO_INCREMENT PRIMARY KEY,
+          Judul VARCHAR(255) NOT NULL,
+          Slug VARCHAR(255) NOT NULL UNIQUE,
+          URL_thumbnail VARCHAR(500) NULL,
+          URL_video VARCHAR(500) NULL,
+          durasi_video VARCHAR(20) NULL,
+          status VARCHAR(50) DEFAULT 'Aktif',
+          tanggal DATE NULL,
+          id_kategory INT NULL,
+          value JSON NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (id_kategory) REFERENCES kategory_video(ID_kategori) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      results.push('SUCCESS: tabel video siap');
+    } catch (err: any) {
+      results.push(`INFO: error tabel video (${err.message})`);
+    }
+
+    // infografis
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS infografis (
+          ID_infografis INT AUTO_INCREMENT PRIMARY KEY,
+          Judul VARCHAR(255) NOT NULL,
+          Slug VARCHAR(255) NOT NULL UNIQUE,
+          URL_thumbnail VARCHAR(500) NULL,
+          URL_dokumen VARCHAR(500) NULL,
+          status VARCHAR(50) DEFAULT 'Aktif',
+          tanggal DATE NULL,
+          id_kategory INT NULL,
+          value JSON NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (id_kategory) REFERENCES kategory_infografis(ID_kategori) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      results.push('SUCCESS: tabel infografis siap');
+    } catch (err: any) {
+      results.push(`INFO: error tabel infografis (${err.message})`);
+    }
+
+    // ── Artikel Tables ────────────────────────────────────────────────
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS kategory_artikel (
+          ID_kategori INT AUTO_INCREMENT PRIMARY KEY,
+          name_kategori VARCHAR(100) NOT NULL UNIQUE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      await pool.query(`
+        INSERT IGNORE INTO kategory_artikel (name_kategori)
+        VALUES ('Kelautan'), ('Perikanan'), ('Konservasi'), ('Edukasi'), ('Umum');
+      `);
+      results.push('SUCCESS: tabel kategory_artikel siap');
+    } catch (err: any) {
+      results.push(`INFO: error kategory_artikel (${err.message})`);
+    }
+
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS artikel (
+          ID_artikel INT AUTO_INCREMENT PRIMARY KEY,
+          Judul VARCHAR(255) NOT NULL,
+          Slug VARCHAR(255) NOT NULL UNIQUE,
+          status VARCHAR(50) DEFAULT 'draft',
+          tanggal DATE NULL,
+          id_kategori INT NULL,
+          value JSON NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (id_kategori) REFERENCES kategory_artikel(ID_kategori) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      results.push('SUCCESS: tabel artikel siap');
+    } catch (err: any) {
+      results.push(`INFO: error tabel artikel (${err.message})`);
+    }
+
+    // ── End Galeri Tables ─────────────────────────────────────────────
+
     // Verify the column exists now
     const [[dbRow]]: any = await pool.query('SELECT DATABASE() AS db');
 

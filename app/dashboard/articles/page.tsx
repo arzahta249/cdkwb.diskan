@@ -2,12 +2,12 @@ import Link from 'next/link';
 import { Plus, Search, FileText, CheckCircle2, Clock, User, Tag } from 'lucide-react';
 import { pool } from '@/lib/db';
 
-export const revalidate = 0; // Data always fresh
+export const revalidate = 0;
 
-async function getNews() {
+async function getArticles() {
   try {
     const [rows]: any = await pool.query(
-      "SELECT ID_berita, Judul, Slug, status, tanggal, penulis, kategori FROM berita WHERE type = 'berita' OR type IS NULL ORDER BY tanggal DESC"
+      "SELECT ID_berita, Judul, Slug, status, tanggal, penulis, kategori FROM berita WHERE type = 'artikel' ORDER BY tanggal DESC"
     );
     return rows;
   } catch (error) {
@@ -16,22 +16,22 @@ async function getNews() {
   }
 }
 
-export default async function NewsDashboardPage() {
-  const news = await getNews();
+export default async function ArticlesDashboardPage() {
+  const articles = await getArticles();
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Data Berita</h1>
-          <p className="text-gray-400 mt-1">Kelola berita resmi dan kegiatan dinas.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Data Artikel</h1>
+          <p className="text-gray-400 mt-1">Kelola artikel dan publikasi edutainasi.</p>
         </div>
         <Link 
-          href="/dashboard/news/create" 
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-medium transition-colors shadow-lg shadow-blue-500/20 text-sm"
+          href="/dashboard/articles/create" 
+          className="inline-flex items-center gap-2 bg-[#6FF3C8] text-black hover:bg-[#5ae6b9] px-4 py-2.5 rounded-xl font-bold transition-colors shadow-lg shadow-[#6FF3C8]/20 text-sm"
         >
           <Plus className="w-5 h-5" />
-          Buat Berita Baru
+          Buat Artikel Baru
         </Link>
       </div>
 
@@ -41,8 +41,8 @@ export default async function NewsDashboardPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input 
               type="text" 
-              placeholder="Cari berita..." 
-              className="w-full pl-10 pr-4 py-2 bg-black/50 border border-white/10 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors text-sm"
+              placeholder="Cari artikel..." 
+              className="w-full pl-10 pr-4 py-2 bg-black/50 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#6FF3C8] transition-colors text-sm"
             />
           </div>
         </div>
@@ -51,7 +51,7 @@ export default async function NewsDashboardPage() {
           <table className="w-full text-left text-sm text-gray-300">
             <thead className="bg-white/5 text-gray-400 uppercase text-xs">
               <tr>
-                <th className="px-6 py-4 font-medium">Judul Berita</th>
+                <th className="px-6 py-4 font-medium">Judul Artikel</th>
                 <th className="px-6 py-4 font-medium">Kategori</th>
                 <th className="px-6 py-4 font-medium">Penulis / Pengunggah</th>
                 <th className="px-6 py-4 font-medium">Status</th>
@@ -60,17 +60,17 @@ export default async function NewsDashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {news.length === 0 ? (
+              {articles.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                     <div className="flex flex-col items-center justify-center">
                       <FileText className="w-12 h-12 mb-3 opacity-20" />
-                      <p>Belum ada data berita yang ditambahkan.</p>
+                      <p>Belum ada data artikel yang ditambahkan.</p>
                     </div>
                   </td>
                 </tr>
               ) : (
-                news.map((item: any) => (
+                articles.map((item: any) => (
                   <tr key={item.ID_berita} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-medium text-white">{item.Judul}</div>
@@ -89,7 +89,7 @@ export default async function NewsDashboardPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center gap-1.5 text-xs text-gray-300">
-                        <User className="w-3.5 h-3.5 text-blue-400" />
+                        <User className="w-3.5 h-3.5 text-[#6FF3C8]" />
                         {item.penulis || 'Reynard'}
                       </span>
                     </td>
@@ -115,7 +115,7 @@ export default async function NewsDashboardPage() {
                       <Link 
                         href={`/news/${item.Slug}`} 
                         target="_blank"
-                        className="text-blue-400 hover:text-blue-300 transition-colors text-sm font-medium mr-3"
+                        className="text-[#6FF3C8] hover:underline transition-colors text-sm font-medium"
                       >
                         Lihat
                       </Link>

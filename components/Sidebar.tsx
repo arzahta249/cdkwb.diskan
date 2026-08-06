@@ -9,6 +9,7 @@ import {
   FileText,
   MessageSquare, 
   Award,
+  Image,
   LogOut, 
   ChevronDown,
   Menu,
@@ -22,7 +23,7 @@ export default function Sidebar() {
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isNewsOpen, setIsNewsOpen] = useState(pathname.includes('/dashboard/news'));
-  const [isArtikelOpen, setIsArtikelOpen] = useState(pathname.includes('/dashboard/artikel'));
+  const [isArtikelOpen, setIsArtikelOpen] = useState(pathname.includes('/dashboard/articles') || pathname.includes('/dashboard/artikel'));
   const [isGaleriOpen, setIsGaleriOpen] = useState(pathname.includes('/dashboard/galeri'));
 
   const handleLogout = async () => {
