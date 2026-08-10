@@ -56,6 +56,7 @@ export default function Navbar() {
             <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden translate-y-2 group-hover:translate-y-0 cursor-default">
               <Link href="/profil/struktur-organisasi" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Struktur Organisasi</Link>
               <Link href="/profil/tugas-pokok" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Tugas Pokok dan Fungsi</Link>
+              <Link href="/profil/visi-misi" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Visi dan Misi</Link>
               <Link href="/profil/tentang-kami" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Tentang Kami</Link>
             </div>
           </div>
@@ -78,6 +79,16 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* Dropdown Layanan */}
+          <div className={linkClass}>
+            Layanan <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
+            <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden translate-y-2 group-hover:translate-y-0 cursor-default">
+              <Link href="#" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Layanan Perizinan</Link>
+              <Link href="#" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Layanan Konservasi</Link>
+              <Link href="#" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Layanan Pengawasan</Link>
+            </div>
+          </div>
+
           {/* Dropdown Galeri */}
           <div className={linkClass}>
             Galeri <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
@@ -92,7 +103,7 @@ export default function Navbar() {
           <div className={linkClass}>
             Unduh <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
             <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden translate-y-2 group-hover:translate-y-0 cursor-default">
-              <Link href="#" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Materi</Link>
+              <Link href="/materi" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Materi</Link>
             </div>
           </div>
 
@@ -156,6 +167,7 @@ export default function Navbar() {
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
                 <Link href="/profil/struktur-organisasi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Struktur Organisasi</Link>
                 <Link href="/profil/tugas-pokok" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Tugas Pokok & Fungsi</Link>
+                <Link href="/profil/visi-misi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Visi dan Misi</Link>
                 <Link href="/profil/tentang-kami" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Tentang Kami</Link>
               </div>
             </div>
@@ -195,6 +207,24 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* Layanan */}
+          <div>
+            <button 
+              onClick={() => toggleMobileDropdown('layanan')}
+              className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
+            >
+              Layanan
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'layanan' ? 'rotate-180 text-blue-600' : ''}`} />
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'layanan' ? 'max-h-48' : 'max-h-0'}`}>
+              <div className="pl-4 py-2 space-y-1 bg-gray-50/50 rounded-xl mt-1">
+                <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Layanan Perizinan</Link>
+                <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Layanan Konservasi</Link>
+                <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Layanan Pengawasan</Link>
+              </div>
+            </div>
+          </div>
+
           {/* Galeri */}
           <div>
             <button 
@@ -222,9 +252,9 @@ export default function Navbar() {
               Unduh
               <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'unduh' ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'unduh' ? 'max-h-36' : 'max-h-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'unduh' ? 'max-h-48' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                <Link href="#" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Materi</Link>
+                <Link href="/materi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Materi</Link>
               </div>
             </div>
           </div>
