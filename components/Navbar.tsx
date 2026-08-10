@@ -64,9 +64,20 @@ export default function Navbar() {
           {/* Dropdown Konservasi */}
           <div className={linkClass}>
             Konservasi <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-            <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden translate-y-2 group-hover:translate-y-0 cursor-default">
-              <Link href="#" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">kawasan konservasi</Link>
-              <Link href="#" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">rehabilitas mangrove</Link>
+            <div className="absolute top-full left-0 mt-2 w-60 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-visible translate-y-2 group-hover:translate-y-0 cursor-default">
+              {/* Kawasan Konservasi — nested flyout */}
+              <div className="relative group/kawasan">
+                <div className="flex items-center justify-between px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer">
+                  Kawasan Konservasi
+                  <ChevronDown className="w-3.5 h-3.5 -rotate-90 ml-2 flex-shrink-0" />
+                </div>
+                {/* Sub-sub flyout */}
+                <div className="absolute left-full top-0 ml-1 w-52 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover/kawasan:opacity-100 group-hover/kawasan:visible transition-all duration-200 flex flex-col overflow-hidden">
+                  <Link href="/konservasi/kawasan/karang-jeruk" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">🐠 Karang Jeruk</Link>
+                  <Link href="/konservasi/kawasan/ujungnegoro" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">🌊 Ujungnegoro</Link>
+                </div>
+              </div>
+              <Link href="/konservasi/rehabilitasi-mangrove" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Rehabilitasi Mangrove</Link>
             </div>
           </div>
 
@@ -182,10 +193,13 @@ export default function Navbar() {
               Konservasi
               <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'konservasi' ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'konservasi' ? 'max-h-48' : 'max-h-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'konservasi' ? 'max-h-64' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                <Link href="#" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>kawasan konservasi</Link>
-                <Link href="#" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>rehabilitas mangrove</Link>
+                <p className="px-4 pt-1 pb-0.5 text-xs font-semibold text-gray-400 uppercase tracking-wide">Kawasan Konservasi</p>
+                <Link href="/konservasi/kawasan/karang-jeruk" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>🐠 Karang Jeruk</Link>
+                <Link href="/konservasi/kawasan/ujungnegoro" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>🌊 Ujungnegoro</Link>
+                <div className="border-t border-gray-200 my-1" />
+                <Link href="/konservasi/rehabilitasi-mangrove" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>🌿 Rehabilitasi Mangrove</Link>
               </div>
             </div>
           </div>
