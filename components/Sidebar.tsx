@@ -14,7 +14,8 @@ import {
   ChevronDown,
   Menu,
   X,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Waves
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -32,7 +33,8 @@ export default function Sidebar() {
       console.error('Logout error:', e);
     }
     localStorage.removeItem('user');
-    window.location.href = '/login';
+    router.replace('/login');
+    router.refresh();
   };
 
   const NavItem = ({ href, icon: Icon, children, exact = false }: any) => {
@@ -40,13 +42,51 @@ export default function Sidebar() {
     return (
       <Link
         href={href}
-        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+        className={`flex items-center gap-3 px-4 py-2.5 rounded-l-md rounded-r-none transition-all duration-300 ${
           isActive 
-            ? 'bg-blue-600/10 text-blue-500 font-medium' 
-            : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+            ? 'bg-cyan-900/20 text-cyan-400 border-r-2 border-cyan-400 shadow-[inset_0_0_20px_rgba(6,182,212,0.05)] font-medium' 
+            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
         }`}
       >
-        <Icon className="w-5 h-5" />
+        <Icon className={`w-4 h-4 ${isActive ? 'drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]' : ''}`} />
+        <span className="text-sm tracking-wide">{children}</span>
+      </Link>
+    );
+  };
+
+  // Dropdown Button Component
+  const NavDropdownBtn = ({ isOpen, onClick, icon: Icon, children, activePath }: any) => {
+    const isActive = pathname.includes(activePath);
+    return (
+      <button
+        onClick={onClick}
+        className={`w-full flex items-center justify-between px-4 py-2.5 rounded-l-md rounded-r-none transition-all duration-300 ${
+          isActive
+            ? 'bg-cyan-900/20 text-cyan-400 border-r-2 border-cyan-400 shadow-[inset_0_0_20px_rgba(6,182,212,0.05)] font-medium'
+            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <Icon className={`w-4 h-4 ${isActive ? 'drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]' : ''}`} />
+          <span className="text-sm tracking-wide">{children}</span>
+        </div>
+        <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+    );
+  };
+
+  // Dropdown Link Component
+  const DropdownLink = ({ href, children }: any) => {
+    const isActive = pathname === href;
+    return (
+      <Link 
+        href={href}
+        className={`block px-4 py-2 rounded-md text-[13px] transition-all duration-300 ${
+          isActive
+            ? 'text-cyan-300 bg-cyan-900/30'
+            : 'text-slate-400 hover:text-cyan-100 hover:bg-slate-800/50 hover:pl-5'
+        }`}
+      >
         {children}
       </Link>
     );
@@ -57,182 +97,101 @@ export default function Sidebar() {
       {/* Mobile Toggle */}
       <button 
         onClick={() => setIsMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#171717] rounded-lg border border-white/10"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#080C17] rounded-lg border border-cyan-900/50 shadow-lg shadow-cyan-900/20 text-cyan-400"
       >
-        <Menu className="w-6 h-6 text-white" />
+        <Menu className="w-5 h-5" />
       </button>
 
       {/* Sidebar Overlay */}
-      {isMobileOpen && (
+      {isMobileOpen ? (
         <div 
-          className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+          className="md:hidden fixed inset-0 bg-slate-900/80 z-40 backdrop-blur-sm"
           onClick={() => setIsMobileOpen(false)}
         />
-      )}
+      ) : null}
 
       {/* Sidebar Content */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-50 w-72 bg-[#0a0a0a] border-r border-white/5 flex flex-col
+        fixed md:static inset-y-0 left-0 z-50 w-64 bg-[#080C17]/95 backdrop-blur-xl border-r border-cyan-900/30 flex flex-col shadow-2xl
         transition-transform duration-300 ease-in-out
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-6 flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xl font-bold text-white tracking-tight">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              D
+        <div className="p-6 flex items-center justify-between border-b border-cyan-900/30">
+          <div className="flex items-center gap-3 text-lg font-bold text-slate-100 tracking-tight">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-600 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+              <Waves className="w-4 h-4 text-white" />
             </div>
             Diskan Admin
           </div>
           <button 
-            className="md:hidden p-2 text-gray-400 hover:text-white"
+            className="md:hidden p-1.5 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
             onClick={() => setIsMobileOpen(false)}
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <nav className="flex-1 px-4 py-6 flex flex-col gap-2 overflow-y-auto">
+        <nav className="flex-1 pl-4 py-6 pr-0 flex flex-col gap-1.5 overflow-y-auto overflow-x-hidden custom-scrollbar">
           <NavItem href="/dashboard" icon={LayoutDashboard} exact>
             Dashboard
           </NavItem>
 
           {/* Dropdown Berita */}
-          <div className="space-y-1">
-            <button
-              onClick={() => setIsNewsOpen(!isNewsOpen)}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
-                pathname.includes('/dashboard/news')
-                  ? 'bg-blue-600/10 text-blue-500 font-medium'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
-              }`}
+          <div className="space-y-1 pr-4 md:pr-0">
+            <NavDropdownBtn 
+              isOpen={isNewsOpen} 
+              onClick={() => setIsNewsOpen(!isNewsOpen)} 
+              icon={Newspaper}
+              activePath="/dashboard/news"
             >
-              <div className="flex items-center gap-3">
-                <Newspaper className="w-5 h-5" />
-                <span>Berita</span>
-              </div>
-              <ChevronDown className={`w-4 h-4 transition-transform ${isNewsOpen ? 'rotate-180' : ''}`} />
-            </button>
+              Berita
+            </NavDropdownBtn>
             
-            {isNewsOpen && (
-              <div className="pl-11 pr-2 py-2 space-y-1">
-                <Link 
-                  href="/dashboard/news/create"
-                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/news/create'
-                      ? 'text-white bg-white/10'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Buat Berita
-                </Link>
-                <Link 
-                  href="/dashboard/news"
-                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/news'
-                      ? 'text-white bg-white/10'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Lihat Data Berita
-                </Link>
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isNewsOpen ? 'max-h-40 opacity-100 mt-1' : 'max-h-0 opacity-0'}`}>
+              <div className="pl-11 pr-4 py-1 space-y-1 border-l border-cyan-900/30 ml-6">
+                <DropdownLink href="/dashboard/news/create">Buat Berita</DropdownLink>
+                <DropdownLink href="/dashboard/news">Lihat Data Berita</DropdownLink>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Dropdown Artikel */}
-          <div className="space-y-1">
-            <button
-              onClick={() => setIsArtikelOpen(!isArtikelOpen)}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
-                pathname.includes('/dashboard/articles') || pathname.includes('/dashboard/artikel')
-                  ? 'bg-blue-600/10 text-blue-500 font-medium'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
-              }`}
+          <div className="space-y-1 pr-4 md:pr-0">
+            <NavDropdownBtn 
+              isOpen={isArtikelOpen} 
+              onClick={() => setIsArtikelOpen(!isArtikelOpen)} 
+              icon={FileText}
+              activePath="/dashboard/artikel"
             >
-              <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5" />
-                <span>Artikel</span>
+              Artikel
+            </NavDropdownBtn>
+            
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isArtikelOpen ? 'max-h-40 opacity-100 mt-1' : 'max-h-0 opacity-0'}`}>
+              <div className="pl-11 pr-4 py-1 space-y-1 border-l border-cyan-900/30 ml-6">
+                <DropdownLink href="/dashboard/artikel/create">Buat Artikel</DropdownLink>
+                <DropdownLink href="/dashboard/artikel">Lihat Data Artikel</DropdownLink>
               </div>
-              <ChevronDown className={`w-4 h-4 transition-transform ${isArtikelOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {isArtikelOpen && (
-              <div className="pl-11 pr-2 py-2 space-y-1">
-                <Link
-                  href="/dashboard/articles/create"
-                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/articles/create' || pathname === '/dashboard/artikel/create'
-                      ? 'text-white bg-white/10'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Buat Artikel
-                </Link>
-                <Link
-                  href="/dashboard/articles"
-                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/articles' || pathname === '/dashboard/artikel'
-                      ? 'text-white bg-white/10'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Lihat Data Artikel
-                </Link>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Dropdown Galeri */}
-          <div className="space-y-1">
-            <button
-              onClick={() => setIsGaleriOpen(!isGaleriOpen)}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
-                pathname.includes('/dashboard/galeri')
-                  ? 'bg-blue-600/10 text-blue-500 font-medium'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
-              }`}
+          <div className="space-y-1 pr-4 md:pr-0">
+            <NavDropdownBtn 
+              isOpen={isGaleriOpen} 
+              onClick={() => setIsGaleriOpen(!isGaleriOpen)} 
+              icon={ImageIcon}
+              activePath="/dashboard/galeri"
             >
-              <div className="flex items-center gap-3">
-                <ImageIcon className="w-5 h-5" />
-                <span>Galeri</span>
-              </div>
-              <ChevronDown className={`w-4 h-4 transition-transform ${isGaleriOpen ? 'rotate-180' : ''}`} />
-            </button>
+              Galeri
+            </NavDropdownBtn>
             
-            {isGaleriOpen && (
-              <div className="pl-11 pr-2 py-2 space-y-1">
-                <Link 
-                  href="/dashboard/galeri/foto"
-                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/galeri/foto'
-                      ? 'text-white bg-white/10'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Foto
-                </Link>
-                <Link 
-                  href="/dashboard/galeri/video"
-                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/galeri/video'
-                      ? 'text-white bg-white/10'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Video
-                </Link>
-                <Link 
-                  href="/dashboard/galeri/infografis"
-                  className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                    pathname === '/dashboard/galeri/infografis'
-                      ? 'text-white bg-white/10'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Infografis
-                </Link>
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isGaleriOpen ? 'max-h-60 opacity-100 mt-1' : 'max-h-0 opacity-0'}`}>
+              <div className="pl-11 pr-4 py-1 space-y-1 border-l border-cyan-900/30 ml-6">
+                <DropdownLink href="/dashboard/galeri/foto">Kelola Foto</DropdownLink>
+                <DropdownLink href="/dashboard/galeri/video">Kelola Video</DropdownLink>
+                <DropdownLink href="/dashboard/galeri/infografis">Kelola Infografis</DropdownLink>
               </div>
-            )}
+            </div>
           </div>
 
           <NavItem href="/dashboard/aduan" icon={MessageSquare}>
@@ -242,14 +201,18 @@ export default function Sidebar() {
           <NavItem href="/dashboard/kepuasan" icon={Award}>
             Survei Kepuasan
           </NavItem>
+
+          <NavItem href="/dashboard/materi" icon={FileText}>
+            Manajemen Materi
+          </NavItem>
         </nav>
 
-        <div className="p-4 border-t border-white/5">
+        <div className="p-4 border-t border-cyan-900/30">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-md transition-colors text-sm font-medium border border-transparent hover:border-rose-500/20"
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut className="w-4 h-4" />
             Logout
           </button>
         </div>
