@@ -209,7 +209,7 @@ export default function Navbar() {
             {/* Mobile Menu Toggle Button */}
             <button 
               type="button"
-              className="lg:hidden p-2 text-gray-600 hover:text-[#0b3b60] hover:bg-gray-100 rounded-lg transition-colors relative z-[502] min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer active:scale-95 touch-manipulation"
+              className="lg:hidden p-2 text-gray-600 hover:text-[#0b3b60] hover:bg-gray-100 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer active:scale-95 touch-manipulation"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsMobileMenuOpen((prev) => !prev);
@@ -220,173 +220,173 @@ export default function Navbar() {
             </button>
           </div>
         </div>
+      </nav>
 
-        {/* Mobile Menu Overlay */}
-        <div 
-          className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[500] transition-opacity duration-300 lg:hidden ${
-            isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          }`}
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
+      {/* Mobile Menu Overlay */}
+      <div 
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] transition-opacity duration-300 lg:hidden ${
+          isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
 
-        {/* Mobile Menu Panel */}
-        <div 
-          className={`fixed top-0 right-0 h-full w-[85%] max-w-[320px] bg-white z-[501] shadow-2xl transition-transform duration-300 transform lg:hidden overflow-y-auto flex flex-col ${
-            isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
-        >
-          {/* Mobile Drawer Top Header */}
-          <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/80 sticky top-0 z-10">
-            <div className="flex items-center gap-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src="/leading/logo.jateng.jpg" 
-                alt="Logo Jawa Tengah" 
-                className="w-6 h-8 object-contain"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
-              <span className="font-bold text-lg text-[#0b3b60] tracking-tight">CDKWB Menu</span>
-            </div>
-            <button
+      {/* Mobile Menu Panel Drawer */}
+      <div 
+        className={`fixed top-0 right-0 bottom-0 h-screen h-[100dvh] w-[85%] max-w-[320px] bg-white z-[9999] shadow-2xl transition-transform duration-300 ease-in-out transform lg:hidden overflow-y-auto flex flex-col ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        {/* Mobile Drawer Top Header */}
+        <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/90 sticky top-0 z-10">
+          <div className="flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/leading/logo.jateng.jpg" 
+              alt="Logo Jawa Tengah" 
+              className="w-6 h-8 object-contain"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+            <span className="font-bold text-lg text-[#0b3b60] tracking-tight">CDKWB Menu</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-200/60 rounded-lg transition-colors cursor-pointer"
+            aria-label="Tutup menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-4 flex-1 space-y-1.5">
+          <Link href="/" className="block py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+            Beranda
+          </Link>
+
+          {/* Profil */}
+          <div>
+            <button 
               type="button"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-200/60 rounded-lg transition-colors cursor-pointer"
-              aria-label="Tutup menu"
+              onClick={() => toggleMobileDropdown('profil')}
+              className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
             >
-              <X className="w-5 h-5" />
+              Profil
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'profil' ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'profil' ? 'max-h-56' : 'max-h-0'}`}>
+              <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
+                <Link href="/profil/struktur-organisasi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Struktur Organisasi</Link>
+                <Link href="/profil/tugas-pokok" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Tugas Pokok & Fungsi</Link>
+                <Link href="/profil/visi-misi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Visi dan Misi</Link>
+                <Link href="/profil/tentang-kami" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Tentang Kami</Link>
+              </div>
+            </div>
           </div>
 
-          <div className="p-4 flex-1 space-y-1.5">
-            <Link href="/" className="block py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-              Beranda
-            </Link>
-
-            {/* Profil */}
-            <div>
-              <button 
-                type="button"
-                onClick={() => toggleMobileDropdown('profil')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
-              >
-                Profil
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'profil' ? 'rotate-180 text-blue-600' : ''}`} />
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'profil' ? 'max-h-56' : 'max-h-0'}`}>
-                <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                  <Link href="/profil/struktur-organisasi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Struktur Organisasi</Link>
-                  <Link href="/profil/tugas-pokok" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Tugas Pokok & Fungsi</Link>
-                  <Link href="/profil/visi-misi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Visi dan Misi</Link>
-                  <Link href="/profil/tentang-kami" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Tentang Kami</Link>
-                </div>
+          {/* Informasi */}
+          <div>
+            <button 
+              type="button"
+              onClick={() => toggleMobileDropdown('informasi')}
+              className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
+            >
+              Informasi
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'informasi' ? 'rotate-180 text-blue-600' : ''}`} />
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'informasi' ? 'max-h-48' : 'max-h-0'}`}>
+              <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
+                <Link href="/news" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Berita</Link>
+                <Link href="/artikel" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Artikel</Link>
               </div>
             </div>
+          </div>
 
-            {/* Informasi */}
-            <div>
-              <button 
-                type="button"
-                onClick={() => toggleMobileDropdown('informasi')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
-              >
-                Informasi
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'informasi' ? 'rotate-180 text-blue-600' : ''}`} />
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'informasi' ? 'max-h-48' : 'max-h-0'}`}>
-                <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                  <Link href="/news" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Berita</Link>
-                  <Link href="/artikel" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Artikel</Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Layanan (Contains Kawasan Konservasi, Rehabilitasi Mangrove, Kehumasan, Kerja Sama, SLO) */}
-            <div>
-              <button 
-                type="button"
-                onClick={() => toggleMobileDropdown('layanan')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
-              >
-                Layanan
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'layanan' ? 'rotate-180 text-blue-600' : ''}`} />
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'layanan' ? 'max-h-[500px]' : 'max-h-0'}`}>
-                <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                  {/* 1. Kawasan Konservasi (nested accordion) */}
-                  <div>
-                    <button 
-                      type="button"
-                      onClick={() => toggleMobileDropdown('layanan-kawasan')}
-                      className="w-full flex items-center justify-between py-2 px-4 text-sm font-semibold text-gray-700 hover:text-blue-600 rounded-lg transition-colors touch-manipulation"
-                    >
-                      Kawasan Konservasi
-                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${activeMobileDropdown === 'layanan-kawasan' ? 'rotate-180 text-blue-600' : ''}`} />
-                    </button>
-                    <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'layanan-kawasan' ? 'max-h-48' : 'max-h-0'}`}>
-                      <div className="pl-4 py-1.5 space-y-1 bg-white/80 rounded-lg mt-1 border border-gray-100">
-                        <Link href="/konservasi/kawasan/karang-jeruk" className="block py-2 px-3 text-xs text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Karang Jeruk</Link>
-                        <Link href="/konservasi/kawasan/ujungnegoro" className="block py-2 px-3 text-xs text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Ujungnegoro</Link>
-                      </div>
+          {/* Layanan (Contains Kawasan Konservasi, Rehabilitasi Mangrove, Kehumasan, Kerja Sama, SLO) */}
+          <div>
+            <button 
+              type="button"
+              onClick={() => toggleMobileDropdown('layanan')}
+              className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
+            >
+              Layanan
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'layanan' ? 'rotate-180 text-blue-600' : ''}`} />
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'layanan' ? 'max-h-[500px]' : 'max-h-0'}`}>
+              <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
+                {/* 1. Kawasan Konservasi (nested accordion) */}
+                <div>
+                  <button 
+                    type="button"
+                    onClick={() => toggleMobileDropdown('layanan-kawasan')}
+                    className="w-full flex items-center justify-between py-2 px-4 text-sm font-semibold text-gray-700 hover:text-blue-600 rounded-lg transition-colors touch-manipulation"
+                  >
+                    Kawasan Konservasi
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${activeMobileDropdown === 'layanan-kawasan' ? 'rotate-180 text-blue-600' : ''}`} />
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'layanan-kawasan' ? 'max-h-48' : 'max-h-0'}`}>
+                    <div className="pl-4 py-1.5 space-y-1 bg-white/80 rounded-lg mt-1 border border-gray-100">
+                      <Link href="/konservasi/kawasan/karang-jeruk" className="block py-2 px-3 text-xs text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Karang Jeruk</Link>
+                      <Link href="/konservasi/kawasan/ujungnegoro" className="block py-2 px-3 text-xs text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Ujungnegoro</Link>
                     </div>
                   </div>
-
-                  {/* 2. Rehabilitasi Mangrove */}
-                  <Link href="/konservasi/rehabilitasi-mangrove" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Rehabilitasi Mangrove</Link>
-
-                  {/* 3. Kehumasan */}
-                  <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan</Link>
-
-                  {/* 4. Kerja Sama */}
-                  <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kerja Sama</Link>
-
-                  {/* 5. SLO */}
-                  <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>SLO (Surat Laik Operasi)</Link>
                 </div>
+
+                {/* 2. Rehabilitasi Mangrove */}
+                <Link href="/konservasi/rehabilitasi-mangrove" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Rehabilitasi Mangrove</Link>
+
+                {/* 3. Kehumasan */}
+                <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan</Link>
+
+                {/* 4. Kerja Sama */}
+                <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kerja Sama</Link>
+
+                {/* 5. SLO */}
+                <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>SLO (Surat Laik Operasi)</Link>
               </div>
             </div>
-
-            {/* Galeri */}
-            <div>
-              <button 
-                type="button"
-                onClick={() => toggleMobileDropdown('galeri')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
-              >
-                Galeri
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'galeri' ? 'rotate-180 text-blue-600' : ''}`} />
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'galeri' ? 'max-h-48' : 'max-h-0'}`}>
-                <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                  <Link href="/galeri?tab=foto" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Foto</Link>
-                  <Link href="/galeri?tab=video" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Video</Link>
-                  <Link href="/galeri?tab=infografis" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Infografis</Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Hubungi Kami */}
-            <div>
-              <button 
-                type="button"
-                onClick={() => toggleMobileDropdown('hubungi')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
-              >
-                Hubungi Kami
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'hubungi' ? 'rotate-180 text-blue-600' : ''}`} />
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'hubungi' ? 'max-h-60' : 'max-h-0'}`}>
-                <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                  <Link href="/kontak" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Kontak</Link>
-                  <Link href="/kontak#lokasi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Lokasi</Link>
-                  <Link href="/pengaduan" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Pengaduan & Kepuasan</Link>
-                  <Link href="/materi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Materi</Link>
-                </div>
-              </div>
-            </div>
-
           </div>
+
+          {/* Galeri */}
+          <div>
+            <button 
+              type="button"
+              onClick={() => toggleMobileDropdown('galeri')}
+              className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
+            >
+              Galeri
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'galeri' ? 'rotate-180 text-blue-600' : ''}`} />
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'galeri' ? 'max-h-48' : 'max-h-0'}`}>
+              <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
+                <Link href="/galeri?tab=foto" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Foto</Link>
+                <Link href="/galeri?tab=video" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Video</Link>
+                <Link href="/galeri?tab=infografis" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Infografis</Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Hubungi Kami */}
+          <div>
+            <button 
+              type="button"
+              onClick={() => toggleMobileDropdown('hubungi')}
+              className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
+            >
+              Hubungi Kami
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'hubungi' ? 'rotate-180 text-blue-600' : ''}`} />
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'hubungi' ? 'max-h-60' : 'max-h-0'}`}>
+              <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
+                <Link href="/kontak" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Kontak</Link>
+                <Link href="/kontak#lokasi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Lokasi</Link>
+                <Link href="/pengaduan" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Pengaduan & Kepuasan</Link>
+                <Link href="/materi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Materi</Link>
+              </div>
+            </div>
+          </div>
+
         </div>
-      </nav>
+      </div>
 
       {/* ── ACCESSIBLE & FUNCTIONAL GLOBAL SEARCH MODAL ── */}
       {isSearchOpen && (
