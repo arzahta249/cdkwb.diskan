@@ -43,7 +43,7 @@ export default function MateriPage() {
         setMateriList(data);
       } catch (error) {
         console.error('Failed to fetch materi:', error);
-      } font-lightally {
+      } finally {
         setIsLoading(false);
       }
     };
