@@ -123,7 +123,7 @@ export default function RehabilitasiMangrovePage() {
   const [speciesRef, speciesVisible] = useInView(0.1);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(to bottom, #2E8B70 0%, #1a6b52 12%, #a7f3d0 40%, #ecfdf5 58%, #ffffff 78%)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(to bottom, #2E8B70 0%, #2E8B70 22%, #a7f3d0 48%, #ecfdf5 64%, #ffffff 82%)' }}>
       <Navbar />
 
       {/* ── HERO ── */}
