@@ -305,12 +305,12 @@ export default function RehabilitasiMangrovePage() {
           <h2 className="text-3xl font-bold text-[#052e16] mb-6">
             Mengembalikan Sabuk Hijau Pesisir
           </h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
+          <p className="text-white leading-relaxed mb-4">
             Degradasi hutan mangrove di pesisir Jawa Tengah telah menyebabkan abrasi yang mengancam
             pemukiman, tambak, dan infrastruktur pesisir. CDKWB merespons dengan program rehabilitasi
             mangrove skala besar yang menggabungkan pendekatan ekologis, sosial, dan ekonomi secara terpadu.
           </p>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-white leading-relaxed">
             Sejak 2018, program ini telah menanam lebih dari 125.000 bibit mangrove dari berbagai spesies
             asli di 48 hektare lahan terdegradasi, melibatkan 12 desa pesisir sebagai mitra aktif dalam
             pengelolaan dan pemantauan kawasan.
