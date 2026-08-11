@@ -9,7 +9,7 @@ import { ArrowRight, PlayCircle, Ship, Waves, ShieldAlert, FileText } from 'luci
 async function getPublishedNews() {
   try {
     const [rows]: any = await pool.query(
-      "SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal, penulis FROM berita WHERE status = 'published' AND (type = 'berita' OR type IS NULL) ORDER BY tanggal DESC LIMIT 2"
+      "SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal FROM berita WHERE status = 'published' ORDER BY tanggal DESC LIMIT 2"
     );
     return rows;
   } catch (err) {
@@ -120,11 +120,11 @@ export default async function HomePage() {
                 Layanan inti untuk nelayan, pelaku usaha, dan masyarakat pesisir.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              <ServiceCard icon={Ship}        title="Perizinan Kapal" desc="Layanan administrasi perikanan tangkap."    num="01" />
-              <ServiceCard icon={Waves}       title="Konservasi"      desc="Program pelestarian ekosistem laut."         num="02" />
-              <ServiceCard icon={ShieldAlert} title="Pengawasan"      desc="Patroli dan keamanan wilayah pesisir."       num="03" />
-              <ServiceCard icon={FileText}    title="Data & Info"     desc="Statistik dan informasi publik kelautan."   num="04" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <ServiceCard icon={Ship} title="Perizinan Kapal" desc="Layanan administrasi perikanan tangkap." num="01" />
+              <ServiceCard icon={Waves} title="Konservasi" desc="Program pelestarian ekosistem laut." num="02" />
+              <ServiceCard icon={ShieldAlert} title="Pengawasan" desc="Patroli dan keamanan wilayah pesisir." num="03" />
+              <ServiceCard icon={FileText} title="Data & Info" desc="Statistik dan informasi publik kelautan." num="04" />
             </div>
           </div>
         </section>

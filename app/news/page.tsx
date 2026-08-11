@@ -40,13 +40,11 @@ function fmtDate(d: string, short = false) {
     : { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-async function getContent(type: string, cat?: string) {
+async function getContent(cat?: string) {
   try {
     let q = `SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal, type, penulis, views, kategori
-             FROM berita WHERE status = 'published'`;
+             FROM berita WHERE status = 'published' AND (type = 'berita' OR type IS NULL)`;
     const p: any[] = [];
-    if (type === 'artikel') q += ` AND type = 'artikel'`;
-    else q += ` AND (type = 'berita' OR type IS NULL)`;
     if (cat && cat !== 'Semua') { q += ' AND kategori = ?'; p.push(cat); }
     q += ' ORDER BY tanggal DESC';
     const [rows]: any = await pool.query(q, p);
@@ -54,17 +52,15 @@ async function getContent(type: string, cat?: string) {
   } catch { return []; }
 }
 
-async function getPopular(type: string) {
+async function getPopular() {
   try {
-    let q = `SELECT ID_berita, Judul, Slug, views, tanggal FROM berita WHERE status = 'published'`;
-    if (type === 'artikel') q += ` AND type = 'artikel'`; else q += ` AND (type = 'berita' OR type IS NULL)`;
+    let q = `SELECT ID_berita, Judul, Slug, views, tanggal FROM berita WHERE status = 'published' AND (type = 'berita' OR type IS NULL)`;
     q += ' ORDER BY views DESC LIMIT 4';
     const [rows]: any = await pool.query(q);
     return rows as any[];
   } catch { return []; }
 }
 
-// ── Category Badge ──────────────────────────────────────────────────────────
 function CatBadge({ cat, size = 'sm' }: { cat: string; size?: 'xs' | 'sm' }) {
   const s = getCat(cat);
   const cls = size === 'xs' ? 'px-2 py-0.5 text-[10px] gap-1' : 'px-2.5 py-1 text-[11px] gap-1.5';
@@ -79,21 +75,19 @@ function CatBadge({ cat, size = 'sm' }: { cat: string; size?: 'xs' | 'sm' }) {
   );
 }
 
-// ── Page ────────────────────────────────────────────────────────────────────
 export default async function NewsListPage({
   searchParams,
 }: {
   searchParams?: Promise<{ q?: string; type?: string; cat?: string; page?: string }>;
 }) {
   const sp = (await searchParams) || {};
-  const filterType = sp.type === 'artikel' ? 'artikel' : 'berita';
   const searchQuery = (sp.q || '').toLowerCase();
   const activeCat = sp.cat || 'Semua';
   const currentPage = Math.max(1, parseInt(sp.page || '1', 10));
 
   const catForQuery = activeCat === 'Semua' ? undefined : activeCat;
-  const allItems = await getContent(filterType, catForQuery);
-  const popular = await getPopular(filterType);
+  const allItems = await getContent(catForQuery);
+  const popular = await getPopular();
 
   const filtered = allItems.filter(item => {
     if (!searchQuery) return true;
@@ -122,71 +116,42 @@ export default async function NewsListPage({
 
   function buildQuery(ov: Record<string, string>) {
     const base: Record<string, string> = {};
-    if (filterType === 'artikel') base.type = 'artikel';
     if (searchQuery) base.q = searchQuery;
     if (activeCat !== 'Semua') base.cat = activeCat;
     base.page = String(currentPage);
     return '/news?' + new URLSearchParams({ ...base, ...ov }).toString();
   }
 
-  const isArtikel = filterType === 'artikel';
-
   return (
     <div className="min-h-screen font-sans">
       <Navbar />
       <DepthGauge />
 
-      {/* ── Single continuous ocean background ── */}
       <div className="ocean-bg text-white">
 
-        {/* ── HERO SECTION ── */}
-        <section className="pt-28 pb-16 relative overflow-hidden">
+        <section className="pt-32 pb-16 relative overflow-hidden">
           <div className="rays" aria-hidden="true"><span /><span /><span /><span /></div>
           <div className="glow-particles" aria-hidden="true" id="glowNewsHero" />
 
           <div className="container mx-auto px-6 max-w-6xl relative z-10">
-            {/* Type switcher tabs */}
-            <div className="flex items-center gap-1 mb-8">
-              <Link
-                href="/news"
-                className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-                  !isArtikel ? 'bg-white text-[#0D5568]' : 'text-white/50 hover:text-white'
-                }`}
-              >
-                Berita
-              </Link>
-              <Link
-                href="/news?type=artikel"
-                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
-                  isArtikel ? 'text-black' : 'text-white/50 hover:text-white'
-                }`}
-                style={isArtikel ? { background: '#6FF3C8' } : {}}
-              >
-                Artikel
-              </Link>
-            </div>
-
             {/* Title */}
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3 leading-tight">
-              {isArtikel ? 'Artikel & Wawasan' : 'Berita & Kegiatan'}
+              Berita & Kegiatan
             </h1>
             <p className="text-gray-300 text-base mb-10 max-w-xl leading-relaxed">
-              {isArtikel
-                ? 'Jelajahi berita terbaru, inovasi teknologi kelautan, dan panduan pertanian perkotaan untuk mendukung ketahanan pangan berkelanjutan.'
-                : 'Informasi resmi, laporan kegiatan lapangan, dan kabar terkini seputar DKP Jawa Tengah Wilayah Barat.'}
+              Informasi resmi, laporan kegiatan lapangan, dan kabar terkini seputar DKP Jawa Tengah Wilayah Barat.
             </p>
 
             {/* Search + Category filter row */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap">
               {/* Search */}
               <form method="GET" action="/news" className="flex items-center gap-2 shrink-0">
-                {isArtikel && <input type="hidden" name="type" value="artikel" />}
                 {activeCat !== 'Semua' && <input type="hidden" name="cat" value={activeCat} />}
                 <div className="relative">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type="text" name="q" defaultValue={searchQuery}
-                    placeholder={isArtikel ? 'Cari artikel...' : 'Cari berita...'}
+                    placeholder="Cari berita..."
                     className="pl-10 pr-4 py-2.5 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#6FF3C8] transition-colors text-sm w-56"
                   />
                 </div>
@@ -219,148 +184,106 @@ export default async function NewsListPage({
           </div>
         </section>
 
-        {/* ── MAIN CONTENT + SIDEBAR ── */}
         <section className="pb-24 relative">
           <div className="glow-particles" aria-hidden="true" id="glowNewsGrid" />
           <div className="container mx-auto px-6 max-w-6xl relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
 
-              {/* ── LEFT: Article feed ── */}
-              <div className="space-y-6">
+              <div className="space-y-8">
 
-                {/* Empty state */}
                 {filtered.length === 0 && (
                   <div className="ocean-card text-center py-20 px-6">
                     <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <h3 className="text-lg font-bold mb-2">Belum ada {isArtikel ? 'artikel' : 'berita'}</h3>
+                    <h3 className="text-lg font-bold mb-2">Belum ada berita</h3>
                     <p className="text-sm text-gray-400">
                       {searchQuery ? `Tidak ditemukan "${searchQuery}".` : 'Tambahkan melalui Dashboard Admin.'}
                     </p>
                   </div>
                 )}
 
-                {/* ── FEATURED ARTICLE (large landscape card) ── */}
                 {featured && !searchQuery && (
-                  <Link
-                    href={`/news/${featured.Slug}`}
-                    className="group block rounded-2xl overflow-hidden border border-white/10 relative min-h-[340px] transition-all hover:border-white/25 hover:scale-[1.005]"
-                    style={{ background: 'rgba(255,255,255,0.04)' }}
-                  >
-                    <div className="grid grid-cols-1 sm:grid-cols-[3fr_2fr] min-h-[340px]">
-                      {/* Image */}
-                      <div className="relative min-h-[200px] sm:min-h-full overflow-hidden">
-                        <Image
-                          src={featured.image || '/leading/berita.png'}
-                          alt={featured.Judul}
-                          fill
-                          priority
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#091D2C]/80 hidden sm:block" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#091D2C]/90 to-transparent sm:hidden" />
-                        {/* Category badge on image */}
-                        <div className="absolute top-4 left-4">
-                          <CatBadge cat={featured.kategori || 'Umum'} />
-                        </div>
-                      </div>
-
-                      {/* Text */}
-                      <div className="p-6 sm:p-8 flex flex-col justify-between bg-[#091D2C]/80 backdrop-blur-sm">
-                        <div>
-                          {isNew(featured.tanggal) && (
-                            <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white mb-3 animate-pulse"
-                              style={{ background: 'linear-gradient(135deg, #FF593C, #C2452F)' }}>
-                              TERBARU
-                            </span>
-                          )}
-                          <h2 className="text-xl sm:text-2xl font-bold text-white leading-snug mb-3 group-hover:text-[#6FF3C8] transition-colors">
-                            {featured.Judul}
-                          </h2>
-                          <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">
-                            {stripHtml(featured.isi_berita)}
-                          </p>
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-3 text-xs text-white/90 mt-5 mb-4 font-medium">
-                            <span className="flex items-center gap-1.5 text-white">
-                              <Calendar className="w-3.5 h-3.5 text-[#6FF3C8]" />
-                              {fmtDate(featured.tanggal, true)}
-                            </span>
-                            {featured.penulis && (
-                              <span className="text-white font-semibold bg-white/10 px-2.5 py-0.5 rounded-full border border-white/15">
-                                {featured.penulis}
-                              </span>
-                            )}
-                          </div>
-                          <span className="flex items-center gap-1.5 text-sm font-semibold text-[#6FF3C8]">
-                            Baca Selengkapnya <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                  <Link href={`/news/${featured.Slug}`} className="group block relative rounded-2xl overflow-hidden ocean-card min-h-[380px]">
+                    <div className="absolute inset-0">
+                      <Image src={featured.image || '/leading/berita.png'} alt={featured.Judul} fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105" priority />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#030B14] via-[#030B14]/80 to-transparent" />
+                    </div>
+                    
+                    <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                      <div className="flex flex-wrap items-center gap-3 mb-4">
+                        <CatBadge cat={featured.kategori || 'Berita'} />
+                        {isNew(featured.tanggal) && (
+                          <span className="flex items-center gap-1 text-[10px] font-bold text-[#6FF3C8] uppercase tracking-wider bg-[#6FF3C8]/10 px-2 py-0.5 rounded-full border border-[#6FF3C8]/30">
+                            <Flame className="w-3 h-3" /> Baru
                           </span>
-                        </div>
+                        )}
+                      </div>
+                      <h2 className="text-3xl font-bold text-white leading-tight mb-3 group-hover:text-[#6FF3C8] transition-colors">
+                        {featured.Judul}
+                      </h2>
+                      <p className="text-sm text-gray-300 leading-relaxed mb-5 max-w-2xl line-clamp-2">
+                        {stripHtml(featured.isi_berita)}
+                      </p>
+                      <div className="flex items-center gap-4 text-xs font-medium text-gray-400">
+                        {featured.penulis && (
+                          <span className="flex items-center gap-1.5 text-white">
+                            <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-[#6FF3C8]">
+                              {featured.penulis[0]}
+                            </span>
+                            {featured.penulis}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="w-4 h-4 text-[#6FF3C8]" />
+                          {fmtDate(featured.tanggal)}
+                        </span>
+                        {(featured.views || 0) > 0 && (
+                          <span className="flex items-center gap-1.5">
+                            <Flame className="w-4 h-4 text-orange-400" />
+                            {featured.views} dibaca
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Link>
                 )}
 
-                {/* ── 2-COLUMN GRID ── */}
                 {pageGrid.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    {pageGrid.map(item => {
-                      const cs = getCat(item.kategori || 'Umum');
-                      return (
-                        <Link
-                          key={item.ID_berita}
-                          href={`/news/${item.Slug}`}
-                          className="group ocean-card rounded-xl overflow-hidden flex flex-col transition-all hover:-translate-y-1"
-                        >
-                          <div className="relative h-44 overflow-hidden bg-black/20">
-                            <Image src={item.image || '/leading/berita.png'} alt={item.Judul} fill
-                              className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                            <div className="absolute top-3 left-3"><CatBadge cat={item.kategori || 'Umum'} size="xs" /></div>
-                            {isNew(item.tanggal) && (
-                              <div className="absolute top-3 right-3">
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase text-white animate-pulse"
-                                  style={{ background: 'linear-gradient(135deg,#FF593C,#C2452F)' }}>BARU</span>
-                              </div>
-                            )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {pageGrid.map((item: any) => (
+                      <Link key={item.ID_berita} href={`/news/${item.Slug}`} className="group ocean-card rounded-2xl flex flex-col overflow-hidden relative">
+                        <div className="relative h-48 w-full overflow-hidden bg-black/20">
+                          <Image src={item.image || '/leading/berita.png'} alt={item.Judul} fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                          <div className="absolute top-3 left-3"><CatBadge cat={item.kategori || 'Umum'} /></div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <div className="p-5 flex-1 flex flex-col">
+                          <h3 className="text-base font-bold text-white leading-snug mb-2 group-hover:text-[#6FF3C8] transition-colors line-clamp-2">
+                            {item.Judul}
+                          </h3>
+                          <p className="text-sm text-gray-400 line-clamp-2 mb-4 flex-1">{stripHtml(item.isi_berita)}</p>
+                          <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                            <span className="text-[11px] text-gray-400 flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5" /> {fmtDate(item.tanggal, true)}
+                            </span>
+                            <ArrowRight className="w-4 h-4 text-[#6FF3C8] opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
                           </div>
-                          <div className="p-4 flex-1 flex flex-col">
-                            <h3 className="text-sm font-bold text-white line-clamp-2 mb-2 group-hover:text-[#6FF3C8] transition-colors leading-snug">
-                              {item.Judul}
-                            </h3>
-                            <p className="text-xs text-gray-400 line-clamp-2 flex-1">{stripHtml(item.isi_berita)}</p>
-                            <div className="mt-3 flex items-center justify-between pt-2 border-t border-white/10 text-xs">
-                              <span className="flex items-center gap-1.5 text-white font-medium">
-                                <Clock className="w-3.5 h-3.5 text-[#6FF3C8]" />{fmtDate(item.tanggal, true)}
-                              </span>
-                              <span className="text-white font-semibold text-xs flex items-center gap-1.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#6FF3C8]" />
-                                {item.penulis || 'Admin'}
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
+                        </div>
+                      </Link>
+                    ))}
                   </div>
                 )}
 
-                {/* ── LIST-STYLE CARDS ── */}
                 {pageList.length > 0 && (
-                  <div className="space-y-4">
-                    {pageList.map(item => (
-                      <Link
-                        key={item.ID_berita}
-                        href={`/news/${item.Slug}`}
-                        className="group ocean-card rounded-xl overflow-hidden flex gap-4 p-4 transition-all hover:-translate-y-0.5"
-                      >
-                        {/* Thumbnail */}
+                  <div className="space-y-4 pt-4 border-t border-white/10">
+                    {pageList.map((item: any) => (
+                      <Link key={item.ID_berita} href={`/news/${item.Slug}`} className="group ocean-card rounded-xl p-4 flex gap-5">
                         <div className="relative w-28 h-20 shrink-0 rounded-lg overflow-hidden bg-black/20">
                           <Image src={item.image || '/leading/berita.png'} alt={item.Judul} fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105" />
                           <div className="absolute top-1 left-1"><CatBadge cat={item.kategori || 'Umum'} size="xs" /></div>
                         </div>
-                        {/* Content */}
                         <div className="flex-1 min-w-0 flex flex-col justify-between">
                           <div>
                             <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-[#6FF3C8] transition-colors leading-snug mb-1">
@@ -389,7 +312,6 @@ export default async function NewsListPage({
                   </div>
                 )}
 
-                {/* ── PAGINATION ── */}
                 {totalPages > 1 && (
                   <div className="flex items-center justify-center gap-2 pt-4">
                     {currentPage > 1 ? (
@@ -424,18 +346,16 @@ export default async function NewsListPage({
                   </div>
                 )}
 
-              </div>{/* end LEFT */}
+              </div>
 
-              {/* ── RIGHT: SIDEBAR ── */}
               <aside className="space-y-6">
                 <div className="glow-particles" aria-hidden="true" id="glowNewsSidebar" />
 
-                {/* Popular Articles */}
                 <div className="ocean-card rounded-2xl p-6 relative overflow-hidden">
                   <div className="flex items-center gap-2 mb-5">
                     <TrendingUp className="w-4 h-4 text-[#6FF3C8]" />
                     <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                      {isArtikel ? 'Artikel Populer' : 'Berita Populer'}
+                      Berita Populer
                     </h3>
                   </div>
                   <div className="space-y-4">
@@ -445,7 +365,6 @@ export default async function NewsListPage({
                     {popular.map((item, idx) => (
                       <Link key={item.ID_berita} href={`/news/${item.Slug}`}
                         className="group flex items-start gap-3 hover:opacity-90 transition-opacity">
-                        {/* Number */}
                         <span className="text-2xl font-black shrink-0 leading-none mt-0.5"
                           style={{ color: idx === 0 ? '#6FF3C8' : 'rgba(255,255,255,0.2)', fontVariantNumeric: 'tabular-nums' }}>
                           {String(idx + 1).padStart(2, '0')}
@@ -455,7 +374,7 @@ export default async function NewsListPage({
                             {item.Judul}
                           </p>
                           <p className="text-xs text-white mt-1 flex items-center gap-1">
-                            <Flame className="w-3 h-3 -text-white" />
+                            <Flame className="w-3 h-3 text-orange-400" />
                             {(item.views || 0).toLocaleString('id-ID')} kali dibaca
                           </p>
                         </div>
@@ -464,37 +383,6 @@ export default async function NewsListPage({
                   </div>
                 </div>
 
-                {/* Newsletter */}
-                <div className="rounded-2xl p-6 relative overflow-hidden"
-                  style={{ background: 'linear-gradient(135deg, rgba(111,243,200,0.12) 0%, rgba(13,85,104,0.6) 100%)', border: '1px solid rgba(111,243,200,0.2)' }}>
-                  {/* Decorative glow */}
-                  <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-20 blur-2xl"
-                    style={{ background: '#6FF3C8' }} />
-                  <div className="relative z-10">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-                      style={{ background: 'rgba(111,243,200,0.2)', border: '1px solid rgba(111,243,200,0.3)' }}>
-                      <Mail className="w-5 h-5 text-[#6FF3C8]" />
-                    </div>
-                    <h3 className="text-base font-bold text-white mb-1">Dapatkan Info Terbaru</h3>
-                    <p className="text-xs text-white-400 mb-4 leading-relaxed">
-                      Berlangganan buletin kami untuk menerima wawasan maritim dan pertanian langsung di kotak masuk Anda.
-                    </p>
-                    <form className="space-y-2">
-                      <input
-                        type="email"
-                        placeholder="Alamat Email Anda"
-                        className="w-full px-3 py-2.5 rounded-lg bg-black/30 border border-white/15 text-white text-sm placeholder-white-500 focus:outline-none focus:border-[#6FF3C8] transition-colors"
-                      />
-                      <button type="submit"
-                        className="w-full py-2.5 rounded-lg font-bold text-sm text-black transition-all hover:opacity-90 active:scale-95"
-                        style={{ background: '#6FF3C8' }}>
-                        Langganan
-                      </button>
-                    </form>
-                  </div>
-                </div>
-
-                {/* Category quick links */}
                 <div className="ocean-card rounded-2xl p-6">
                   <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Kategori</h3>
                   <div className="space-y-2">
