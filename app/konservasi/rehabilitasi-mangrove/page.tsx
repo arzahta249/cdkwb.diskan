@@ -268,11 +268,8 @@ export default function RehabilitasiMangrovePage() {
         </div>
       </section>
 
-      {/* ── STATS SECTION WITH SMOOTH GRADIENT TRANSITION ── */}
-      <section
-        className="pt-10 pb-16 relative z-30"
-        style={{ background: 'linear-gradient(to bottom, #064e3b 0%, #d1fae5 18%, #ffffff 42%)' }}
-      >
+      {/* ── STATS ── */}
+      <section className="pt-10 pb-16 bg-white relative z-30">
         <div
           ref={statsRef}
           className="container mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4"
