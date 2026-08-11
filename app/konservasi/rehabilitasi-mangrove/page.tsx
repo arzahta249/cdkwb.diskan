@@ -237,6 +237,11 @@ export default function RehabilitasiMangrovePage() {
                 <stop offset="50%" stopColor="#2dd4bf" stopOpacity="0.5" />
                 <stop offset="100%" stopColor="#a3e635" stopOpacity="0.4" />
               </linearGradient>
+              <linearGradient id="mangrove-wave-grad-front" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#047857" stopOpacity="1" />
+                <stop offset="50%" stopColor="#065f46" stopOpacity="1" />
+                <stop offset="100%" stopColor="#064e3b" stopOpacity="1" />
+              </linearGradient>
             </defs>
 
             {/* Back glowing wave layer */}
@@ -254,17 +259,17 @@ export default function RehabilitasiMangrovePage() {
               d="M0,65 C360,-15 620,95 960,25 C1200,-15 1340,65 1440,80 L1440,130 L0,130 Z"
               fill="url(#mangrove-wave-grad-2)"
             />
-            {/* Front main wave layer matching white content section below */}
+            {/* Front main wave layer with green gradient */}
             <path
               d="M0,85 C240,30 480,105 720,55 C960,10 1200,85 1440,45 L1440,130 L0,130 Z"
-              fill="#ffffff"
+              fill="url(#mangrove-wave-grad-front)"
             />
           </svg>
         </div>
       </section>
 
-      {/* ── STATS ── */}
-      <section className="pt-6 pb-16 bg-white relative z-30">
+      {/* ── STATS SECTION WITH SMOOTH GRADIENT TRANSITION ── */}
+      <section className="pt-10 pb-16 bg-gradient-to-b from-[#064e3b] via-[#ecfdf5]/80 to-white relative z-30">
         <div
           ref={statsRef}
           className="container mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4"
