@@ -209,8 +209,14 @@ export default function Navbar() {
             {/* Mobile Menu Toggle Button */}
             <button 
               type="button"
-              className="lg:hidden p-2 text-gray-600 hover:text-[#0b3b60] hover:bg-gray-100 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer active:scale-95 touch-manipulation"
+              className="lg:hidden p-2 text-gray-600 hover:text-[#0b3b60] hover:bg-gray-100 rounded-lg transition-all min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer active:scale-95 touch-manipulation select-none"
               onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsMobileMenuOpen((prev) => !prev);
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 setIsMobileMenuOpen((prev) => !prev);
               }}
@@ -227,14 +233,23 @@ export default function Navbar() {
         className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] transition-opacity duration-300 lg:hidden ${
           isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
-        onClick={() => setIsMobileMenuOpen(false)}
+        style={{
+          visibility: isMobileMenuOpen ? 'visible' : 'hidden',
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsMobileMenuOpen(false);
+        }}
       />
 
       {/* Mobile Menu Panel Drawer */}
       <div 
-        className={`fixed top-0 right-0 bottom-0 h-screen h-[100dvh] w-[85%] max-w-[320px] bg-white z-[9999] shadow-2xl transition-transform duration-300 ease-in-out transform lg:hidden overflow-y-auto flex flex-col ${
-          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className="fixed top-0 right-0 bottom-0 h-screen h-[100dvh] w-[85%] max-w-[320px] bg-white z-[9999] shadow-2xl transition-all duration-300 ease-in-out lg:hidden overflow-y-auto flex flex-col"
+        style={{
+          transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
+          visibility: isMobileMenuOpen ? 'visible' : 'hidden',
+        }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Mobile Drawer Top Header */}
         <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/90 sticky top-0 z-10">
