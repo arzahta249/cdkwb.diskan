@@ -208,18 +208,22 @@ export default function Navbar() {
             
             {/* Mobile Menu Toggle Button */}
             <button 
-              className="lg:hidden p-2 text-gray-600 hover:text-[#0b3b60] hover:bg-gray-100 rounded-lg transition-colors relative z-50 min-w-[40px] min-h-[40px] flex items-center justify-center"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              type="button"
+              className="lg:hidden p-2 text-gray-600 hover:text-[#0b3b60] hover:bg-gray-100 rounded-lg transition-colors relative z-[502] min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer active:scale-95 touch-manipulation"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMobileMenuOpen((prev) => !prev);
+              }}
               aria-label="Toggle mobile navigation menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? <X className="w-6 h-6 text-gray-800" /> : <Menu className="w-6 h-6 text-gray-800" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu Overlay */}
         <div 
-          className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden ${
+          className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[500] transition-opacity duration-300 lg:hidden ${
             isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
           onClick={() => setIsMobileMenuOpen(false)}
@@ -231,7 +235,29 @@ export default function Navbar() {
             isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
-          <div className="p-5 pt-20 flex-1 space-y-1.5">
+          {/* Mobile Drawer Top Header */}
+          <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/80 sticky top-0 z-10">
+            <div className="flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/leading/logo.jateng.jpg" 
+                alt="Logo Jawa Tengah" 
+                className="w-6 h-8 object-contain"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+              <span className="font-bold text-lg text-[#0b3b60] tracking-tight">CDKWB Menu</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-200/60 rounded-lg transition-colors cursor-pointer"
+              aria-label="Tutup menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="p-4 flex-1 space-y-1.5">
             <Link href="/" className="block py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
               Beranda
             </Link>
@@ -239,8 +265,9 @@ export default function Navbar() {
             {/* Profil */}
             <div>
               <button 
+                type="button"
                 onClick={() => toggleMobileDropdown('profil')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
+                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
               >
                 Profil
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'profil' ? 'rotate-180 text-blue-600' : ''}`} />
@@ -258,8 +285,9 @@ export default function Navbar() {
             {/* Informasi */}
             <div>
               <button 
+                type="button"
                 onClick={() => toggleMobileDropdown('informasi')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
+                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
               >
                 Informasi
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'informasi' ? 'rotate-180 text-blue-600' : ''}`} />
@@ -275,8 +303,9 @@ export default function Navbar() {
             {/* Layanan (Contains Kawasan Konservasi, Rehabilitasi Mangrove, Kehumasan, Kerja Sama, SLO) */}
             <div>
               <button 
+                type="button"
                 onClick={() => toggleMobileDropdown('layanan')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
+                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
               >
                 Layanan
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'layanan' ? 'rotate-180 text-blue-600' : ''}`} />
@@ -286,8 +315,9 @@ export default function Navbar() {
                   {/* 1. Kawasan Konservasi (nested accordion) */}
                   <div>
                     <button 
+                      type="button"
                       onClick={() => toggleMobileDropdown('layanan-kawasan')}
-                      className="w-full flex items-center justify-between py-2 px-4 text-sm font-semibold text-gray-700 hover:text-blue-600 rounded-lg transition-colors"
+                      className="w-full flex items-center justify-between py-2 px-4 text-sm font-semibold text-gray-700 hover:text-blue-600 rounded-lg transition-colors touch-manipulation"
                     >
                       Kawasan Konservasi
                       <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${activeMobileDropdown === 'layanan-kawasan' ? 'rotate-180 text-blue-600' : ''}`} />
@@ -318,8 +348,9 @@ export default function Navbar() {
             {/* Galeri */}
             <div>
               <button 
+                type="button"
                 onClick={() => toggleMobileDropdown('galeri')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
+                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
               >
                 Galeri
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'galeri' ? 'rotate-180 text-blue-600' : ''}`} />
@@ -336,8 +367,9 @@ export default function Navbar() {
             {/* Hubungi Kami */}
             <div>
               <button 
+                type="button"
                 onClick={() => toggleMobileDropdown('hubungi')}
-                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
+                className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors touch-manipulation"
               >
                 Hubungi Kami
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'hubungi' ? 'rotate-180 text-blue-600' : ''}`} />
