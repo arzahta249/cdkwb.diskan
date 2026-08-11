@@ -123,7 +123,7 @@ export default function RehabilitasiMangrovePage() {
   const [speciesRef, speciesVisible] = useInView(0.1);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(to bottom, #065f46 0%, #047857 12%, #a7f3d0 40%, #ecfdf5 58%, #ffffff 78%)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(to bottom, #2E8B70 0%, #1a6b52 12%, #a7f3d0 40%, #ecfdf5 58%, #ffffff 78%)' }}>
       <Navbar />
 
       {/* ── HERO ── */}
@@ -262,7 +262,7 @@ export default function RehabilitasiMangrovePage() {
             {/* Front main wave layer — solid color matching page gradient start */}
             <path
               d="M0,85 C240,30 480,105 720,55 C960,10 1200,85 1440,45 L1440,130 L0,130 Z"
-              fill="#065f46"
+              fill="#2E8B70"
             />
           </svg>
         </div>
