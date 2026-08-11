@@ -123,7 +123,7 @@ export default function RehabilitasiMangrovePage() {
   const [speciesRef, speciesVisible] = useInView(0.1);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(to bottom, #052e16 0%, #064e3b 8%, #065f46 14%, #d1fae5 38%, #ecfdf5 55%, #ffffff 75%)' }}>
       <Navbar />
 
       {/* ── HERO ── */}
@@ -269,7 +269,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── STATS ── */}
-      <section className="pt-10 pb-16 bg-white relative z-30">
+      <section className="pt-10 pb-16 relative z-30">
         <div
           ref={statsRef}
           className="container mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4"
@@ -297,7 +297,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── INTRO TEXT ── */}
-      <section className="py-16 bg-white">
+      <section className="py-16">
         <div className="container mx-auto px-6 max-w-3xl text-center">
           <span className="inline-block bg-emerald-50 text-emerald-600 text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
             Tentang Program
@@ -319,7 +319,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── STAGES ── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20">
         <div className="container mx-auto px-6">
           <div
             ref={stagesRef}
@@ -370,7 +370,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── BENEFITS ── */}
-      <section className="py-20 bg-white">
+      <section className="py-20">
         <div className="container mx-auto px-6">
           <div
             ref={benefitsRef}
@@ -412,7 +412,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── SPECIES TABLE ── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20">
         <div className="container mx-auto px-6">
           <div
             ref={speciesRef}
