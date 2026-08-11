@@ -108,8 +108,8 @@ export default function KarangJerukPage() {
 
         {/* Background image overlay */}
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=1920&auto=format&fit=crop')" }}
+          className="absolute inset-0 bg-cover bg-center opacity-40"
+          style={{ backgroundImage: "url('/leading/konservasi1.jpg')" }}
         />
 
         <div ref={heroRef} className="relative z-10 container mx-auto px-6 py-24">
@@ -118,13 +118,7 @@ export default function KarangJerukPage() {
             className="flex items-center gap-2 text-white/50 text-sm mb-8 transition-all duration-700"
             style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? 'translateY(0)' : 'translateY(20px)' }}
           >
-            <Link href="/" className="hover:text-white transition-colors">Beranda</Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="hover:text-white transition-colors cursor-pointer">Konservasi</span>
-            <ChevronRight className="w-3 h-3" />
-            <span className="hover:text-white transition-colors cursor-pointer">Kawasan Konservasi</span>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-white">Karang Jeruk</span>
+
           </div>
 
           {/* Badge */}
@@ -158,30 +152,67 @@ export default function KarangJerukPage() {
             className="flex flex-wrap gap-4 transition-all duration-700 delay-400"
             style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? 'translateY(0)' : 'translateY(30px)' }}
           >
-            <div className="flex items-center gap-2 text-white/70 text-sm">
-              <MapPin className="w-4 h-4 text-cyan-400" />
-              Kabupaten Batang, Jawa Tengah
-            </div>
-            <div className="flex items-center gap-2 text-white/70 text-sm">
-              <Sun className="w-4 h-4 text-yellow-400" />
-              Terbaik: Musim Kemarau (Apr–Sep)
-            </div>
-            <div className="flex items-center gap-2 text-white/70 text-sm">
-              <Wind className="w-4 h-4 text-blue-400" />
-              Kedalaman: 3–15 meter
-            </div>
+            {['Terumbu Karang Alami', 'Kawasan Lindung Perairan', 'Zona Wisata Bahari'].map((tag, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-white/80 text-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40">
-          <span className="text-xs">Gulir ke bawah</span>
-          <div className="w-0.5 h-8 bg-gradient-to-b from-white/40 to-transparent animate-pulse" />
+        {/* Dynamic Ocean Wave Divider at bottom of Hero */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none overflow-hidden leading-none">
+          <svg
+            className="relative block w-full h-[55px] sm:h-[100px] md:h-[130px]"
+            viewBox="0 0 1440 130"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="kj-wave-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.85" />
+                <stop offset="50%" stopColor="#2563eb" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.85" />
+              </linearGradient>
+              <linearGradient id="kj-wave-grad-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0891b2" stopOpacity="0.95" />
+                <stop offset="50%" stopColor="#0369a1" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#0d9488" stopOpacity="0.95" />
+              </linearGradient>
+              <linearGradient id="kj-wave-grad-3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.6" />
+                <stop offset="50%" stopColor="#38bdf8" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#22c55e" stopOpacity="0.4" />
+              </linearGradient>
+            </defs>
+
+            {/* Back glowing wave layer */}
+            <path
+              d="M0,20 C320,110 580,0 880,70 C1140,135 1320,20 1440,50 L1440,130 L0,130 Z"
+              fill="url(#kj-wave-grad-3)"
+            />
+            {/* Middle vibrant wave layer */}
+            <path
+              d="M0,40 C280,105 520,15 800,75 C1080,130 1280,25 1440,55 L1440,130 L0,130 Z"
+              fill="url(#kj-wave-grad-1)"
+            />
+            {/* Main rich wave layer */}
+            <path
+              d="M0,65 C360,-15 620,95 960,25 C1200,-15 1340,65 1440,80 L1440,130 L0,130 Z"
+              fill="url(#kj-wave-grad-2)"
+            />
+            {/* Front main wave layer matching white content section below */}
+            <path
+              d="M0,85 C240,30 480,105 720,55 C960,10 1200,85 1440,45 L1440,130 L0,130 Z"
+              fill="#ffffff"
+            />
+          </svg>
         </div>
       </section>
 
       {/* ── STATS ── */}
-      <section className="py-16 bg-gradient-to-b from-[#051d3a] to-white relative">
+      <section className="pt-6 pb-16 bg-white relative z-30">
         <div
           ref={statsRef}
           className="container mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4"

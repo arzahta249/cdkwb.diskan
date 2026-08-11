@@ -212,10 +212,59 @@ export default function RehabilitasiMangrovePage() {
             ))}
           </div>
         </div>
+
+        {/* Dynamic Ocean Wave Divider at bottom of Hero */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none overflow-hidden leading-none">
+          <svg
+            className="relative block w-full h-[55px] sm:h-[100px] md:h-[130px]"
+            viewBox="0 0 1440 130"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="mangrove-wave-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.85" />
+                <stop offset="50%" stopColor="#059669" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#34d399" stopOpacity="0.85" />
+              </linearGradient>
+              <linearGradient id="mangrove-wave-grad-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#047857" stopOpacity="0.95" />
+                <stop offset="50%" stopColor="#0d9488" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#15803d" stopOpacity="0.95" />
+              </linearGradient>
+              <linearGradient id="mangrove-wave-grad-3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#4ade80" stopOpacity="0.6" />
+                <stop offset="50%" stopColor="#2dd4bf" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#a3e635" stopOpacity="0.4" />
+              </linearGradient>
+            </defs>
+
+            {/* Back glowing wave layer */}
+            <path
+              d="M0,20 C320,110 580,0 880,70 C1140,135 1320,20 1440,50 L1440,130 L0,130 Z"
+              fill="url(#mangrove-wave-grad-3)"
+            />
+            {/* Middle vibrant wave layer */}
+            <path
+              d="M0,40 C280,105 520,15 800,75 C1080,130 1280,25 1440,55 L1440,130 L0,130 Z"
+              fill="url(#mangrove-wave-grad-1)"
+            />
+            {/* Main rich wave layer */}
+            <path
+              d="M0,65 C360,-15 620,95 960,25 C1200,-15 1340,65 1440,80 L1440,130 L0,130 Z"
+              fill="url(#mangrove-wave-grad-2)"
+            />
+            {/* Front main wave layer matching white content section below */}
+            <path
+              d="M0,85 C240,30 480,105 720,55 C960,10 1200,85 1440,45 L1440,130 L0,130 Z"
+              fill="#ffffff"
+            />
+          </svg>
+        </div>
       </section>
 
       {/* ── STATS ── */}
-      <section className="py-16 bg-gradient-to-b from-[#052e16] to-white relative">
+      <section className="pt-6 pb-16 bg-white relative z-30">
         <div
           ref={statsRef}
           className="container mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4"

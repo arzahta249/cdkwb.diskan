@@ -207,47 +207,47 @@ export default function AduanDashboardPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white">Data Pengaduan Masyarakat</h1>
-          <p className="text-gray-400 mt-1">Kelola verifikasi, disposisi bidang teknis, penanganan SLA, dan rating kepuasan.</p>
+          <p className="text-slate-400 mt-1">Kelola verifikasi, disposisi bidang teknis, penanganan SLA, dan rating kepuasan.</p>
         </div>
       </div>
 
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-[#1a1a1a] p-4 rounded-2xl border border-white/10">
-          <div className="text-xs text-gray-400">Total Pengaduan</div>
+        <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl">
+          <div className="text-xs text-slate-400">Total Pengaduan</div>
           <div className="text-2xl font-bold text-white mt-1">{totalCount}</div>
         </div>
-        <div className="bg-[#1a1a1a] p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5">
+        <div className="bg-slate-900 p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 shadow-xl">
           <div className="text-xs text-amber-400 font-semibold">Perlu Verifikasi</div>
           <div className="text-2xl font-bold text-amber-400 mt-1">{pendingCount}</div>
         </div>
-        <div className="bg-[#1a1a1a] p-4 rounded-2xl border border-blue-500/20 bg-blue-500/5">
-          <div className="text-xs text-blue-400 font-semibold">Dalam Proses</div>
-          <div className="text-2xl font-bold text-blue-400 mt-1">{processCount}</div>
+        <div className="bg-slate-900 p-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 shadow-xl">
+          <div className="text-xs text-cyan-400 font-semibold">Dalam Proses</div>
+          <div className="text-2xl font-bold text-cyan-400 mt-1">{processCount}</div>
         </div>
-        <div className="bg-[#1a1a1a] p-4 rounded-2xl border border-green-500/20 bg-green-500/5">
-          <div className="text-xs text-green-400 font-semibold">Selesai / Ditutup</div>
-          <div className="text-2xl font-bold text-green-400 mt-1">{doneCount}</div>
+        <div className="bg-slate-900 p-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 shadow-xl">
+          <div className="text-xs text-emerald-400 font-semibold">Selesai / Ditutup</div>
+          <div className="text-2xl font-bold text-emerald-400 mt-1">{doneCount}</div>
         </div>
-        <div className="bg-[#1a1a1a] p-4 rounded-2xl border border-red-500/20 bg-red-500/5">
-          <div className="text-xs text-red-400 font-semibold flex items-center gap-1">
+        <div className="bg-slate-900 p-4 rounded-2xl border border-rose-500/20 bg-rose-500/5 shadow-xl">
+          <div className="text-xs text-rose-400 font-semibold flex items-center gap-1">
             <AlertCircle className="w-3.5 h-3.5" /> Melewati SLA
           </div>
-          <div className="text-2xl font-bold text-red-400 mt-1">{overdueCount}</div>
+          <div className="text-2xl font-bold text-rose-400 mt-1">{overdueCount}</div>
         </div>
       </div>
 
       {/* Filters & Search */}
-      <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-xl overflow-hidden">
-        <div className="p-4 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+        <div className="p-4 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input 
               type="text" 
               placeholder="Cari tiket, nama, lokasi..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-black/50 border border-white/10 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors text-sm"
+              className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors text-sm placeholder:text-slate-500"
             />
           </form>
 
@@ -259,8 +259,8 @@ export default function AduanDashboardPage() {
                 onClick={() => setStatusFilter(st)}
                 className={`px-3 py-1.5 rounded-lg font-medium transition-colors shrink-0 ${
                   statusFilter === st
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                    ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20'
+                    : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
                 }`}
               >
                 {st === 'ALL' ? 'Semua Status' : st}
@@ -271,8 +271,8 @@ export default function AduanDashboardPage() {
         
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-300">
-            <thead className="bg-white/5 text-gray-400 uppercase text-xs">
+          <table className="w-full text-left text-sm text-slate-300">
+            <thead className="bg-slate-950/50 text-slate-400 uppercase text-xs">
               <tr>
                 <th className="px-6 py-4 font-medium">Tiket & Pelapor</th>
                 <th className="px-6 py-4 font-medium">Kategori & Lokasi</th>
@@ -284,13 +284,13 @@ export default function AduanDashboardPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                     Memuat data pengaduan...
                   </td>
                 </tr>
               ) : complaints.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <MessageSquare className="w-12 h-12 mb-3 opacity-20" />
                       <p>Belum ada data aduan yang sesuai filter.</p>
@@ -299,26 +299,26 @@ export default function AduanDashboardPage() {
                 </tr>
               ) : (
                 complaints.map((item) => (
-                  <tr key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                  <tr key={item.id} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-bold text-white tracking-wider text-xs text-[#6FF3C8]">
+                      <div className="font-bold text-cyan-400 tracking-wider text-xs">
                         {item.nomor_tiket}
                       </div>
                       <div className="text-sm font-medium text-white mt-0.5">
                         {item.is_anonim ? (
-                          <span className="text-gray-400 flex items-center gap-1"><User className="w-3.5 h-3.5" /> Anonim</span>
+                          <span className="text-slate-400 flex items-center gap-1"><User className="w-3.5 h-3.5" /> Anonim</span>
                         ) : (
                           item.nama_pelapor || 'Tanpa Nama'
                         )}
                       </div>
-                      <div className="text-xs text-gray-400">{item.email_pelapor}</div>
+                      <div className="text-xs text-slate-500">{item.email_pelapor}</div>
                     </td>
 
                     <td className="px-6 py-4">
-                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-1">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700 mb-1">
                         {item.kategori}
                       </span>
-                      <div className="text-xs text-gray-300">{item.lokasi}</div>
+                      <div className="text-xs text-slate-400">{item.lokasi}</div>
                     </td>
 
                     <td className="px-6 py-4">
@@ -329,7 +329,7 @@ export default function AduanDashboardPage() {
                           </span>
                         )}
                         {item.status === 'DIDISPOSISI' && (
-                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                             DIDISPOSISI
                           </span>
                         )}
@@ -339,7 +339,7 @@ export default function AduanDashboardPage() {
                           </span>
                         )}
                         {item.status === 'SELESAI' && (
-                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                             SELESAI
                           </span>
                         )}
@@ -349,13 +349,13 @@ export default function AduanDashboardPage() {
                           </span>
                         )}
                         {item.status === 'DITOLAK' && (
-                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
                             DITOLAK
                           </span>
                         )}
 
                         {item.is_overdue && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white animate-pulse">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white animate-pulse">
                             ! LEWAT SLA
                           </span>
                         )}
@@ -370,12 +370,12 @@ export default function AduanDashboardPage() {
                               <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
                             ))}
                           </div>
-                          <div className="text-[11px] text-gray-400 mt-0.5 truncate max-w-[150px]" title={item.feedback_kepuasan}>
+                          <div className="text-[11px] text-slate-400 mt-0.5 truncate max-w-[150px]" title={item.feedback_kepuasan}>
                             "{item.feedback_kepuasan}"
                           </div>
                         </div>
                       ) : (
-                        <span className="text-xs text-gray-600 italic">Belum ada rating</span>
+                        <span className="text-xs text-slate-500 italic">Belum ada rating</span>
                       )}
                     </td>
 
@@ -384,7 +384,7 @@ export default function AduanDashboardPage() {
                         {/* Detail button */}
                         <button
                           onClick={() => { setSelectedItem(item); setModalType('detail'); }}
-                          className="px-2.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs transition-colors flex items-center gap-1"
+                          className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs transition-colors flex items-center gap-1"
                         >
                           <Eye className="w-3.5 h-3.5" /> Detail
                         </button>
@@ -394,13 +394,13 @@ export default function AduanDashboardPage() {
                           <>
                             <button
                               onClick={() => { setSelectedItem(item); setModalType('disposition'); }}
-                              className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium transition-colors"
+                              className="px-2.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-medium transition-colors shadow-sm"
                             >
                               Disposisi
                             </button>
                             <button
                               onClick={() => { setSelectedItem(item); setModalType('reject'); }}
-                              className="px-2.5 py-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-lg text-xs transition-colors"
+                              className="px-2.5 py-1.5 bg-rose-600/80 hover:bg-rose-600 text-white rounded-lg text-xs transition-colors"
                             >
                               Tolak
                             </button>
@@ -411,7 +411,7 @@ export default function AduanDashboardPage() {
                         {['DIDISPOSISI', 'DIPROSES'].includes(item.status) && (
                           <button
                             onClick={() => { setSelectedItem(item); setModalType('resolution'); }}
-                            className="px-2.5 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-xs font-medium transition-colors"
+                            className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium transition-colors"
                           >
                             Input Hasil
                           </button>
@@ -438,14 +438,14 @@ export default function AduanDashboardPage() {
 
       {/* Modal Backdrop */}
       {selectedItem && modalType && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div className="flex items-center justify-between pb-4 border-b border-white/10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
               <div>
-                <span className="text-xs text-gray-400">Nomor Tiket</span>
-                <h3 className="text-lg font-bold text-[#6FF3C8]">{selectedItem.nomor_tiket}</h3>
+                <span className="text-xs text-slate-400">Nomor Tiket</span>
+                <h3 className="text-lg font-bold text-cyan-400">{selectedItem.nomor_tiket}</h3>
               </div>
-              <button onClick={closeModal} className="p-1 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white">
+              <button onClick={closeModal} className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -453,40 +453,40 @@ export default function AduanDashboardPage() {
             {/* Modal Content: Detail */}
             {modalType === 'detail' && (
               <div className="space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-4 bg-white/5 p-4 rounded-xl">
+                <div className="grid grid-cols-2 gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
                   <div>
-                    <span className="text-gray-400 block">Pelapor</span>
+                    <span className="text-slate-400 block">Pelapor</span>
                     <span className="font-semibold text-white">{selectedItem.is_anonim ? 'Anonim' : selectedItem.nama_pelapor}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400 block">Email / Telepon</span>
+                    <span className="text-slate-400 block">Email / Telepon</span>
                     <span className="font-semibold text-white">{selectedItem.email_pelapor} ({selectedItem.telepon_pelapor || '-'})</span>
                   </div>
                   <div>
-                    <span className="text-gray-400 block">Kategori</span>
+                    <span className="text-slate-400 block">Kategori</span>
                     <span className="font-semibold text-white">{selectedItem.kategori}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400 block">Lokasi</span>
+                    <span className="text-slate-400 block">Lokasi</span>
                     <span className="font-semibold text-white">{selectedItem.lokasi}</span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-gray-400 block mb-1">Isi Deskripsi Pengaduan</span>
-                  <div className="p-4 bg-black/40 border border-white/10 rounded-xl text-gray-200 leading-relaxed">
+                  <span className="text-slate-400 block mb-1">Isi Deskripsi Pengaduan</span>
+                  <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 leading-relaxed">
                     {selectedItem.deskripsi}
                   </div>
                 </div>
 
                 {selectedItem.lampiran && (
                   <div>
-                    <span className="text-gray-400 block mb-1">Lampiran Berkas Pelapor</span>
+                    <span className="text-slate-400 block mb-1">Lampiran Berkas Pelapor</span>
                     <a
                       href={selectedItem.lampiran}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-blue-400 underline font-medium hover:text-blue-300"
+                      className="text-cyan-400 underline font-medium hover:text-cyan-300"
                     >
                       Buka Lampiran Pelapor
                     </a>
@@ -502,7 +502,7 @@ export default function AduanDashboardPage() {
                         href={selectedItem.bukti_penyelesaian}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-blue-400 underline font-medium block"
+                        className="text-cyan-400 underline font-medium block"
                       >
                         Buka Bukti Penyelesaian
                       </a>
@@ -516,11 +516,11 @@ export default function AduanDashboardPage() {
             {modalType === 'disposition' && (
               <form onSubmit={handleDisposition} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Petugas / Bidang Teknis Penanggung Jawab</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Petugas / Bidang Teknis Penanggung Jawab</label>
                   <select
                     value={petugasBidang}
                     onChange={(e) => setPetugasBidang(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-black/50 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-blue-500"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-cyan-500 transition-colors"
                   >
                     <option value="Bidang Pengawasan & Konservasi">Bidang Pengawasan & Konservasi</option>
                     <option value="Bidang Perikanan Tangkap">Bidang Perikanan Tangkap</option>
@@ -530,11 +530,11 @@ export default function AduanDashboardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Batas Waktu Penanganan (SLA Days)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Batas Waktu Penanganan (SLA Days)</label>
                   <select
                     value={slaDays}
                     onChange={(e) => setSlaDays(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-black/50 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-blue-500"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-cyan-500 transition-colors"
                   >
                     <option value="1">1 Hari Kerja</option>
                     <option value="3">3 Hari Kerja (Standar)</option>
@@ -544,8 +544,8 @@ export default function AduanDashboardPage() {
                 </div>
 
                 <div className="flex justify-end gap-2 pt-4">
-                  <button type="button" onClick={closeModal} className="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-xs">Batal</button>
-                  <button type="submit" disabled={actionSubmitting} className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs">
+                  <button type="button" onClick={closeModal} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-colors">Batal</button>
+                  <button type="submit" disabled={actionSubmitting} className="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl text-xs shadow-lg shadow-cyan-500/20 transition-colors">
                     {actionSubmitting ? 'Simpan...' : 'Simpan & Disposisi'}
                   </button>
                 </div>
@@ -556,20 +556,20 @@ export default function AduanDashboardPage() {
             {modalType === 'reject' && (
               <form onSubmit={handleReject} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Alasan Penolakan Pengaduan</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Alasan Penolakan Pengaduan</label>
                   <textarea
                     required
                     rows={4}
                     placeholder="Uraikan alasan penolakan (misal: diluar wewenang instansi, data tidak valid)..."
                     value={alasanPenolakan}
                     onChange={(e) => setAlasanPenolakan(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-black/50 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-red-500"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-rose-500 transition-colors"
                   />
                 </div>
 
                 <div className="flex justify-end gap-2 pt-4">
-                  <button type="button" onClick={closeModal} className="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-xs">Batal</button>
-                  <button type="submit" disabled={actionSubmitting} className="px-5 py-2 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl text-xs">
+                  <button type="button" onClick={closeModal} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-colors">Batal</button>
+                  <button type="submit" disabled={actionSubmitting} className="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl text-xs transition-colors">
                     {actionSubmitting ? 'Memproses...' : 'Tolak Pengaduan'}
                   </button>
                 </div>
@@ -580,29 +580,29 @@ export default function AduanDashboardPage() {
             {modalType === 'resolution' && (
               <form onSubmit={handleResolution} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Uraian Hasil Penanganan / Bukti Survei</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Uraian Hasil Penanganan / Bukti Survei</label>
                   <textarea
                     required
                     rows={4}
                     placeholder="Uraikan tindakan yang telah dilaksanakan dan solusi penyelesaian..."
                     value={hasilPenyelesaian}
                     onChange={(e) => setHasilPenyelesaian(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-black/50 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-green-500"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-emerald-500 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Upload Foto / Dokumen Bukti Penyelesaian (Opsional)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Upload Foto / Dokumen Bukti Penyelesaian (Opsional)</label>
                   <input
                     type="file"
                     onChange={(e) => setBuktiFile(e.target.files ? e.target.files[0] : null)}
-                    className="w-full px-4 py-2 bg-black/50 border border-white/10 rounded-xl text-white text-xs focus:outline-none"
+                    className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"
                   />
                 </div>
 
                 <div className="flex justify-end gap-2 pt-4">
-                  <button type="button" onClick={closeModal} className="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-xs">Batal</button>
-                  <button type="submit" disabled={actionSubmitting} className="px-5 py-2 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-xl text-xs">
+                  <button type="button" onClick={closeModal} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-colors">Batal</button>
+                  <button type="submit" disabled={actionSubmitting} className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition-colors">
                     {actionSubmitting ? 'Simpan...' : 'Simpan & Tandai Selesai'}
                   </button>
                 </div>

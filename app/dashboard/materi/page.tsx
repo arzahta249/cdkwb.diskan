@@ -24,9 +24,15 @@ export default function AdminMateriPage() {
       setIsLoading(true);
       const res = await fetch('/api/materi');
       const data = await res.json();
-      setMateriList(data);
+      if (res.ok && Array.isArray(data)) {
+        setMateriList(data);
+      } else {
+        console.error('API returned non-array or error response:', data);
+        setMateriList([]);
+      }
     } catch (error) {
       console.error('Failed to fetch materi:', error);
+      setMateriList([]);
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +142,7 @@ export default function AdminMateriPage() {
                     <p>Memuat data...</p>
                   </td>
                 </tr>
-              ) : materiList.length === 0 ? (
+              ) : !Array.isArray(materiList) || materiList.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">

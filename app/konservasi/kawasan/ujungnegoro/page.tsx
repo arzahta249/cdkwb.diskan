@@ -150,24 +150,73 @@ export default function UjungnegoroPage() {
             className="flex flex-wrap gap-4 transition-all duration-700 delay-400"
             style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? 'translateY(0)' : 'translateY(30px)' }}
           >
-            <div className="flex items-center gap-2 text-white/70 text-sm">
+            <div className="flex items-center gap-2 text-white/70 text-sm bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
               <MapPin className="w-4 h-4 text-amber-400" />
               Kabupaten Batang, Jawa Tengah
             </div>
-            <div className="flex items-center gap-2 text-white/70 text-sm">
+            <div className="flex items-center gap-2 text-white/70 text-sm bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
               <Sunset className="w-4 h-4 text-orange-400" />
               Sunset Terbaik Pesisir Utara Jawa
             </div>
-            <div className="flex items-center gap-2 text-white/70 text-sm">
+            <div className="flex items-center gap-2 text-white/70 text-sm bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
               <Wind className="w-4 h-4 text-blue-400" />
               Terbuka Sepanjang Tahun
             </div>
           </div>
         </div>
+
+        {/* Dynamic Ocean Wave Divider at bottom of Hero */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none overflow-hidden leading-none">
+          <svg
+            className="relative block w-full h-[55px] sm:h-[100px] md:h-[130px]"
+            viewBox="0 0 1440 130"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="ujung-wave-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#a855f7" stopOpacity="0.85" />
+                <stop offset="50%" stopColor="#ec4899" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.85" />
+              </linearGradient>
+              <linearGradient id="ujung-wave-grad-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.95" />
+                <stop offset="50%" stopColor="#6366f1" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#4338ca" stopOpacity="0.95" />
+              </linearGradient>
+              <linearGradient id="ujung-wave-grad-3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.55" />
+                <stop offset="50%" stopColor="#fb923c" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#c084fc" stopOpacity="0.45" />
+              </linearGradient>
+            </defs>
+
+            {/* Back glowing wave layer */}
+            <path
+              d="M0,20 C320,110 580,0 880,70 C1140,135 1320,20 1440,50 L1440,130 L0,130 Z"
+              fill="url(#ujung-wave-grad-3)"
+            />
+            {/* Middle vibrant wave layer */}
+            <path
+              d="M0,40 C280,105 520,15 800,75 C1080,130 1280,25 1440,55 L1440,130 L0,130 Z"
+              fill="url(#ujung-wave-grad-1)"
+            />
+            {/* Main rich wave layer */}
+            <path
+              d="M0,65 C360,-15 620,95 960,25 C1200,-15 1340,65 1440,80 L1440,130 L0,130 Z"
+              fill="url(#ujung-wave-grad-2)"
+            />
+            {/* Front main wave layer matching white content section below */}
+            <path
+              d="M0,85 C240,30 480,105 720,55 C960,10 1200,85 1440,45 L1440,130 L0,130 Z"
+              fill="#ffffff"
+            />
+          </svg>
+        </div>
       </section>
 
       {/* ── STATS ── */}
-      <section className="py-16 bg-gradient-to-b from-[#1a0a3e] to-white relative">
+      <section className="pt-6 pb-16 bg-white relative z-30">
         <div
           ref={statsRef}
           className="container mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4"

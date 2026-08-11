@@ -79,19 +79,19 @@ export default function CreateArtikelPage() {
       <div className="flex items-center gap-4">
         <Link 
           href="/dashboard/artikel"
-          className="p-2 text-gray-400 hover:text-white bg-[#1a1a1a] hover:bg-white/10 rounded-xl transition-colors border border-white/5"
+          className="p-2 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors border border-slate-800"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white">Buat Artikel Baru</h1>
-          <p className="text-gray-400 mt-1">Tambahkan publikasi edukasi / artikel dinas.</p>
+          <p className="text-slate-400 mt-1">Tambahkan publikasi edukasi / artikel dinas.</p>
         </div>
       </div>
 
-      <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-xl overflow-hidden max-w-4xl">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden max-w-4xl">
         {error && (
-          <div className="m-6 mb-0 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+          <div className="m-6 mb-0 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-sm">
             {error}
           </div>
         )}
@@ -99,22 +99,22 @@ export default function CreateArtikelPage() {
         <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
           {/* Cover image */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Gambar Cover</label>
+            <label className="text-sm font-medium text-slate-300">Gambar Cover</label>
             {!imagePreview ? (
               <div 
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full h-48 border-2 border-dashed border-white/10 hover:border-white/20 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors bg-black/30"
+                className="w-full h-48 border-2 border-dashed border-slate-800 hover:border-cyan-500/50 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-950"
               >
-                <ImageIcon className="w-8 h-8 text-gray-500 mb-2" />
-                <p className="text-sm text-gray-400">Klik untuk mengunggah gambar</p>
-                <p className="text-xs text-gray-500 mt-1">PNG, JPG atau WEBP (Maks 2MB)</p>
+                <ImageIcon className="w-8 h-8 text-slate-500 mb-2" />
+                <p className="text-sm text-slate-400">Klik untuk mengunggah gambar</p>
+                <p className="text-xs text-slate-500 mt-1">PNG, JPG atau WEBP (Maks 2MB)</p>
               </div>
             ) : (
-              <div className="relative w-full h-48 sm:h-64 rounded-xl overflow-hidden group">
+              <div className="relative w-full h-48 sm:h-64 rounded-xl overflow-hidden group border border-slate-800">
                 <Image src={imagePreview} alt="Preview" fill className="object-cover" />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button type="button" onClick={clearImage}
-                    className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium">
+                    className="p-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium">
                     <X className="w-4 h-4" />
                     Hapus Gambar
                   </button>
@@ -127,10 +127,10 @@ export default function CreateArtikelPage() {
           {/* Judul */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-gray-300">Judul Artikel</label>
+              <label className="text-sm font-medium text-slate-300">Judul Artikel</label>
               <input 
                 type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required
-                className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[#6FF3C8] focus:ring-1 focus:ring-[#6FF3C8] transition-all text-sm"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm placeholder:text-slate-500"
                 placeholder="Masukkan judul artikel"
               />
             </div>
@@ -139,15 +139,15 @@ export default function CreateArtikelPage() {
           {/* Kategori + Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300 flex items-center gap-1.5">
-                <Tag className="w-4 h-4 text-[#6FF3C8]" />
+              <label className="text-sm font-medium text-slate-300 flex items-center gap-1.5">
+                <Tag className="w-4 h-4 text-cyan-400" />
                 Kategori
               </label>
               <div className="relative">
                 <select
                   value={kategori}
                   onChange={(e) => setKategori(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[#6FF3C8] focus:ring-1 focus:ring-[#6FF3C8] transition-all appearance-none text-sm pr-10"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all appearance-none text-sm pr-10"
                 >
                   {KATEGORI_OPTIONS.map((k) => (
                     <option key={k} value={k}>{k}</option>
@@ -181,10 +181,10 @@ export default function CreateArtikelPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Status</label>
+              <label className="text-sm font-medium text-slate-300">Status</label>
               <select 
                 value={status} onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[#6FF3C8] focus:ring-1 focus:ring-[#6FF3C8] transition-all appearance-none text-sm"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all appearance-none text-sm"
               >
                 <option value="published">Diterbitkan (Published)</option>
                 <option value="draft">Draft</option>
@@ -194,10 +194,10 @@ export default function CreateArtikelPage() {
 
           {/* Isi Artikel */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Isi Artikel</label>
+            <label className="text-sm font-medium text-slate-300">Isi Artikel</label>
             <textarea 
               rows={10} value={isiArtikel} onChange={(e) => setIsiArtikel(e.target.value)} required
-              className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-[#6FF3C8] focus:ring-1 focus:ring-[#6FF3C8] transition-all resize-y leading-relaxed text-sm"
+              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-y leading-relaxed text-sm placeholder:text-slate-500"
               placeholder="Tuliskan isi artikel di sini..."
             />
           </div>
@@ -205,7 +205,7 @@ export default function CreateArtikelPage() {
           <div className="pt-4 flex justify-end">
             <button 
               type="submit" disabled={loading}
-              className="inline-flex items-center gap-2 bg-[#6FF3C8] hover:bg-[#5ae6b9] text-black px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-[#6FF3C8]/20 disabled:opacity-70 disabled:cursor-not-allowed text-sm"
+              className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg shadow-cyan-500/20 disabled:opacity-70 disabled:cursor-not-allowed text-sm"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {loading ? 'Menyimpan...' : 'Simpan Artikel'}
