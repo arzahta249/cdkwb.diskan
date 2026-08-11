@@ -33,7 +33,7 @@ export default async function HomePage() {
       <div className="ocean-bg">
 
         {/* 1. Hero Section */}
-        <section className="relative min-h-screen flex items-center pt-24 pb-36 overflow-hidden bg-[#093345]">
+        <section className="relative min-h-[85vh] sm:min-h-screen flex items-center pt-20 sm:pt-24 pb-24 sm:pb-36 overflow-hidden bg-[#093345]">
           {/* Background image & gradient overlay (placed ON TOP of light rays) */}
           <div className="absolute inset-0 z-0">
             {/* Light rays layer behind image */}
@@ -44,38 +44,38 @@ export default async function HomePage() {
             {/* Background image on top layer with crisp visibility */}
             <div
               className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-65"
-              style={{ backgroundImage: "url('/leading/latar%20belakang.png')" }}
+              style={{ backgroundImage: "url('/leading/CDKWB.jpg')" }}
             />
 
             {/* Subtle gradient overlay for text readability without darkening image */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#093345]/75 via-[#093345]/35 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#093345]/85 via-[#093345]/45 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#093345]/20 to-[#093345]" />
           </div>
 
           {/* Animated bubbles */}
           <div className="bubbles z-10" aria-hidden="true" id="bubblesHero" />
 
-          <div className="container mx-auto px-6 relative z-10 max-w-6xl">
+          <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-6xl">
             <div className="max-w-2xl">
-              <span className="eyebrow" style={{ color: '#6FF3C8' }}>
+              <span className="eyebrow text-xs" style={{ color: '#6FF3C8' }}>
                 Dinas Kelautan dan Perikanan · Provinsi Jawa Tengah
               </span>
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white mt-5 mb-6 leading-[1.08]">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mt-4 sm:mt-5 mb-4 sm:mb-6 leading-[1.1]">
                 Cabang Dinas Kelautan<br />Wilayah Barat
               </h1>
-              <p className="text-lg md:text-xl mb-10 leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,0.75)' }}>
+              <p className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,0.75)' }}>
                 Mewujudkan pengelolaan ruang laut yang berkelanjutan, aman, dan sejahtera untuk masa depan maritim Jawa Tengah.
               </p>
-              <div className="flex flex-wrap items-center gap-4 mb-14">
-                <Link href="#layanan" className="btn-coral-ocean">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-10 sm:mb-14">
+                <Link href="#layanan" className="btn-coral-ocean justify-center text-center">
                   Jelajahi Layanan
                 </Link>
-                <button className="btn-ghost-ocean">
-                  <PlayCircle className="w-5 h-5" /> Tonton Video Profil
+                <button className="btn-ghost-ocean justify-center text-center">
+                  <PlayCircle className="w-5 h-5 shrink-0" /> Tonton Video Profil
                 </button>
               </div>
               {/* Scroll cue */}
-              <div className="scroll-cue">
+              <div className="scroll-cue hidden sm:flex">
                 <span className="scroll-line" />
                 Selami halaman ini
               </div>
@@ -85,7 +85,7 @@ export default async function HomePage() {
           {/* Dynamic Ocean Wave Divider at bottom of Hero (Seamless transition into Section 2) */}
           <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none overflow-hidden leading-none">
             <svg
-              className="relative block w-full h-[60px] sm:h-[90px] md:h-[130px]"
+              className="relative block w-full h-[40px] sm:h-[90px] md:h-[130px]"
               viewBox="0 0 1440 140"
               preserveAspectRatio="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -110,17 +110,17 @@ export default async function HomePage() {
         </section>
 
         {/* 2. Sekilas Layanan */}
-        <section id="layanan" className="py-24 relative">
+        <section id="layanan" className="py-16 sm:py-24 relative">
           <div className="glow-particles" aria-hidden="true" id="glowLayanan" />
-          <div className="container mx-auto px-6 max-w-5xl relative z-10">
-            <div className="text-center mb-16">
+          <div className="container mx-auto px-4 sm:px-6 max-w-5xl relative z-10">
+            <div className="text-center mb-12 sm:mb-16">
               <span className="eyebrow" style={{ color: '#6FF3C8' }}>Zona Dangkal</span>
-              <h2 className="text-3xl font-bold text-white mt-4 mb-2">Sekilas Layanan</h2>
-              <p className="text-sm mt-3" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mt-3 sm:mt-4 mb-2">Sekilas Layanan</h2>
+              <p className="text-xs sm:text-sm mt-2 sm:mt-3" style={{ color: 'rgba(255,255,255,0.55)' }}>
                 Layanan inti untuk nelayan, pelaku usaha, dan masyarakat pesisir.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <ServiceCard icon={Ship}        title="Perizinan Kapal" desc="Layanan administrasi perikanan tangkap."    num="01" />
               <ServiceCard icon={Waves}       title="Konservasi"      desc="Program pelestarian ekosistem laut."         num="02" />
               <ServiceCard icon={ShieldAlert} title="Pengawasan"      desc="Patroli dan keamanan wilayah pesisir."       num="03" />
@@ -130,26 +130,26 @@ export default async function HomePage() {
         </section>
 
         {/* 3. Berita & Kegiatan Terbaru */}
-        <section className="py-24 relative">
-          <div className="container mx-auto px-6 max-w-6xl relative z-10">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+        <section className="py-16 sm:py-24 relative">
+          <div className="container mx-auto px-4 sm:px-6 max-w-6xl relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-4">
               <div>
                 <span className="eyebrow" style={{ color: '#6FF3C8' }}>Zona Twilight · Terkini</span>
-                <h2 className="text-3xl font-bold text-white mt-4 mb-2">Berita &amp; Kegiatan Terbaru</h2>
-                <p style={{ color: 'rgba(255,255,255,0.55)' }}>Pembaruan aktivitas dan dokumentasi lapangan terkini.</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mt-3 sm:mt-4 mb-2">Berita &amp; Kegiatan Terbaru</h2>
+                <p className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>Pembaruan aktivitas dan dokumentasi lapangan terkini.</p>
               </div>
-              <Link href="/news" className="text-sm font-semibold flex items-center gap-1 transition-colors hover:text-white" style={{ color: '#6FF3C8' }}>
+              <Link href="/news" className="text-xs sm:text-sm font-semibold flex items-center gap-1 transition-colors hover:text-white self-start sm:self-auto" style={{ color: '#6FF3C8' }}>
                 Lihat Semua <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {news.map((item: any) => {
                 return (
                   <Link
                     href={`/news/${item.Slug}`}
                     key={item.ID_berita}
-                    className="group relative block h-80 rounded-2xl overflow-hidden transition-transform hover:-translate-y-1"
+                    className="group relative block h-64 sm:h-80 rounded-2xl overflow-hidden transition-transform hover:-translate-y-1"
                     style={{ border: '1px solid rgba(255,255,255,0.1)' }}
                   >
                     <Image
@@ -159,8 +159,8 @@ export default async function HomePage() {
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #030B14 0%, rgba(10,42,64,0.55) 50%, transparent 100%)' }} />
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                      <div className="flex items-center gap-3 mb-3">
+                    <div className="absolute inset-0 p-4 sm:p-6 flex flex-col justify-end">
+                      <div className="flex items-center gap-3 mb-2 sm:mb-3">
                         <span className="text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded" style={{ background: 'rgba(255,122,89,0.85)' }}>
                           {item.penulis || 'Reynard'}
                         </span>
@@ -168,14 +168,14 @@ export default async function HomePage() {
                           {new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </span>
                       </div>
-                      <h3 className="text-2xl font-bold text-white leading-tight line-clamp-2">{item.Judul}</h3>
+                      <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight line-clamp-2">{item.Judul}</h3>
                     </div>
                   </Link>
                 );
               })}
 
               {news.length === 0 && (
-                <div className="col-span-2 text-center py-20 rounded-2xl ocean-card">
+                <div className="col-span-1 md:col-span-2 text-center py-16 sm:py-20 rounded-2xl ocean-card">
                   <p style={{ color: 'rgba(255,255,255,0.45)' }}>Belum ada berita terbaru.</p>
                 </div>
               )}
@@ -184,25 +184,25 @@ export default async function HomePage() {
         </section>
 
         {/* 4. Portal Layanan Terpadu */}
-        <section className="relative pt-28 pb-24 text-center overflow-hidden">
+        <section className="relative pt-20 sm:pt-28 pb-16 sm:pb-24 text-center overflow-hidden">
           <div className="glow-particles" aria-hidden="true" id="glowPortal" />
           {/* Decorative rings */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.05)' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.04)' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.05)' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.04)' }} />
 
-          <div className="container mx-auto px-6 relative z-10 max-w-3xl flex flex-col items-center">
-            <span className="eyebrow mb-4" style={{ color: '#6FF3C8' }}>Zona Tengah Malam</span>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+          <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-3xl flex flex-col items-center">
+            <span className="eyebrow mb-3 sm:mb-4" style={{ color: '#6FF3C8' }}>Zona Tengah Malam</span>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6 tracking-tight">
               Portal Layanan Terpadu
             </h2>
-            <p className="text-lg mb-10 leading-relaxed max-w-2xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            <p className="text-sm sm:text-lg mb-8 sm:mb-10 leading-relaxed max-w-2xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
               Akses cepat ke berbagai layanan publik, informasi kelautan terpusat, dan pelaporan perizinan untuk wilayah barat dalam satu platform terintegrasi.
             </p>
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Link href="#" className="btn-coral-ocean">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+              <Link href="#" className="btn-coral-ocean justify-center text-center">
                 Akses Portal Sekarang <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="#" className="btn-ghost-ocean">
+              <Link href="#" className="btn-ghost-ocean justify-center text-center">
                 Unduh Buku Panduan
               </Link>
             </div>

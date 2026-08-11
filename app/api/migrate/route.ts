@@ -270,6 +270,27 @@ export async function GET() {
       results.push(`INFO: error tabel artikel (${err.message})`);
     }
 
+    // ── Materi Table ──────────────────────────────────────────────────
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS materi (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          judul VARCHAR(255) NOT NULL,
+          deskripsi TEXT NULL,
+          kategori VARCHAR(100) NOT NULL,
+          file_url VARCHAR(255) NOT NULL,
+          file_type VARCHAR(20) NOT NULL,
+          file_size VARCHAR(50) NOT NULL,
+          is_verified TINYINT(1) DEFAULT 1,
+          status ENUM('published', 'draft') DEFAULT 'published',
+          tanggal DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+      results.push('SUCCESS: tabel materi siap');
+    } catch (err: any) {
+      results.push(`INFO: error tabel materi (${err.message})`);
+    }
+
     // ── End Galeri Tables ─────────────────────────────────────────────
 
     // Verify the column exists now

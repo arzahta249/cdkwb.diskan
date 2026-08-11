@@ -51,10 +51,10 @@ export default function MateriPage() {
     fetchMateri();
   }, [activeCategory]);
 
-  const filteredMateri = materiList.filter(item => 
+  const filteredMateri = Array.isArray(materiList) ? materiList.filter(item => 
     item.judul.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (item.deskripsi && item.deskripsi.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  ) : [];
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -145,7 +145,7 @@ export default function MateriPage() {
                   <div className="flex items-start justify-between mb-4">
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${getCategoryColor(item.kategori)}`}>
                       {getCategoryIcon(item.kategori)}
-                      {item.kategori.split(' ')[0]}
+                      {item.kategori ? item.kategori.split(' ')[0] : 'Umum'}
                     </span>
                     <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2.5 py-1 rounded-full border border-gray-100">
                       {new Date(item.tanggal).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}
