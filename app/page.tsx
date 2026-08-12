@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DepthGauge from '@/components/DepthGauge';
-import { ArrowRight, PlayCircle, Ship, Waves, ShieldAlert, FileText } from 'lucide-react';
+import { ArrowRight, PlayCircle, Ship, Waves, ShieldAlert, FileText, Users, Calendar, User, ChevronRight } from 'lucide-react';
 
 async function getPublishedNews() {
   try {
@@ -121,10 +121,10 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <ServiceCard icon={Ship} title="Perizinan Kapal" desc="Layanan administrasi perikanan tangkap." num="01" />
-              <ServiceCard icon={Waves} title="Konservasi" desc="Program pelestarian ekosistem laut." num="02" />
-              <ServiceCard icon={ShieldAlert} title="Pengawasan" desc="Patroli dan keamanan wilayah pesisir." num="03" />
-              <ServiceCard icon={FileText} title="Data & Info" desc="Statistik dan informasi publik kelautan." num="04" />
+              <ServiceCard icon={Ship} title="Layanan SUOP & E-SLO" desc="Fasilitas perizinan dan administrasi kapal perikanan." num="01" />
+              <ServiceCard icon={Waves} title="Kawasan Konservasi" desc="Pelestarian alam laut dan rehabilitasi ekosistem mangrove." num="02" />
+              <ServiceCard icon={FileText} title="Kehumasan" desc="Publikasi media dan penyediaan informasi untuk publik." num="03" />
+              <ServiceCard icon={Users} title="Kerja Sama" desc="Kemitraan strategis lintas sektor dan antar instansi." num="04" />
             </div>
           </div>
         </section>
@@ -143,32 +143,58 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              {news.map((item: any) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+              {news.map((item: any, index: number) => {
+                const isEven = index % 2 === 0;
                 return (
                   <Link
                     href={`/news/${item.Slug}`}
                     key={item.ID_berita}
-                    className="group relative block h-64 sm:h-80 rounded-2xl overflow-hidden transition-transform hover:-translate-y-1"
-                    style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+                    className={`group relative flex flex-col h-[400px] sm:h-[450px] rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(111,243,200,0.15)] ${!isEven ? 'lg:mt-12' : ''}`}
+                    style={{ border: '1px solid rgba(255,255,255,0.05)' }}
                   >
+                    {/* Background Image with Slow Zoom on Hover */}
                     <Image
                       src={item.image || '/leading/berita.png'}
                       alt={item.Judul}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover transition-transform duration-1000 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #030B14 0%, rgba(10,42,64,0.55) 50%, transparent 100%)' }} />
-                    <div className="absolute inset-0 p-4 sm:p-6 flex flex-col justify-end">
-                      <div className="flex items-center gap-3 mb-2 sm:mb-3">
-                        <span className="text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded" style={{ background: 'rgba(255,122,89,0.85)' }}>
-                          {item.penulis || 'Reynard'}
-                        </span>
-                        <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                          {new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </span>
+                    
+                    {/* Rich Deep Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#030B14] via-[#030B14]/80 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100" />
+                    
+                    {/* Floating Glassmorphism Badge */}
+                    <div className="absolute top-6 right-6 z-20">
+                      <span className="backdrop-blur-md bg-white/10 border border-white/20 text-white text-[10px] sm:text-xs font-semibold px-4 py-2 rounded-full shadow-lg uppercase tracking-widest">
+                        Terkini
+                      </span>
+                    </div>
+
+                    {/* Animated Content Container */}
+                    <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end z-20 transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                      {/* Meta Information */}
+                      <div className="flex items-center gap-4 mb-4 text-xs font-medium text-gray-300">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-4 h-4 text-[#6FF3C8]" />
+                          <span>{new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <User className="w-4 h-4 text-[#6FF3C8]" />
+                          <span>{item.penulis || 'Admin CDKWB'}</span>
+                        </div>
                       </div>
-                      <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight line-clamp-2">{item.Judul}</h3>
+                      
+                      {/* Title with color transition */}
+                      <h3 className="text-2xl sm:text-3xl font-bold text-white leading-snug mb-4 line-clamp-3 group-hover:text-[#6FF3C8] transition-colors duration-300">
+                        {item.Judul}
+                      </h3>
+                      
+                      {/* Interactive Reveal Button */}
+                      <div className="flex items-center gap-2 text-[#6FF3C8] text-sm font-bold uppercase tracking-wider opacity-0 -translate-x-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0">
+                        Baca Selengkapnya
+                        <ChevronRight className="w-4 h-4" />
+                      </div>
                     </div>
                   </Link>
                 );

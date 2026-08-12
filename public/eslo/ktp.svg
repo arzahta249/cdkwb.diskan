@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 280" width="100%" height="100%">
+  <!-- Card Background -->
+  <rect width="450" height="280" rx="15" ry="15" fill="#a0c4ff" />
+  
+  <!-- Light Pattern (Map shape abstraction) -->
+  <path d="M 50 150 Q 150 50 250 100 T 450 150 L 450 280 L 0 280 Z" fill="#b9d6ff" opacity="0.6" />
+  <path d="M 0 100 Q 100 200 200 150 T 400 200 L 400 280 L 0 280 Z" fill="#90b8f8" opacity="0.4" />
+  
+  <!-- Header -->
+  <text x="225" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#000">PROVINSI JAWA TENGAH</text>
+  <text x="225" y="50" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#000">KABUPATEN SEMARANG</text>
+  
+  <!-- NIK -->
+  <text x="20" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#000">NIK</text>
+  <text x="90" y="90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#000">: 3322110000000001</text>
+  
+  <!-- Data Fields -->
+  <g font-family="Arial, sans-serif" font-size="10" fill="#000">
+    <text x="20" y="120">Nama</text>
+    <text x="100" y="120">: BAPAK BUDI</text>
+    
+    <text x="20" y="140">Tempat/Tgl Lahir</text>
+    <text x="100" y="140">: SEMARANG, 17-08-1970</text>
+    
+    <text x="20" y="160">Jenis Kelamin</text>
+    <text x="100" y="160">: LAKI-LAKI</text>
+    
+    <text x="20" y="180">Alamat</text>
+    <text x="100" y="180">: JL. NELAYAN NO. 1</text>
+    
+    <text x="35" y="195">RT/RW</text>
+    <text x="100" y="195">: 001/002</text>
+    
+    <text x="35" y="210">Kel/Desa</text>
+    <text x="100" y="210">: TAMBAK LOROK</text>
+    
+    <text x="35" y="225">Kecamatan</text>
+    <text x="100" y="225">: SEMARANG UTARA</text>
+    
+    <text x="20" y="245">Agama</text>
+    <text x="100" y="245">: ISLAM</text>
+    
+    <text x="20" y="260">Status Perkawinan</text>
+    <text x="100" y="260">: KAWIN</text>
+  </g>
+  
+  <!-- Photo Box -->
+  <rect x="330" y="70" width="100" height="130" fill="#e0e0e0" stroke="#fff" stroke-width="2" />
+  <circle cx="380" cy="110" r="30" fill="#ccc" />
+  <path d="M 340 190 Q 380 150 420 190" fill="#ccc" />
+  
+  <!-- Signature / Fingerprint Box -->
+  <text x="380" y="215" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#000">SEMARANG</text>
+  <text x="380" y="225" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#000">11-08-2026</text>
+  
+  <path d="M 350 250 Q 380 230 410 260" fill="none" stroke="#000" stroke-width="1.5" />
+</svg>
