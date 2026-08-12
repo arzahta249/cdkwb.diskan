@@ -123,7 +123,7 @@ export default function RehabilitasiMangrovePage() {
   const [speciesRef, speciesVisible] = useInView(0.1);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(to bottom, #2E8B70 0%, #2E8B70 22%, #a7f3d0 48%, #ecfdf5 64%, #ffffff 82%)' }}>
       <Navbar />
 
       {/* ── HERO ── */}
@@ -237,6 +237,11 @@ export default function RehabilitasiMangrovePage() {
                 <stop offset="50%" stopColor="#2dd4bf" stopOpacity="0.5" />
                 <stop offset="100%" stopColor="#a3e635" stopOpacity="0.4" />
               </linearGradient>
+              <linearGradient id="mangrove-wave-grad-front" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#047857" stopOpacity="1" />
+                <stop offset="50%" stopColor="#065f46" stopOpacity="1" />
+                <stop offset="100%" stopColor="#064e3b" stopOpacity="1" />
+              </linearGradient>
             </defs>
 
             {/* Back glowing wave layer */}
@@ -254,17 +259,17 @@ export default function RehabilitasiMangrovePage() {
               d="M0,65 C360,-15 620,95 960,25 C1200,-15 1340,65 1440,80 L1440,130 L0,130 Z"
               fill="url(#mangrove-wave-grad-2)"
             />
-            {/* Front main wave layer matching white content section below */}
+            {/* Front main wave layer — solid color matching page gradient start */}
             <path
               d="M0,85 C240,30 480,105 720,55 C960,10 1200,85 1440,45 L1440,130 L0,130 Z"
-              fill="#ffffff"
+              fill="#2E8B70"
             />
           </svg>
         </div>
       </section>
 
       {/* ── STATS ── */}
-      <section className="pt-6 pb-16 bg-white relative z-30">
+      <section className="pt-10 pb-16 relative z-30">
         <div
           ref={statsRef}
           className="container mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4"
@@ -292,7 +297,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── INTRO TEXT ── */}
-      <section className="py-16 bg-white">
+      <section className="py-16">
         <div className="container mx-auto px-6 max-w-3xl text-center">
           <span className="inline-block bg-emerald-50 text-emerald-600 text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
             Tentang Program
@@ -300,12 +305,12 @@ export default function RehabilitasiMangrovePage() {
           <h2 className="text-3xl font-bold text-[#052e16] mb-6">
             Mengembalikan Sabuk Hijau Pesisir
           </h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
+          <p className="text-white leading-relaxed mb-4">
             Degradasi hutan mangrove di pesisir Jawa Tengah telah menyebabkan abrasi yang mengancam
             pemukiman, tambak, dan infrastruktur pesisir. CDKWB merespons dengan program rehabilitasi
             mangrove skala besar yang menggabungkan pendekatan ekologis, sosial, dan ekonomi secara terpadu.
           </p>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-white leading-relaxed">
             Sejak 2018, program ini telah menanam lebih dari 125.000 bibit mangrove dari berbagai spesies
             asli di 48 hektare lahan terdegradasi, melibatkan 12 desa pesisir sebagai mitra aktif dalam
             pengelolaan dan pemantauan kawasan.
@@ -314,7 +319,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── STAGES ── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20">
         <div className="container mx-auto px-6">
           <div
             ref={stagesRef}
@@ -365,7 +370,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── BENEFITS ── */}
-      <section className="py-20 bg-white">
+      <section className="py-20">
         <div className="container mx-auto px-6">
           <div
             ref={benefitsRef}
@@ -407,7 +412,7 @@ export default function RehabilitasiMangrovePage() {
       </section>
 
       {/* ── SPECIES TABLE ── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20">
         <div className="container mx-auto px-6">
           <div
             ref={speciesRef}
