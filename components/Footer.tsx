@@ -33,17 +33,17 @@ export default function Footer() {
             <ul className="space-y-2.5 sm:space-y-3">
               <li>
                 <Link href="/pengaduan" className="text-xs sm:text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> Pengaduan & Kepuasan Pengguna
+                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> <span>Pengaduan & Kepuasan Pengguna</span>
                 </Link>
               </li>
               <li>
                 <Link href="#" className="text-xs sm:text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> Privacy Policy
+                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> <span>Privacy Policy</span>
                 </Link>
               </li>
               <li>
                 <Link href="#" className="text-xs sm:text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> Terms of Service
+                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> <span>Terms of Service</span>
                 </Link>
               </li>
             </ul>
@@ -55,12 +55,12 @@ export default function Footer() {
             <ul className="space-y-2.5 sm:space-y-3">
               <li>
                 <Link href="#" className="text-xs sm:text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> DKP Provinsi Jawa Tengah
+                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> <span>DKP Provinsi Jawa Tengah</span>
                 </Link>
               </li>
               <li>
                 <Link href="#" className="text-xs sm:text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> Kementerian Kelautan dan Perikanan
+                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> <span>Kementerian Kelautan dan Perikanan</span>
                 </Link>
               </li>
             </ul>
@@ -90,7 +90,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-          <p className="text-[11px] sm:text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <p className="text-[11px] sm:text-xs font-mono" style={{ color: 'rgba(255,255,255,0.3)' }} suppressHydrationWarning>
             © {new Date().getFullYear()} CDKWB · ZONA ABISAL, −4.500 M · Semua Hak Dilindungi
           </p>
           <button
