@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Briefcase, Search, Download, Trash2, Eye, CheckCircle } from 'lucide-react';
+import { Briefcase, Search, Download, Trash2, Eye, CheckCircle, X, FileText, DownloadCloud } from 'lucide-react';
+import Link from 'next/link';
 
 interface MagangApp {
   id: number;
@@ -10,7 +11,10 @@ interface MagangApp {
   universitas: string;
   jurusan: string;
   posisi: string;
+  nomor_ponsel: string;
+  domisili: string;
   motivasi_cv: string;
+  cv_file: string | null;
   status: string;
   created_at: string;
 }
@@ -19,6 +23,20 @@ export default function MagangDashboard() {
   const [applications, setApplications] = useState<MagangApp[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Modal State
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: 'confirm_acc' | 'confirm_delete' | 'view_details' | 'success_toast' | null;
+    appId: number | null;
+    appData: MagangApp | null;
+    message?: string;
+  }>({
+    isOpen: false,
+    type: null,
+    appId: null,
+    appData: null,
+  });
 
   const fetchApplications = async () => {
     try {
@@ -38,9 +56,22 @@ export default function MagangDashboard() {
     fetchApplications();
   }, []);
 
+  const openModal = (type: 'confirm_acc' | 'confirm_delete' | 'view_details', app: MagangApp) => {
+    setModalState({ isOpen: true, type, appId: app.id, appData: app });
+  };
+
+  const closeModal = () => {
+    setModalState({ isOpen: false, type: null, appId: null, appData: null });
+  };
+
+  const showToast = (message: string) => {
+    setModalState({ isOpen: true, type: 'success_toast', appId: null, appData: null, message });
+    setTimeout(() => {
+      closeModal();
+    }, 2000);
+  };
+
   const handleUpdateStatus = async (id: number, newStatus: string) => {
-    if (!confirm(`Yakin ingin mengubah status menjadi ${newStatus}?`)) return;
-    
     try {
       const res = await fetch('/api/magang', {
         method: 'PUT',
@@ -49,6 +80,7 @@ export default function MagangDashboard() {
       });
       if (res.ok) {
         setApplications(apps => apps.map(app => app.id === id ? { ...app, status: newStatus } : app));
+        showToast('Status pendaftaran berhasil diperbarui!');
       } else {
         alert('Gagal mengubah status');
       }
@@ -58,8 +90,6 @@ export default function MagangDashboard() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Yakin ingin menghapus lamaran ini secara permanen? User akan bisa mendaftar lagi jika lamarannya dihapus.')) return;
-    
     try {
       const res = await fetch('/api/magang', {
         method: 'DELETE',
@@ -68,6 +98,7 @@ export default function MagangDashboard() {
       });
       if (res.ok) {
         setApplications(apps => apps.filter(app => app.id !== id));
+        showToast('Data pendaftaran berhasil dihapus!');
       } else {
         alert('Gagal menghapus');
       }
@@ -83,7 +114,7 @@ export default function MagangDashboard() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
@@ -175,16 +206,16 @@ export default function MagangDashboard() {
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap items-center justify-center gap-2 w-max">
                         <button 
-                          onClick={() => alert(`Motivasi/CV: ${app.motivasi_cv}`)}
+                          onClick={() => openModal('view_details', app)}
                           className="p-1.5 bg-blue-900/30 text-blue-400 hover:bg-blue-800/50 rounded-md transition-colors" 
-                          title="Lihat Detail/CV"
+                          title="Lihat Detail & CV"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         
                         {app.status === 'pending' && (
                           <button 
-                            onClick={() => handleUpdateStatus(app.id, 'accepted')}
+                            onClick={() => openModal('confirm_acc', app)}
                             className="p-1.5 bg-emerald-900/30 text-emerald-400 hover:bg-emerald-800/50 rounded-md transition-colors" 
                             title="ACC / Terima"
                           >
@@ -193,7 +224,7 @@ export default function MagangDashboard() {
                         )}
                         
                         <button 
-                          onClick={() => handleDelete(app.id)}
+                          onClick={() => openModal('confirm_delete', app)}
                           className="p-1.5 bg-rose-900/30 text-rose-400 hover:bg-rose-800/50 rounded-md transition-colors" 
                           title="Hapus / Tolak"
                         >
@@ -208,6 +239,127 @@ export default function MagangDashboard() {
           </table>
         </div>
       </div>
+
+      {/* CUSTOM MODALS */}
+      {modalState.isOpen && modalState.type !== 'success_toast' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          
+          {/* 1. Modal View Details */}
+          {modalState.type === 'view_details' && modalState.appData && (
+            <div className="bg-[#0F172A] border border-cyan-900/50 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="flex justify-between items-center p-6 border-b border-cyan-900/30 bg-[#1E293B]/50">
+                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-cyan-400" /> Profil & Motivasi Kadet
+                </h3>
+                <button onClick={closeModal} className="text-slate-400 hover:text-white transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-6 space-y-6 text-sm">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-slate-500 mb-1">Nama Lengkap</p>
+                    <p className="text-white font-medium">{modalState.appData.nama}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 mb-1">Email</p>
+                    <p className="text-white font-medium">{modalState.appData.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 mb-1">Nomor Ponsel (WA)</p>
+                    <p className="text-white font-medium">{modalState.appData.nomor_ponsel || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 mb-1">Domisili</p>
+                    <p className="text-white font-medium">{modalState.appData.domisili || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 mb-1">Institusi / Jurusan</p>
+                    <p className="text-white font-medium">{modalState.appData.universitas} - {modalState.appData.jurusan}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 mb-1">Posisi Dilamar</p>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-900/30 text-cyan-400 border border-cyan-800/50">
+                      {modalState.appData.posisi}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-[#1E293B]/50 p-4 rounded-xl border border-cyan-900/30">
+                  <p className="text-slate-400 font-medium mb-2">Deskripsi Diri / Motivasi:</p>
+                  <p className="text-slate-200 whitespace-pre-wrap leading-relaxed">{modalState.appData.motivasi_cv}</p>
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  {modalState.appData.cv_file ? (
+                    <Link href={modalState.appData.cv_file} target="_blank" className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors shadow-lg shadow-blue-900/20">
+                      <DownloadCloud className="w-4 h-4" /> Buka / Unduh File CV
+                    </Link>
+                  ) : (
+                    <span className="text-slate-500 italic flex items-center gap-2 px-5 py-2.5 bg-[#1E293B] rounded-lg border border-slate-800">
+                      Tidak ada file CV yang dilampirkan
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 2. Modal Confirm ACC */}
+          {modalState.type === 'confirm_acc' && modalState.appData && (
+            <div className="bg-[#0F172A] border border-emerald-900/50 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle className="w-8 h-8 text-emerald-500" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Terima Kandidat?</h3>
+                <p className="text-slate-400 mb-8 text-sm">
+                  Anda akan mengubah status <span className="text-white font-medium">{modalState.appData.nama}</span> menjadi DITERIMA.
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <button onClick={closeModal} className="px-5 py-2.5 rounded-lg font-medium text-slate-300 hover:bg-[#1E293B] transition-colors">Batal</button>
+                  <button onClick={() => { handleUpdateStatus(modalState.appId!, 'accepted'); closeModal(); }} className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition-colors shadow-lg shadow-emerald-900/20">
+                    Ya, Terima Kandidat
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3. Modal Confirm Delete */}
+          {modalState.type === 'confirm_delete' && modalState.appData && (
+            <div className="bg-[#0F172A] border border-rose-900/50 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Trash2 className="w-8 h-8 text-rose-500" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Hapus Lamaran?</h3>
+                <p className="text-slate-400 mb-8 text-sm">
+                  Anda yakin ingin menghapus data <span className="text-white font-medium">{modalState.appData.nama}</span>? Setelah dihapus, peserta dapat mendaftar kembali.
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <button onClick={closeModal} className="px-5 py-2.5 rounded-lg font-medium text-slate-300 hover:bg-[#1E293B] transition-colors">Batal</button>
+                  <button onClick={() => { handleDelete(modalState.appId!); closeModal(); }} className="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-medium transition-colors shadow-lg shadow-rose-900/20">
+                    Ya, Hapus Data
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* TOAST SUCCESS NOTIFICATION */}
+      {modalState.isOpen && modalState.type === 'success_toast' && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className="bg-emerald-900/90 border border-emerald-500/50 backdrop-blur-md px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <p className="text-emerald-50 font-medium">{modalState.message}</p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

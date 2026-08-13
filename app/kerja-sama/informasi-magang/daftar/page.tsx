@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { Send, CheckCircle2, FileText, ArrowLeft, LogOut, ShieldCheck } from 'lucide-react';
+import { Send, CheckCircle2, FileText, ArrowLeft, LogOut, ShieldCheck, Upload } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -10,6 +10,7 @@ export default function DaftarMagangPage() {
   const { data: session, status: sessionStatus } = useSession();
   const searchParams = useSearchParams();
   const initialPosisi = searchParams.get('posisi') || '';
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     nama: '',
@@ -17,8 +18,11 @@ export default function DaftarMagangPage() {
     universitas: '',
     jurusan: '',
     posisi: initialPosisi,
+    nomor_ponsel: '',
+    domisili: '',
     motivasi_cv: ''
   });
+  const [cvFile, setCvFile] = useState<File | null>(null);
   
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [appStatus, setAppStatus] = useState<'loading' | 'can_apply' | 'pending'>('loading');
@@ -55,15 +59,38 @@ export default function DaftarMagangPage() {
     });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setCvFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitStatus('loading');
+    
     try {
+      const formPayload = new FormData();
+      formPayload.append('nama', formData.nama);
+      formPayload.append('email', formData.email);
+      formPayload.append('universitas', formData.universitas);
+      formPayload.append('jurusan', formData.jurusan);
+      formPayload.append('posisi', formData.posisi);
+      formPayload.append('nomor_ponsel', formData.nomor_ponsel);
+      formPayload.append('domisili', formData.domisili);
+      formPayload.append('motivasi_cv', formData.motivasi_cv);
+      
+      if (cvFile) {
+        formPayload.append('cv_file', cvFile);
+      }
+
       const res = await fetch('/api/magang', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        // Note: When sending FormData, DO NOT set Content-Type header. 
+        // The browser will automatically set it to multipart/form-data with the correct boundary.
+        body: formPayload
       });
+
       if (res.ok) {
         setSubmitStatus('success');
         setAppStatus('pending'); // User has just applied
@@ -170,6 +197,14 @@ export default function DaftarMagangPage() {
                     <label className="block text-sm font-medium text-blue-200 mb-2">Program Studi / Jurusan</label>
                     <input type="text" name="jurusan" required value={formData.jurusan} onChange={handleChange} className="w-full bg-[#010b14] border border-cyan-900/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Contoh: Ilmu Kelautan" />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-blue-200 mb-2">Nomor Ponsel (WhatsApp Aktif)</label>
+                    <input type="tel" name="nomor_ponsel" required value={formData.nomor_ponsel} onChange={handleChange} className="w-full bg-[#010b14] border border-cyan-900/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Contoh: 081234567890" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-blue-200 mb-2">Alamat Domisili</label>
+                    <input type="text" name="domisili" required value={formData.domisili} onChange={handleChange} className="w-full bg-[#010b14] border border-cyan-900/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Contoh: Semarang, Jawa Tengah" />
+                  </div>
                 </div>
 
                 <div>
@@ -183,8 +218,35 @@ export default function DaftarMagangPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">Motivasi & Tautan CV / Portofolio</label>
-                  <textarea name="motivasi_cv" required value={formData.motivasi_cv} onChange={handleChange} rows={4} className="w-full bg-[#010b14] border border-cyan-900/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Ceritakan motivasi Anda dan cantumkan link Google Drive untuk CV/Portofolio Anda..."></textarea>
+                  <label className="block text-sm font-medium text-blue-200 mb-2">Deskripsi Diri / Motivasi Magang</label>
+                  <textarea name="motivasi_cv" required value={formData.motivasi_cv} onChange={handleChange} rows={4} className="w-full bg-[#010b14] border border-cyan-900/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Ceritakan motivasi Anda mengikuti magang ini..."></textarea>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-blue-200 mb-2">Unggah Berkas CV (PDF/Gambar)</label>
+                  <div 
+                    className="w-full border-2 border-dashed border-cyan-900/50 rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-cyan-500/50 transition-colors bg-[#010b14]"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <input 
+                      type="file" 
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      accept=".pdf,image/*"
+                      className="hidden" 
+                    />
+                    <Upload className="w-10 h-10 text-cyan-500 mb-3" />
+                    {cvFile ? (
+                      <div className="text-emerald-400 font-medium">
+                        File terpilih: {cvFile.name}
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-white font-medium mb-1">Klik untuk memilih file CV Anda</p>
+                        <p className="text-slate-400 text-xs">Maksimal 5MB. Format: PDF, JPG, PNG</p>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 {submitStatus === 'error' && (
@@ -193,7 +255,7 @@ export default function DaftarMagangPage() {
                   </div>
                 )}
 
-                <button type="submit" disabled={submitStatus === 'loading'} className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] disabled:opacity-70 disabled:cursor-not-allowed">
+                <button type="submit" disabled={submitStatus === 'loading' || !cvFile} className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] disabled:opacity-70 disabled:cursor-not-allowed mt-4">
                   {submitStatus === 'loading' ? 'Mengirim Data...' : (
                     <>
                       <Send className="w-5 h-5" /> Kirim Pendaftaran
