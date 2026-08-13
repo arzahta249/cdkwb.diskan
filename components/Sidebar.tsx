@@ -15,7 +15,8 @@ import {
   Menu,
   X,
   Image as ImageIcon,
-  Waves
+  Waves,
+  Briefcase
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -204,6 +205,10 @@ export default function Sidebar() {
 
           <NavItem href="/dashboard/materi" icon={FileText}>
             Manajemen Materi
+          </NavItem>
+
+          <NavItem href="/dashboard/magang" icon={Briefcase}>
+            Data Magang
           </NavItem>
         </nav>
 

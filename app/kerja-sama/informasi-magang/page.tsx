@@ -25,6 +25,7 @@ import {
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DepthGauge from '@/components/DepthGauge';
+import MagangForm from '@/components/MagangForm';
 
 export const metadata = {
   title: 'Kadet Magang Maritim - CDKWB',
@@ -220,6 +221,11 @@ export default function InformasiMagangLeviathanPage() {
           </div>
         </div>
       </section>
+
+      {/* =========================================================
+          3.5 MAGANG FORM & POSITIONS
+          ========================================================= */}
+      <MagangForm />
 
       {/* =========================================================
           4. VERTICAL "SONAR" TIMELINE (ALUR)
