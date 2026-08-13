@@ -121,135 +121,149 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center gap-8 text-sm font-medium">
+          <div className="hidden lg:flex items-center gap-7 text-sm font-semibold text-slate-700">
             <Link href="/" className={linkClass}>
               Beranda
             </Link>
 
             {/* Dropdown Profil */}
             <div className={linkClass}>
-              Profil <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-              <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden translate-y-2 group-hover:translate-y-0 cursor-default">
-                <Link href="/profil/struktur-organisasi" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Struktur Organisasi</Link>
-                <Link href="/profil/tugas-pokok" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Tugas Pokok dan Fungsi</Link>
-                <Link href="/profil/visi-misi" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Visi dan Misi</Link>
-                <Link href="/profil/tentang-kami" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Tentang Kami</Link>
+              Profil <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180 text-slate-400 group-hover:text-[#0b3b60]" />
+              <div className="absolute top-full left-0 mt-2 w-60 bg-white border border-slate-100 shadow-xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2 flex flex-col translate-y-2 group-hover:translate-y-0 cursor-default">
+                <Link href="/profil/struktur-organisasi" className="px-3.5 py-2.5 text-xs sm:text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Struktur Organisasi</Link>
+                <Link href="/profil/tugas-pokok" className="px-3.5 py-2.5 text-xs sm:text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Tugas Pokok & Fungsi</Link>
+                <Link href="/profil/visi-misi" className="px-3.5 py-2.5 text-xs sm:text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Visi dan Misi</Link>
+                <Link href="/profil/tentang-kami" className="px-3.5 py-2.5 text-xs sm:text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Tentang Kami</Link>
               </div>
             </div>
 
             {/* Dropdown Informasi */}
             <div className={linkClass}>
-              Informasi <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-              <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden translate-y-2 group-hover:translate-y-0 cursor-default">
-                <Link href="/news" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Berita</Link>
-                <Link href="/artikel" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Artikel</Link>
+              Informasi <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180 text-slate-400 group-hover:text-[#0b3b60]" />
+              <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-slate-100 shadow-xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2 flex flex-col translate-y-2 group-hover:translate-y-0 cursor-default">
+                <Link href="/news" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Berita</Link>
+                <Link href="/artikel" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Artikel</Link>
               </div>
             </div>
 
-            {/* Dropdown Layanan */}
+            {/* Streamlined Mega Dropdown Layanan */}
             <div className={linkClass}>
-              Layanan <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-              <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-visible translate-y-2 group-hover:translate-y-0 cursor-default">
-                {/* 1. Kawasan Konservasi */}
-                <div className="relative group/kawasan">
-                  <div className="flex items-center justify-between px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer">
-                    Kawasan Konservasi
-                    <ChevronDown className="w-3.5 h-3.5 -rotate-90 ml-2 flex-shrink-0" />
-                  </div>
-                  <div className="absolute left-full top-0 ml-1 w-52 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover/kawasan:opacity-100 group-hover/kawasan:visible transition-all duration-200 flex flex-col overflow-hidden">
-                    <Link href="/konservasi/kawasan/karang-jeruk" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Karang Jeruk</Link>
-                    <Link href="/konservasi/kawasan/ujungnegoro" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Ujungnegoro</Link>
-                  </div>
-                </div>
-
-                {/* 2. Rehabilitasi Mangrove */}
-                <Link href="/konservasi/rehabilitasi-mangrove" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Rehabilitasi Mangrove</Link>
+              Layanan <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180 text-slate-400 group-hover:text-[#0b3b60]" />
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[620px] bg-white border border-slate-100 shadow-2xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4 grid grid-cols-2 gap-4 translate-y-2 group-hover:translate-y-0 cursor-default z-50">
                 
-                {/* 3. Kehumasan */}
-                <Link href="/kehumasan" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Kehumasan</Link>
+                {/* Column 1: Layanan Utama & Konservasi */}
+                <div className="space-y-3">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">Konservasi & Kehumasan</div>
+                  <div className="space-y-1">
+                    <Link href="/konservasi/kawasan/karang-jeruk" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">KKP Karang Jeruk</div>
+                        <div className="text-xs text-slate-500">Kawasan konservasi perairan Batang</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
 
-                {/* 4. Kerja Sama */}
-                <div className="relative group/kerjasama">
-                  <div className="flex items-center justify-between px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer">
-                    Kerja Sama
-                    <ChevronDown className="w-3.5 h-3.5 -rotate-90 ml-2 flex-shrink-0" />
-                  </div>
-                  <div className="absolute left-full top-0 ml-1 w-52 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover/kerjasama:opacity-100 group-hover/kerjasama:visible transition-all duration-200 flex flex-col overflow-hidden">
-                    <Link href="/kerja-sama/informasi-magang" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Info Magang</Link>
+                    <Link href="/konservasi/kawasan/ujungnegoro" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">KKP Ujungnegoro</div>
+                        <div className="text-xs text-slate-500">Taman pesisir & keanekaragaman laut</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
+
+                    <Link href="/konservasi/rehabilitasi-mangrove" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Rehabilitasi Mangrove</div>
+                        <div className="text-xs text-slate-500">Penanaman & pelestarian pesisir</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
+
+                    <Link href="/kehumasan" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/60 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan & Publikasi</div>
+                        <div className="text-xs text-slate-500">Layanan informasi publik & humas</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
+
+                    <Link href="/kerja-sama/informasi-magang" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Info Magang & Kerja Sama</div>
+                        <div className="text-xs text-slate-500">Kemitraan akademis & penelitian</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
                   </div>
                 </div>
 
-                {/* 5. Layanan SUOP */}
-                <Link href="#" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Profil SUOP</Link>
+                {/* Column 2: Portal & Panduan E-SLO */}
+                <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-100 flex flex-col justify-between">
+                  <div>
+                    <div className="text-[11px] font-bold text-[#0b3b60] uppercase tracking-wider mb-2 flex items-center justify-between">
+                      <span>Layanan E-SLO & SUOP</span>
+                      <span className="text-[10px] bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full font-bold">Resmi</span>
+                    </div>
 
-                {/* 6. Layanan E-SLO */}
-                <div className="group/eslo relative">
-                  <div className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors flex items-center justify-between cursor-pointer">
-                    Layanan E-SLO <ChevronRight className="w-4 h-4" />
+                    <div className="space-y-1.5">
+                      <button onClick={() => setIsBerkasModalOpen(true)} className="w-full text-left flex items-center gap-2.5 p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200">
+                        <FileText className="w-4 h-4 text-teal-600 shrink-0" />
+                        <div>
+                          <div className="text-xs font-bold text-slate-800">Siapkan Berkas</div>
+                          <div className="text-[11px] text-slate-500">Persyaratan NIB, SKAT & SLO</div>
+                        </div>
+                      </button>
+
+                      <button onClick={() => setIsDaftarModalOpen(true)} className="w-full text-left flex items-center gap-2.5 p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200">
+                        <PlayCircle className="w-4 h-4 text-indigo-600 shrink-0" />
+                        <div>
+                          <div className="text-xs font-bold text-slate-800">Cara Daftar Akun</div>
+                          <div className="text-[11px] text-slate-500">Panduan registrasi via HP</div>
+                        </div>
+                      </button>
+
+                      <button onClick={() => setIsAjukanModalOpen(true)} className="w-full text-left flex items-center gap-2.5 p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200">
+                        <Ship className="w-4 h-4 text-[#0b3b60] shrink-0" />
+                        <div>
+                          <div className="text-xs font-bold text-slate-800">Cara Ajukan Izin</div>
+                          <div className="text-[11px] text-slate-500">Alur pengajuan online</div>
+                        </div>
+                      </button>
+                    </div>
                   </div>
-                  <div className="absolute top-1/2 -translate-y-1/2 left-full ml-1 w-[280px] bg-white border border-gray-100 shadow-2xl rounded-2xl opacity-0 invisible group-hover/eslo:opacity-100 group-hover/eslo:visible transition-all duration-300 p-2 flex flex-col cursor-default">
-                    <div className="flex flex-col gap-1">
-                      <button onClick={() => setIsBerkasModalOpen(true)} className="w-full text-left flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl transition-colors">
-                        <FileText className="w-5 h-5 text-blue-500 shrink-0" />
-                        <div>
-                          <div className="text-sm font-bold text-slate-800">Siapkan Berkas</div>
-                          <div className="text-xs text-slate-500">NIB, SKAT, SLO Asal</div>
-                        </div>
-                      </button>
-                      
-                      <button onClick={() => setIsDaftarModalOpen(true)} className="w-full text-left flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl transition-colors">
-                        <PlayCircle className="w-5 h-5 text-indigo-500 shrink-0" />
-                        <div>
-                          <div className="text-sm font-bold text-slate-800">Cara Daftar Akun</div>
-                          <div className="text-xs text-slate-500">Panduan bikin sandi di HP</div>
-                        </div>
-                      </button>
-                      
-                      <button onClick={() => setIsAjukanModalOpen(true)} className="w-full text-left flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl transition-colors">
-                        <Ship className="w-5 h-5 text-teal-500 shrink-0" />
-                        <div>
-                          <div className="text-sm font-bold text-slate-800">Cara Ajukan Izin</div>
-                          <div className="text-xs text-slate-500">Langkah pencet pengajuan</div>
-                        </div>
-                      </button>
-                      
-                      <Link href="https://wa.me/628971574040?text=Halo%20Petugas%20Dinas%20Kelautan,%20saya%20butuh%20bantuan%20terkait%20e-SLO" target="_blank" className="flex items-center gap-3 p-3 bg-green-50/50 hover:bg-green-100/50 border border-green-100 rounded-xl transition-colors">
-                        <PhoneCall className="w-5 h-5 text-green-500 shrink-0" />
-                        <div>
-                          <div className="text-sm font-bold text-slate-800">Tanya Petugas</div>
-                          <div className="text-xs text-slate-500">Bantuan WA jika bingung</div>
-                        </div>
-                      </Link>
-                    </div>
-                    
-                    <div className="mt-3 border-t border-gray-100 pt-3 px-1 pb-1">
-                      <Link href="https://eslo.kkp.go.id/" target="_blank" className="block w-full bg-green-600 hover:bg-green-700 text-white font-bold text-sm text-center p-3 uppercase rounded-xl shadow-md transition-colors animate-pulse">
-                        BUKA WEB E-SLO SEKARANG
-                      </Link>
-                    </div>
+
+                  <div className="mt-3 pt-3 border-t border-slate-200/70 space-y-2">
+                    <Link href="https://wa.me/628971574040?text=Halo%20Petugas%20Dinas%20Kelautan,%20saya%20butuh%20bantuan%20terkait%20e-SLO" target="_blank" className="flex items-center justify-center gap-2 p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-semibold transition-colors">
+                      <PhoneCall className="w-3.5 h-3.5" /> Tanya Petugas WA
+                    </Link>
+
+                    <Link href="https://eslo.kkp.go.id/" target="_blank" className="block w-full bg-[#0b3b60] hover:bg-[#072740] text-white font-bold text-xs text-center py-2.5 rounded-lg shadow-sm transition-colors">
+                      BUKA PORTAL E-SLO
+                    </Link>
                   </div>
                 </div>
+
               </div>
             </div>
 
             {/* Dropdown Galeri */}
             <div className={linkClass}>
-              Galeri <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-              <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden translate-y-2 group-hover:translate-y-0 cursor-default">
-                <Link href="/galeri?tab=foto" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Foto</Link>
-                <Link href="/galeri?tab=video" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Video</Link>
-                <Link href="/galeri?tab=infografis" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Infografis</Link>
+              Galeri <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180 text-slate-400 group-hover:text-[#0b3b60]" />
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2 flex flex-col translate-y-2 group-hover:translate-y-0 cursor-default">
+                <Link href="/galeri?tab=foto" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Foto</Link>
+                <Link href="/galeri?tab=video" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Video</Link>
+                <Link href="/galeri?tab=infografis" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Infografis</Link>
               </div>
             </div>
 
             {/* Dropdown Hubungi Kami */}
             <div className={linkClass}>
-              Hubungi Kami <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-              <div className="absolute top-full -left-20 mt-2 w-56 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col overflow-hidden translate-y-2 group-hover:translate-y-0 cursor-default">
-                <Link href="/kontak" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Kontak</Link>
-                <Link href="/kontak#lokasi" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Lokasi</Link>
-                <Link href="/pengaduan" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Pengaduan & Kepuasan</Link>
-                <Link href="/materi" className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">Materi</Link>
+              Hubungi Kami <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180 text-slate-400 group-hover:text-[#0b3b60]" />
+              <div className="absolute top-full -left-12 mt-2 w-52 bg-white border border-slate-100 shadow-xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2 flex flex-col translate-y-2 group-hover:translate-y-0 cursor-default">
+                <Link href="/kontak" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Kontak</Link>
+                <Link href="/kontak#lokasi" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Lokasi Peta</Link>
+                <Link href="/pengaduan" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Pengaduan & SKM</Link>
+                <Link href="/materi" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Materi & Dokumen</Link>
               </div>
             </div>
           </div>
