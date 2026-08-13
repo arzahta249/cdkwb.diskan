@@ -187,7 +187,7 @@ export default function Navbar() {
                   <div className="px-4 py-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors flex items-center justify-between cursor-pointer">
                     Layanan E-SLO <ChevronRight className="w-4 h-4" />
                   </div>
-                  <div className="absolute top-0 left-full ml-1 w-[280px] bg-white border border-gray-100 shadow-2xl rounded-2xl opacity-0 invisible group-hover/eslo:opacity-100 group-hover/eslo:visible transition-all duration-300 p-2 flex flex-col cursor-default">
+                  <div className="absolute top-1/2 -translate-y-1/2 left-full ml-1 w-[280px] bg-white border border-gray-100 shadow-2xl rounded-2xl opacity-0 invisible group-hover/eslo:opacity-100 group-hover/eslo:visible transition-all duration-300 p-2 flex flex-col cursor-default">
                     <div className="flex flex-col gap-1">
                       <button onClick={() => setIsBerkasModalOpen(true)} className="w-full text-left flex items-center gap-3 p-3 hover:bg-blue-50 rounded-xl transition-colors">
                         <FileText className="w-5 h-5 text-blue-500 shrink-0" />
