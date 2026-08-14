@@ -105,3 +105,25 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    }
+
+    const [result]: any = await pool.query('DELETE FROM artikel WHERE ID_artikel = ?', [id]);
+    
+    if (result.affectedRows === 0) {
+      return NextResponse.json({ error: 'Artikel tidak ditemukan' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: 'Deleted successfully' });
+  } catch (error) {
+    console.error('Delete artikel error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}

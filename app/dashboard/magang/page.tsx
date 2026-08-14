@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Briefcase, Search, Download, Trash2, Eye, CheckCircle, X, FileText, DownloadCloud } from 'lucide-react';
 import Link from 'next/link';
+import { showError } from '@/lib/swal';
 
 interface MagangApp {
   id: number;
@@ -82,10 +83,10 @@ export default function MagangDashboard() {
         setApplications(apps => apps.map(app => app.id === id ? { ...app, status: newStatus } : app));
         showToast('Status pendaftaran berhasil diperbarui!');
       } else {
-        alert('Gagal mengubah status');
+        showError('Gagal', 'Gagal mengubah status');
       }
     } catch (e) {
-      alert('Terjadi kesalahan');
+      showError('Error', 'Terjadi kesalahan pada server');
     }
   };
 
@@ -100,10 +101,10 @@ export default function MagangDashboard() {
         setApplications(apps => apps.filter(app => app.id !== id));
         showToast('Data pendaftaran berhasil dihapus!');
       } else {
-        alert('Gagal menghapus');
+        showError('Gagal', 'Gagal menghapus data lamaran');
       }
     } catch (e) {
-      alert('Terjadi kesalahan');
+      showError('Error', 'Terjadi kesalahan pada server');
     }
   };
 

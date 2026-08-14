@@ -13,6 +13,7 @@ import {
   Briefcase,
   Sparkles
 } from 'lucide-react';
+import { showError, showSuccess } from '@/lib/swal';
 
 export default function AdminKepuasanPage() {
   const [surveys, setSurveys] = useState<any[]>([]);
@@ -57,12 +58,13 @@ export default function AdminKepuasanPage() {
       if (data.success) {
         setModalType(null);
         setSelectedSurvey(null);
+        await showSuccess('Terhapus', 'Data survei berhasil dihapus.');
         fetchKepuasanData();
       } else {
-        alert(data.error || 'Gagal menghapus data survei');
+        showError('Gagal', data.error || 'Gagal menghapus data survei');
       }
     } catch (err) {
-      alert('Terjadi kesalahan saat menghapus data');
+      showError('Error', 'Terjadi kesalahan saat menghapus data');
     } finally {
       setIsDeleting(false);
     }

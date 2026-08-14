@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Plus, Search, FileText, CheckCircle2, Clock, User, Tag } from 'lucide-react';
+import DeleteButton from '@/components/DeleteButton';
 import { pool } from '@/lib/db';
 
 export const revalidate = 0; // Data always fresh
@@ -116,14 +117,15 @@ export default async function ArtikelDashboardPage() {
                         year: 'numeric', month: 'short', day: 'numeric'
                       })}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
                       <Link 
                         href={`/artikel/${item.Slug}`} 
                         target="_blank"
-                        className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-medium mr-3"
+                        className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-medium mr-2"
                       >
                         Lihat
                       </Link>
+                      <DeleteButton endpoint="/api/artikel" id={item.ID_artikel} type="artikel" />
                     </td>
                   </tr>
                 ))

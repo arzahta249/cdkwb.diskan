@@ -92,3 +92,25 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    }
+
+    const [result]: any = await pool.query('DELETE FROM berita WHERE ID_berita = ?', [id]);
+    
+    if (result.affectedRows === 0) {
+      return NextResponse.json({ error: 'Berita tidak ditemukan' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: 'Deleted successfully' });
+  } catch (error) {
+    console.error('Delete berita error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}

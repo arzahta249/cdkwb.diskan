@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { Send, CheckCircle2, FileText, ArrowLeft, LogOut, ShieldCheck, Upload } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function DaftarMagangPage() {
+function DaftarMagangContent() {
   const { data: session, status: sessionStatus } = useSession();
   const searchParams = useSearchParams();
   const initialPosisi = searchParams.get('posisi') || '';
@@ -23,7 +23,7 @@ export default function DaftarMagangPage() {
     motivasi_cv: ''
   });
   const [cvFile, setCvFile] = useState<File | null>(null);
-  
+
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [appStatus, setAppStatus] = useState<'loading' | 'can_apply' | 'pending'>('loading');
 
@@ -68,7 +68,7 @@ export default function DaftarMagangPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitStatus('loading');
-    
+
     try {
       const formPayload = new FormData();
       formPayload.append('nama', formData.nama);
@@ -79,7 +79,7 @@ export default function DaftarMagangPage() {
       formPayload.append('nomor_ponsel', formData.nomor_ponsel);
       formPayload.append('domisili', formData.domisili);
       formPayload.append('motivasi_cv', formData.motivasi_cv);
-      
+
       if (cvFile) {
         formPayload.append('cv_file', cvFile);
       }
@@ -113,7 +113,7 @@ export default function DaftarMagangPage() {
   return (
     <div className="min-h-screen bg-[#010b14] text-slate-200 py-20 px-6">
       <div className="max-w-4xl mx-auto">
-        
+
         <Link href="/kerja-sama/informasi-magang" className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Kembali ke Info Magang
         </Link>
@@ -127,15 +127,15 @@ export default function DaftarMagangPage() {
             <p className="text-blue-100/70 mb-8 max-w-lg mx-auto leading-relaxed">
               Untuk melanjutkan proses pendaftaran kadet magang, Anda diwajibkan untuk masuk menggunakan akun Google Anda terlebih dahulu.
             </p>
-            <button 
+            <button
               onClick={() => signIn('google')}
               className="bg-white text-gray-800 font-bold px-8 py-3.5 rounded-full hover:bg-gray-100 transition-colors inline-flex items-center gap-3 shadow-lg"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               </svg>
               Login dengan Google
             </button>
@@ -221,19 +221,19 @@ export default function DaftarMagangPage() {
                   <label className="block text-sm font-medium text-blue-200 mb-2">Deskripsi Diri / Motivasi Magang</label>
                   <textarea name="motivasi_cv" required value={formData.motivasi_cv} onChange={handleChange} rows={4} className="w-full bg-[#010b14] border border-cyan-900/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Ceritakan motivasi Anda mengikuti magang ini..."></textarea>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-blue-200 mb-2">Unggah Berkas CV (PDF/Gambar)</label>
-                  <div 
+                  <div
                     className="w-full border-2 border-dashed border-cyan-900/50 rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-cyan-500/50 transition-colors bg-[#010b14]"
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <input 
-                      type="file" 
+                    <input
+                      type="file"
                       ref={fileInputRef}
                       onChange={handleFileChange}
                       accept=".pdf,image/*"
-                      className="hidden" 
+                      className="hidden"
                     />
                     <Upload className="w-10 h-10 text-cyan-500 mb-3" />
                     {cvFile ? (
@@ -268,5 +268,17 @@ export default function DaftarMagangPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function DaftarMagangPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#010b14] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <DaftarMagangContent />
+    </Suspense>
   );
 }

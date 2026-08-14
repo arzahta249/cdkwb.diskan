@@ -19,6 +19,7 @@ import {
   Calendar,
   AlertCircle
 } from 'lucide-react';
+import { showSuccess, showError, showConfirm } from '@/lib/swal';
 
 export default function AduanDashboardPage() {
   const [complaints, setComplaints] = useState<any[]>([]);
@@ -90,14 +91,14 @@ export default function AduanDashboardPage() {
 
       const data = await res.json();
       if (data.success) {
-        alert('Disposisi berhasil disimpan!');
+        await showSuccess('Berhasil', 'Disposisi berhasil disimpan!');
         closeModal();
         fetchComplaints();
       } else {
-        alert(data.error || 'Gagal memproses disposisi');
+        showError('Gagal', data.error || 'Gagal memproses disposisi');
       }
     } catch (err) {
-      alert('Terjadi kesalahan');
+      showError('Error', 'Terjadi kesalahan sistem');
     } finally {
       setActionSubmitting(false);
     }
@@ -121,14 +122,14 @@ export default function AduanDashboardPage() {
 
       const data = await res.json();
       if (data.success) {
-        alert('Pengaduan ditolak');
+        await showSuccess('Berhasil', 'Pengaduan ditolak');
         closeModal();
         fetchComplaints();
       } else {
-        alert(data.error || 'Gagal menolak pengaduan');
+        showError('Gagal', data.error || 'Gagal menolak pengaduan');
       }
     } catch (err) {
-      alert('Terjadi kesalahan');
+      showError('Error', 'Terjadi kesalahan sistem');
     } finally {
       setActionSubmitting(false);
     }
@@ -155,14 +156,14 @@ export default function AduanDashboardPage() {
 
       const data = await res.json();
       if (data.success) {
-        alert('Hasil penyelesaian berhasil disimpan!');
+        await showSuccess('Berhasil', 'Hasil penyelesaian berhasil disimpan!');
         closeModal();
         fetchComplaints();
       } else {
-        alert(data.error || 'Gagal menyimpan hasil penyelesaian');
+        showError('Gagal', data.error || 'Gagal menyimpan hasil penyelesaian');
       }
     } catch (err) {
-      alert('Terjadi kesalahan');
+      showError('Error', 'Terjadi kesalahan sistem');
     } finally {
       setActionSubmitting(false);
     }
@@ -170,7 +171,13 @@ export default function AduanDashboardPage() {
 
   // Close & Archive Ticket
   const handleCloseTicket = async (id: number) => {
-    if (!confirm('Apakah Anda yakin ingin menutup dan mengarsipkan tiket ini?')) return;
+    const isConfirmed = await showConfirm(
+      'Tutup Tiket?',
+      'Apakah Anda yakin ingin menutup dan mengarsipkan tiket ini?',
+      'Ya, Tutup Tiket',
+      false
+    );
+    if (!isConfirmed) return;
 
     try {
       const res = await fetch(`/api/pengaduan/${id}`, {
@@ -180,10 +187,13 @@ export default function AduanDashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
+        await showSuccess('Ditutup', 'Tiket berhasil ditutup.');
         fetchComplaints();
+      } else {
+        showError('Gagal', 'Gagal menutup tiket');
       }
     } catch (err) {
-      alert('Gagal menutup tiket');
+      showError('Error', 'Gagal menutup tiket');
     }
   };
 
