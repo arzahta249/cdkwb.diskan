@@ -1,5 +1,5 @@
 import { pool } from '@/lib/db';
-import EditForm from './EditForm'; // Force TS parse
+import EditForm from './FormEdit';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 0;
