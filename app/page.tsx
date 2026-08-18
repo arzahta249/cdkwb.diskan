@@ -172,50 +172,74 @@ export default async function HomePage() {
                   <Link
                     href={linkHref}
                     key={`${item.type}-${item.id}`}
-                    className="group relative flex flex-col h-[340px] sm:h-[400px] md:h-[450px] w-[85vw] sm:w-[350px] md:w-[400px] lg:w-[450px] shrink-0 snap-center sm:snap-start rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(111,243,200,0.15)]"
-                    style={{ border: '1px solid rgba(255,255,255,0.05)' }}
+                    className="group relative flex flex-col h-[380px] sm:h-[420px] md:h-[480px] w-[85vw] sm:w-[350px] md:w-[400px] lg:w-[450px] shrink-0 snap-center sm:snap-start overflow-hidden transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_50px_-10px_rgba(111,243,200,0.25)] border border-white/10 hover:border-[#6FF3C8]/40"
+                    style={{ 
+                      borderRadius: '40px 10px 40px 10px', // Organic wave-like shape
+                      animation: `floatBob ${6 + (index % 3)}s ease-in-out infinite ${index * 0.5}s` 
+                    }}
                   >
-                    {/* Background Image with Slow Zoom on Hover */}
-                    <Image
-                      src={item.image || '/leading/berita.png'}
-                      alt={item.Judul}
-                      fill
-                      className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                    />
+                    {/* Inline style for the float animation to avoid touching globals.css for now */}
+                    <style dangerouslySetInnerHTML={{__html: `
+                      @keyframes floatBob {
+                        0%, 100% { transform: translateY(0); }
+                        50% { transform: translateY(-8px); }
+                      }
+                    `}} />
+
+                    {/* Background Image with Marine Tint and Subtle Zoom */}
+                    <div className="absolute inset-0 w-full h-[65%] overflow-hidden rounded-t-[40px] rounded-tr-[10px]">
+                      <Image
+                        src={item.image || '/leading/berita.png'}
+                        alt={item.Judul}
+                        fill
+                        className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                      />
+                      {/* Deep sea tint over the image */}
+                      <div className="absolute inset-0 bg-[#093345]/40 group-hover:bg-[#093345]/10 transition-colors duration-700" />
+                    </div>
                     
-                    {/* Rich Deep Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#030B14] via-[#030B14]/80 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100" />
-                    
+                    {/* Wave Divider (Marine aesthetic) */}
+                    <div className="absolute top-[64%] left-0 w-full overflow-hidden leading-none z-10 translate-y-[-99%] pointer-events-none">
+                      <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[40px] sm:h-[60px]">
+                        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V0C50.29,15.11,105,29.35,159.21,41.97,212.79,54.49,266.69,65.34,321.39,56.44Z" fill="#030B14"></path>
+                      </svg>
+                    </div>
+
+                    {/* Bottom Content Area */}
+                    <div className="absolute bottom-0 left-0 w-full h-[40%] bg-[#030B14] group-hover:bg-[#05111D] transition-colors duration-500 z-0 rounded-b-[40px] rounded-bl-[10px]" />
+
                     {/* Floating Glassmorphism Badge */}
                     <div className="absolute top-6 right-6 z-20">
-                      <span className="backdrop-blur-md bg-white/10 border border-white/20 text-white text-[10px] sm:text-xs font-semibold px-4 py-2 rounded-full shadow-lg uppercase tracking-widest">
+                      <span className="backdrop-blur-md bg-[#093345]/50 border border-[#6FF3C8]/20 text-[#6FF3C8] text-[10px] font-bold px-4 py-2 rounded-full shadow-lg uppercase tracking-widest group-hover:bg-[#6FF3C8]/10 group-hover:border-[#6FF3C8]/40 transition-colors duration-500">
                         {item.type === 'artikel' ? 'Artikel' : 'Berita'}
                       </span>
                     </div>
 
-                    {/* Animated Content Container */}
-                    <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end z-20 transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
-                      {/* Meta Information */}
-                      <div className="flex items-center gap-4 mb-4 text-xs font-medium text-gray-300">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4 text-[#6FF3C8]" />
-                          <span>{new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    {/* Animated Content Container with Ample Space */}
+                    <div className="absolute inset-x-0 bottom-0 p-8 sm:p-10 flex flex-col justify-end z-20 transition-transform duration-500 translate-y-2 group-hover:translate-y-0 h-full">
+                      <div className="mt-auto">
+                        {/* Meta Information (Styled like marine tags) */}
+                        <div className="flex items-center gap-4 mb-5 text-[11px] font-medium text-slate-400 uppercase tracking-wide">
+                          <div className="flex items-center gap-2 bg-white/5 border border-white/5 px-3 py-1.5 rounded-full group-hover:border-[#6FF3C8]/20 transition-colors">
+                            <Calendar className="w-3.5 h-3.5 text-[#6FF3C8]" />
+                            <span>{new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+                          </div>
+                          <div className="flex items-center gap-2 bg-white/5 border border-white/5 px-3 py-1.5 rounded-full group-hover:border-[#6FF3C8]/20 transition-colors">
+                            <User className="w-3.5 h-3.5 text-[#6FF3C8]" />
+                            <span className="truncate max-w-[100px] sm:max-w-[120px]">{item.penulis || 'Admin'}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <User className="w-4 h-4 text-[#6FF3C8]" />
-                          <span>{item.penulis || 'Admin CDKWB'}</span>
+                        
+                        {/* Title with elegant typography, no excessive sizing */}
+                        <h3 className="text-lg sm:text-xl font-semibold text-white/90 leading-relaxed mb-6 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#6FF3C8] group-hover:to-cyan-300 transition-all duration-300">
+                          {item.Judul}
+                        </h3>
+                        
+                        {/* Interactive Reveal Button */}
+                        <div className="flex items-center gap-2 text-[#6FF3C8] text-xs font-bold uppercase tracking-widest opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:translate-x-1">
+                          Arungi Lebih Jauh
+                          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                         </div>
-                      </div>
-                      
-                      {/* Title with color transition */}
-                      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug mb-4 line-clamp-3 group-hover:text-[#6FF3C8] transition-colors duration-300">
-                        {item.Judul}
-                      </h3>
-                      
-                      {/* Interactive Reveal Button */}
-                      <div className="flex items-center gap-2 text-[#6FF3C8] text-sm font-bold uppercase tracking-wider opacity-0 -translate-x-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0">
-                        Baca Selengkapnya
-                        <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
                   </Link>

@@ -2,19 +2,11 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Loader2, Image as ImageIcon, X, Tag, Camera, ImagePlus } from 'lucide-react';
+import { Save, ArrowLeft, Loader2, Image as ImageIcon, X, Tag, Camera, ImagePlus, Type, AlignLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 const KATEGORI_OPTIONS = ['Umum', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan'];
-
-const KATEGORI_COLORS: Record<string, string> = {
-  Kelautan:     '#6FF3C8',
-  Perikanan:    '#FFC14D',
-  Konservasi:   '#64D287',
-  Pemberdayaan: '#FF795A',
-  Umum:         '#B4B4FF',
-};
 
 export default function FormEdit({ initialData }: { initialData: any }) {
   const router = useRouter();
@@ -85,158 +77,195 @@ export default function FormEdit({ initialData }: { initialData: any }) {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
-      <div className="flex items-center gap-4">
-        <Link 
-          href="/dashboard/news"
-          className="p-2 text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors border border-slate-800"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
-            Edit Berita {isInstagram && '(Via Instagram)'}
-          </h1>
-          <p className="text-slate-400 mt-1">Lakukan perubahan pada data berita Anda.</p>
+    <div className="min-h-[80vh] flex flex-col space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 relative">
+      
+      {/* HEADER SECTION */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10">
+        <div className="flex items-start gap-5">
+          <Link 
+            href="/dashboard/news"
+            className="mt-1 p-2.5 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-2xl backdrop-blur-md transition-all border border-white/5 hover:border-white/20 group"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          </Link>
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent">
+                Edit Berita
+              </h1>
+              {isInstagram && (
+                <span className="px-3 py-1 bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-500/30 rounded-full text-pink-300 text-xs font-bold tracking-wide uppercase">
+                  Via Instagram
+                </span>
+              )}
+            </div>
+            <p className="text-slate-400 text-sm md:text-base max-w-lg leading-relaxed">
+              Sesuaikan informasi, ubah kategori, atau perbarui draf sebelum dipublikasikan ke halaman utama.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden max-w-4xl">
+      {/* FORM CONTAINER (GLASSMORPHISM) */}
+      <div className="bg-[#0A1118]/60 backdrop-blur-2xl border border-white/5 rounded-[2rem] shadow-2xl overflow-hidden max-w-4xl relative z-10">
+        
+        {/* Decorative Top Glow */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+
         {error && (
-          <div className="m-6 mb-0 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-sm">
+          <div className="m-8 mb-0 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center gap-3 text-rose-400 text-sm font-medium animate-in slide-in-from-top-2">
+            <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-10">
           
           {isInstagram && (
-            <>
-              <div className="p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-pink-500/20 mb-6">
-                <div className="flex items-start gap-3">
-                  <Camera className="w-5 h-5 text-pink-400 shrink-0 mt-0.5" />
-                  <p className="text-sm text-pink-100/80 leading-relaxed">
-                    Ubah link Instagram di bawah jika diperlukan.
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Link URL Instagram <span className="text-pink-400">*</span></label>
+            <div className="space-y-3">
+              <label className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                <Camera className="w-4 h-4 text-pink-400" /> Tautan Instagram
+              </label>
+              <div className="relative group">
                 <input 
                   type="url" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} required
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all text-sm placeholder:text-slate-500"
+                  placeholder="https://www.instagram.com/p/..."
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-slate-500 focus:outline-none focus:border-pink-400 focus:bg-white/10 focus:ring-4 focus:ring-pink-400/10 transition-all font-medium"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* COVER IMAGE */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-cyan-400" /> 
+                Sampul / Thumbnail {isInstagram && <span className="text-slate-500 font-normal">(Opsional)</span>}
+              </label>
+            </div>
+            
+            <div className="relative group">
+              {!imagePreview ? (
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full h-56 border-2 border-dashed border-white/10 bg-white/[0.02] hover:bg-cyan-500/[0.02] hover:border-cyan-400/40 rounded-[2rem] flex flex-col items-center justify-center cursor-pointer transition-all duration-300"
+                >
+                  <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-cyan-500/10 transition-all duration-300 shadow-lg">
+                    <ImagePlus className="w-8 h-8 text-slate-400 group-hover:text-cyan-400 transition-colors" />
+                  </div>
+                  <p className="text-slate-300 font-semibold mb-1">Pilih Gambar Sampul</p>
+                  <p className="text-sm text-slate-500">Klik atau seret gambar ke area ini</p>
+                </div>
+              ) : (
+                <div className="relative w-full h-56 sm:h-72 rounded-[2rem] overflow-hidden group/image border border-white/10 shadow-2xl">
+                  <Image src={imagePreview} alt="Preview" fill className="object-cover transition-transform duration-700 group-hover/image:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button type="button" onClick={clearImage}
+                      className="p-3 bg-white/10 hover:bg-rose-500 text-white backdrop-blur-md rounded-full transition-all duration-300 hover:scale-110 shadow-2xl border border-white/20">
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+              <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
+            </div>
+          </div>
+
+          <hr className="border-white/5" />
+
+          {/* JUDUL */}
+          <div className="space-y-3">
+            <label className="text-sm font-bold text-slate-300 flex items-center gap-2">
+              <Type className="w-4 h-4 text-cyan-400" /> Judul Berita
+            </label>
+            <input 
+              type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required
+              placeholder="Masukkan judul yang menarik..."
+              className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-lg font-medium placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 focus:bg-white/10 focus:ring-4 focus:ring-cyan-400/10 transition-all"
+            />
+          </div>
+
+          {/* KATEGORI & STATUS - MODERN PILLS */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div className="space-y-4">
+              <label className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                <Tag className="w-4 h-4 text-cyan-400" /> Kategori
+              </label>
+              <div className="flex flex-wrap gap-2.5">
+                {KATEGORI_OPTIONS.map((k) => (
+                  <button
+                    key={k} type="button" onClick={() => setKategori(k)}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                      kategori === k 
+                      ? 'bg-cyan-500 text-[#030B14] shadow-[0_0_20px_rgba(34,211,238,0.3)]' 
+                      : 'bg-white/5 text-slate-400 border border-white/5 hover:bg-white/10 hover:text-slate-200 hover:border-white/10'
+                    }`}
+                  >
+                    {k}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <label className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                Status Publikasi
+              </label>
+              <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/5 w-fit">
+                <button 
+                  type="button" onClick={() => setStatus('published')} 
+                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                    status === 'published' 
+                    ? 'bg-[#6FF3C8] text-[#030B14] shadow-[0_0_20px_rgba(111,243,200,0.3)]' 
+                    : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Diterbitkan
+                </button>
+                <button 
+                  type="button" onClick={() => setStatus('draft')} 
+                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                    status === 'draft' 
+                    ? 'bg-slate-700 text-white shadow-lg' 
+                    : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Simpan Draf
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {!isInstagram && (
+            <>
+              <hr className="border-white/5" />
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                  <AlignLeft className="w-4 h-4 text-cyan-400" /> Isi Konten Berita
+                </label>
+                <textarea 
+                  rows={12} value={isiBerita} onChange={(e) => setIsiBerita(e.target.value)} required
+                  placeholder="Tuliskan isi berita Anda di sini..."
+                  className="w-full px-5 py-5 bg-white/5 border border-white/10 rounded-[2rem] text-white text-base leading-relaxed placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 focus:bg-white/10 focus:ring-4 focus:ring-cyan-400/10 transition-all resize-y"
                 />
               </div>
             </>
           )}
 
-          {/* Cover image (Opsional untuk Instagram, direkomendasikan untuk biasa) */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Gambar Cover / Thumbnail {isInstagram && '(Opsional)'}</label>
-            {isInstagram ? (
-               <div className="relative border-2 border-dashed border-slate-700 rounded-xl p-6 bg-slate-950 flex flex-col items-center justify-center text-center hover:border-cyan-500/50 hover:bg-slate-900 transition-colors">
-                 <input 
-                   type="file" accept="image/*" onChange={handleImageChange}
-                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                 />
-                 {imagePreview ? (
-                   <div className="relative w-full max-w-sm h-48 rounded-lg overflow-hidden border border-slate-800">
-                     <Image src={imagePreview} alt="Preview" fill className="object-cover" />
-                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                       <p className="text-white text-sm font-medium">Klik untuk mengubah gambar</p>
-                     </div>
-                   </div>
-                 ) : (
-                   <>
-                     <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                       <ImagePlus className="w-6 h-6 text-slate-400" />
-                     </div>
-                     <p className="text-slate-300 text-sm font-medium mb-1">Ubah gambar pratinjau</p>
-                   </>
-                 )}
-               </div>
-            ) : (
-              !imagePreview ? (
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full h-48 border-2 border-dashed border-slate-800 hover:border-cyan-500/50 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-950"
-                >
-                  <ImageIcon className="w-8 h-8 text-slate-500 mb-2" />
-                  <p className="text-sm text-slate-400">Klik untuk mengubah gambar</p>
-                </div>
-              ) : (
-                <div className="relative w-full h-48 sm:h-64 rounded-xl overflow-hidden group border border-slate-800">
-                  <Image src={imagePreview} alt="Preview" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button type="button" onClick={clearImage}
-                      className="p-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium">
-                      <X className="w-4 h-4" />
-                      Hapus Gambar
-                    </button>
-                  </div>
-                </div>
-              )
-            )}
-            {!isInstagram && <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />}
-          </div>
-
-          <div className="grid grid-cols-1 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Judul Berita</label>
-              <input 
-                type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm placeholder:text-slate-500"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300 flex items-center gap-1.5">
-                <Tag className="w-4 h-4 text-cyan-400" /> Kategori
-              </label>
-              <div className="relative">
-                <select
-                  value={kategori} onChange={(e) => setKategori(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all appearance-none text-sm pr-10"
-                >
-                  {KATEGORI_OPTIONS.map((k) => (
-                    <option key={k} value={k}>{k}</option>
-                  ))}
-                </select>
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full" style={{ background: KATEGORI_COLORS[kategori] ?? '#fff' }} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Status</label>
-              <select 
-                value={status} onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all appearance-none text-sm"
-              >
-                <option value="published">Diterbitkan (Published)</option>
-                <option value="draft">Draft</option>
-              </select>
-            </div>
-          </div>
-
-          {!isInstagram && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Isi Berita</label>
-              <textarea 
-                rows={10} value={isiBerita} onChange={(e) => setIsiBerita(e.target.value)} required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-y leading-relaxed text-sm placeholder:text-slate-500"
-              />
-            </div>
-          )}
-
-          <div className="pt-4 flex justify-end">
+          {/* FLOATING ACTION BUTTON */}
+          <div className="pt-6 flex justify-end">
             <button 
               type="submit" disabled={loading}
-              className={`inline-flex items-center gap-2 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg disabled:opacity-70 disabled:cursor-not-allowed text-sm ${isInstagram ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 shadow-pink-500/20' : 'bg-cyan-600 hover:bg-cyan-500 shadow-cyan-500/20'}`}
+              className={`
+                group relative inline-flex items-center gap-3 overflow-hidden rounded-[1.5rem] p-[2px] focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 transition-transform hover:scale-[1.02] active:scale-95
+              `}
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-              {loading ? 'Menyimpan Perubahan...' : 'Simpan Perubahan'}
+              <span className={`absolute inset-[-1000%] animate-[spin_2s_linear_infinite] ${isInstagram ? 'bg-[conic-gradient(from_90deg_at_50%_50%,#EC4899_0%,#A855F7_50%,#EC4899_100%)]' : 'bg-[conic-gradient(from_90deg_at_50%_50%,#22D3EE_0%,#6FF3C8_50%,#22D3EE_100%)]'}`} />
+              <span className="inline-flex h-full w-full items-center justify-center rounded-[1.5rem] bg-[#0A1118] px-8 py-4 text-sm font-bold text-white backdrop-blur-3xl gap-2 transition-colors group-hover:bg-[#0A1118]/80">
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5 group-hover:scale-110 transition-transform" />}
+                {loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+              </span>
             </button>
           </div>
         </form>
