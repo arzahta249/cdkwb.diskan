@@ -45,7 +45,7 @@ export default function RegisterPage() {
       setSuccess('Registrasi berhasil! Mengarahkan ke halaman login...');
       
       setTimeout(() => {
-        router.push('/login');
+        router.push('/adminCDKWB');
       }, 2000);
     } catch (err: any) {
       setError(err.message);
@@ -160,7 +160,7 @@ export default function RegisterPage() {
           
           <div className="mt-6 text-center text-sm text-gray-400">
             Sudah punya akun?{' '}
-            <Link href="/login" className="text-blue-400 hover:text-blue-300 transition-colors">
+            <Link href="/adminCDKWB" className="text-blue-400 hover:text-blue-300 transition-colors">
               Masuk di sini
             </Link>
           </div>

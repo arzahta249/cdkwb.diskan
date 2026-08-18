@@ -15,6 +15,7 @@ async function getArtikelBySlug(slug: string) {
         a.tanggal, 
         a.value, 
         a.kategori as name_kategori,
+        a.instagram_url,
         u.nama as nama_penulis
        FROM artikel a
        LEFT JOIN user u ON a.id_penulis = u.ID_user
@@ -50,6 +51,17 @@ export default async function ArtikelDetailPage({ params }: { params: { slug: st
     }
   }
 
+  let embedUrl = '';
+  if (artikel.instagram_url) {
+    try {
+      const urlObj = new URL(artikel.instagram_url);
+      urlObj.search = '';
+      embedUrl = urlObj.toString().replace(/\/$/, '') + '/embed/captioned/';
+    } catch (e) {
+      embedUrl = artikel.instagram_url;
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="w-full bg-[#0a3153] h-20" /> {/* Spacer untuk Navbar (jika dipisah layoutnya) */}
@@ -64,53 +76,66 @@ export default async function ArtikelDetailPage({ params }: { params: { slug: st
         </Link>
 
         <article className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="relative w-full h-[400px]">
-            <Image 
-              src={imageUrl} 
-              alt={artikel.Judul}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-
-          <div className="p-8 md:p-12">
-            <div className="flex flex-wrap items-center gap-4 mb-6">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">
-                <Folder className="w-3.5 h-3.5" />
-                {artikel.name_kategori || 'Artikel'}
-              </span>
-              <div className="flex items-center gap-1.5 text-sm text-gray-500">
-                <Calendar className="w-4 h-4" />
-                {new Date(artikel.tanggal).toLocaleDateString('id-ID', {
-                  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-                })}
+          {embedUrl ? (
+            <div className="w-full max-w-lg mx-auto p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+               <iframe 
+                 src={embedUrl}
+                 className="w-full h-[800px] border border-gray-200 rounded-2xl shadow-xl bg-white"
+                 allow="encrypted-media"
+                 scrolling="yes"
+               />
+            </div>
+          ) : (
+            <>
+              <div className="relative w-full h-[400px]">
+                <Image 
+                  src={imageUrl} 
+                  alt={artikel.Judul}
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
-              <div className="flex items-center gap-1.5 text-sm text-gray-500">
-                <User className="w-4 h-4" />
-                {artikel.nama_penulis || 'Admin'}
+
+              <div className="p-8 md:p-12">
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">
+                    <Folder className="w-3.5 h-3.5" />
+                    {artikel.name_kategori || 'Artikel'}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                    <Calendar className="w-4 h-4" />
+                    {new Date(artikel.tanggal).toLocaleDateString('id-ID', {
+                      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                    })}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                    <User className="w-4 h-4" />
+                    {artikel.nama_penulis || 'Admin'}
+                  </div>
+                </div>
+
+                <h1 className="text-3xl md:text-4xl font-bold text-[#0a3153] mb-8 leading-tight">
+                  {artikel.Judul}
+                </h1>
+
+                <div className="prose prose-lg max-w-none text-gray-600">
+                  {artikel.isi_artikel.split('\\n').map((paragraph: string, idx: number) => (
+                    <p key={idx} className="mb-4 leading-relaxed">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+
+                <div className="mt-12 pt-8 border-t border-gray-100 flex items-center justify-between">
+                  <span className="text-sm text-gray-500 font-medium">Bagikan artikel ini:</span>
+                  <button className="p-2.5 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors">
+                    <Share2 className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-            </div>
-
-            <h1 className="text-3xl md:text-4xl font-bold text-[#0a3153] mb-8 leading-tight">
-              {artikel.Judul}
-            </h1>
-
-            <div className="prose prose-lg max-w-none text-gray-600">
-              {artikel.isi_artikel.split('\\n').map((paragraph: string, idx: number) => (
-                <p key={idx} className="mb-4 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-
-            <div className="mt-12 pt-8 border-t border-gray-100 flex items-center justify-between">
-              <span className="text-sm text-gray-500 font-medium">Bagikan artikel ini:</span>
-              <button className="p-2.5 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors">
-                <Share2 className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
+            </>
+          )}
         </article>
       </main>
     </div>

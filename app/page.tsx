@@ -6,11 +6,33 @@ import Footer from '@/components/Footer';
 import DepthGauge from '@/components/DepthGauge';
 import { ArrowRight, PlayCircle, Ship, Waves, ShieldAlert, FileText, Users, Calendar, User, ChevronRight } from 'lucide-react';
 
-async function getPublishedNews() {
+async function getLeadingItems() {
   try {
-    const [rows]: any = await pool.query(
-      "SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal FROM berita WHERE status = 'published' ORDER BY tanggal DESC LIMIT 2"
-    );
+    const [rows]: any = await pool.query(`
+      SELECT 
+        ID_berita as id, 
+        Judul, 
+        Slug, 
+        image, 
+        tanggal, 
+        'berita' as type
+      FROM berita 
+      WHERE status = 'published' AND is_leading = 1
+      
+      UNION ALL
+      
+      SELECT 
+        ID_artikel as id, 
+        Judul, 
+        Slug, 
+        NULL as image, 
+        tanggal, 
+        'artikel' as type
+      FROM artikel 
+      WHERE status = 'published' AND is_leading = 1
+      
+      ORDER BY tanggal DESC
+    `);
     return rows;
   } catch (err) {
     console.error(err);
@@ -19,7 +41,7 @@ async function getPublishedNews() {
 }
 
 export default async function HomePage() {
-  const news = await getPublishedNews();
+  const leadingItems = await getLeadingItems();
 
   return (
     <div className="min-h-screen font-sans">
@@ -33,7 +55,7 @@ export default async function HomePage() {
       <div className="ocean-bg">
 
         {/* 1. Hero Section */}
-        <section className="relative min-h-[85vh] sm:min-h-screen flex items-center pt-20 sm:pt-24 pb-24 sm:pb-36 overflow-hidden bg-[#093345]">
+        <section className="relative min-h-[90vh] sm:min-h-screen flex items-center pt-32 sm:pt-40 pb-32 sm:pb-48 overflow-hidden bg-[#093345]">
           {/* Background image & gradient overlay (placed ON TOP of light rays) */}
           <div className="absolute inset-0 z-0">
             {/* Light rays layer behind image */}
@@ -55,22 +77,22 @@ export default async function HomePage() {
           {/* Animated bubbles */}
           <div className="bubbles z-10" aria-hidden="true" id="bubblesHero" />
 
-          <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-6xl">
-            <div className="max-w-2xl">
+          <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-6xl flex flex-col items-center text-center">
+            <div className="max-w-3xl flex flex-col items-center">
               <span className="eyebrow text-xs" style={{ color: '#6FF3C8' }}>
                 Dinas Kelautan dan Perikanan · Provinsi Jawa Tengah
               </span>
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mt-4 sm:mt-5 mb-4 sm:mb-6 leading-[1.1]">
-                Cabang Dinas Kelautan<br />Wilayah Barat
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mt-6 sm:mt-8 mb-6 sm:mb-8 leading-tight">
+                Cabang Dinas Kelautan<br className="hidden sm:block" />Wilayah Barat
               </h1>
-              <p className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,0.75)' }}>
+              <p className="text-base sm:text-lg md:text-xl mb-10 sm:mb-14 leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,0.75)' }}>
                 Mewujudkan pengelolaan ruang laut yang berkelanjutan, aman, dan sejahtera untuk masa depan maritim Jawa Tengah.
               </p>
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-10 sm:mb-14">
-                <Link href="#layanan" className="btn-coral-ocean justify-center text-center">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-12 sm:mb-16 w-full">
+                <Link href="#layanan" className="btn-coral-ocean justify-center text-center w-[260px]">
                   Jelajahi Layanan
                 </Link>
-                <button className="btn-ghost-ocean justify-center text-center">
+                <button className="btn-ghost-ocean justify-center text-center w-[260px]">
                   <PlayCircle className="w-5 h-5 shrink-0" /> Tonton Video Profil
                 </button>
               </div>
@@ -113,10 +135,10 @@ export default async function HomePage() {
         <section id="layanan" className="py-16 sm:py-24 relative">
           <div className="glow-particles" aria-hidden="true" id="glowLayanan" />
           <div className="container mx-auto px-4 sm:px-6 max-w-5xl relative z-10">
-            <div className="text-center mb-12 sm:mb-16">
+            <div className="text-center mb-10 sm:mb-16">
               <span className="eyebrow" style={{ color: '#6FF3C8' }}>Zona Dangkal</span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mt-3 sm:mt-4 mb-2">Sekilas Layanan</h2>
-              <p className="text-xs sm:text-sm mt-2 sm:mt-3" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mt-3 sm:mt-4 mb-3">Sekilas Layanan</h2>
+              <p className="text-sm sm:text-base mt-2 sm:mt-3" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 Layanan inti untuk nelayan, pelaku usaha, dan masyarakat pesisir.
               </p>
             </div>
@@ -132,25 +154,25 @@ export default async function HomePage() {
         {/* 3. Berita & Kegiatan Terbaru */}
         <section className="py-16 sm:py-24 relative">
           <div className="container mx-auto px-4 sm:px-6 max-w-6xl relative z-10">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
               <div>
                 <span className="eyebrow" style={{ color: '#6FF3C8' }}>Zona Twilight · Terkini</span>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mt-3 sm:mt-4 mb-2">Berita &amp; Kegiatan Terbaru</h2>
-                <p className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>Pembaruan aktivitas dan dokumentasi lapangan terkini.</p>
+                <h2 className="text-3xl sm:text-4xl font-bold text-white mt-3 sm:mt-4 mb-3">Berita &amp; Kegiatan Terbaru</h2>
+                <p className="text-sm sm:text-base" style={{ color: 'rgba(255,255,255,0.65)' }}>Pembaruan aktivitas dan dokumentasi lapangan terkini.</p>
               </div>
               <Link href="/news" className="text-xs sm:text-sm font-semibold flex items-center gap-1 transition-colors hover:text-white self-start sm:self-auto" style={{ color: '#6FF3C8' }}>
                 Lihat Semua <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-              {news.map((item: any, index: number) => {
-                const isEven = index % 2 === 0;
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 lg:gap-8 pb-12 pt-4 px-4 -mx-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {leadingItems.map((item: any, index: number) => {
+                const linkHref = item.type === 'artikel' ? `/artikel/${item.Slug}` : `/news/${item.Slug}`;
                 return (
                   <Link
-                    href={`/news/${item.Slug}`}
-                    key={item.ID_berita}
-                    className={`group relative flex flex-col h-[400px] sm:h-[450px] rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(111,243,200,0.15)] ${!isEven ? 'lg:mt-12' : ''}`}
+                    href={linkHref}
+                    key={`${item.type}-${item.id}`}
+                    className="group relative flex flex-col h-[340px] sm:h-[400px] md:h-[450px] w-[85vw] sm:w-[350px] md:w-[400px] lg:w-[450px] shrink-0 snap-center sm:snap-start rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(111,243,200,0.15)]"
                     style={{ border: '1px solid rgba(255,255,255,0.05)' }}
                   >
                     {/* Background Image with Slow Zoom on Hover */}
@@ -167,7 +189,7 @@ export default async function HomePage() {
                     {/* Floating Glassmorphism Badge */}
                     <div className="absolute top-6 right-6 z-20">
                       <span className="backdrop-blur-md bg-white/10 border border-white/20 text-white text-[10px] sm:text-xs font-semibold px-4 py-2 rounded-full shadow-lg uppercase tracking-widest">
-                        Terkini
+                        {item.type === 'artikel' ? 'Artikel' : 'Berita'}
                       </span>
                     </div>
 
@@ -186,7 +208,7 @@ export default async function HomePage() {
                       </div>
                       
                       {/* Title with color transition */}
-                      <h3 className="text-2xl sm:text-3xl font-bold text-white leading-snug mb-4 line-clamp-3 group-hover:text-[#6FF3C8] transition-colors duration-300">
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug mb-4 line-clamp-3 group-hover:text-[#6FF3C8] transition-colors duration-300">
                         {item.Judul}
                       </h3>
                       
@@ -200,9 +222,9 @@ export default async function HomePage() {
                 );
               })}
 
-              {news.length === 0 && (
-                <div className="col-span-1 md:col-span-2 text-center py-16 sm:py-20 rounded-2xl ocean-card">
-                  <p style={{ color: 'rgba(255,255,255,0.45)' }}>Belum ada berita terbaru.</p>
+              {leadingItems.length === 0 && (
+                <div className="w-full text-center py-16 sm:py-20 rounded-2xl ocean-card">
+                  <p style={{ color: 'rgba(255,255,255,0.45)' }}>Belum ada informasi terbaru yang ditampilkan.</p>
                 </div>
               )}
             </div>
@@ -218,13 +240,13 @@ export default async function HomePage() {
 
           <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-3xl flex flex-col items-center">
             <span className="eyebrow mb-3 sm:mb-4" style={{ color: '#6FF3C8' }}>Zona Tengah Malam</span>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 sm:mb-6 tracking-tight leading-tight">
               Portal Layanan Terpadu
             </h2>
-            <p className="text-sm sm:text-lg mb-8 sm:mb-10 leading-relaxed max-w-2xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            <p className="text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 leading-relaxed max-w-2xl px-4 sm:px-0" style={{ color: 'rgba(255,255,255,0.7)' }}>
               Akses cepat ke berbagai layanan publik, informasi kelautan terpusat, dan pelaporan perizinan untuk wilayah barat dalam satu platform terintegrasi.
             </p>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
               <Link href="#" className="btn-coral-ocean justify-center text-center">
                 Akses Portal Sekarang <ArrowRight className="w-4 h-4" />
               </Link>
@@ -244,7 +266,7 @@ export default async function HomePage() {
 
 function ServiceCard({ icon: Icon, title, desc, num }: { icon: any; title: string; desc: string; num: string }) {
   return (
-    <div className="ocean-card flex flex-col items-center text-center p-8" style={{ transition: 'all 0.3s ease' }}>
+    <div className="ocean-card flex flex-col items-center text-center p-6 sm:p-8" style={{ transition: 'all 0.3s ease' }}>
       <span className="mb-3 text-xs font-mono" style={{ color: 'rgba(111,243,200,0.7)' }}>{num}</span>
       <div className="w-14 h-14 rounded-full flex items-center justify-center mb-5" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>
         <Icon className="w-6 h-6 text-white" strokeWidth={1.5} />

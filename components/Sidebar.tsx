@@ -91,7 +91,7 @@ export default function Sidebar() {
       console.error('Logout error:', e);
     }
     localStorage.removeItem('user');
-    router.replace('/login');
+    router.replace('/adminCDKWB');
     router.refresh();
   };
 
