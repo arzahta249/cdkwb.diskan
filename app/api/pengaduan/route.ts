@@ -123,56 +123,96 @@ export async function POST(request: Request) {
       ]
     );
 
-    // Kirim notifikasi email ke Admin secara asynchronous (tidak menunda response ke user)
+    // Kirim notifikasi email ke Admin secara asynchronous
+    const emailPromises = [];
+
     // Ambil daftar email admin langsung dari database
-    pool.query("SELECT Email FROM user WHERE role = 'admin' AND Email IS NOT NULL AND Email != ''")
-      .then(([adminRows]: any) => {
-        if (adminRows && adminRows.length > 0) {
-          const emailList = adminRows.map((row: any) => row.Email);
-          
-          const emailHtml = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
-              <div style="background-color: #0b3b60; color: white; padding: 20px; text-align: center;">
-                <h2 style="margin: 0;">Pemberitahuan Pengaduan Baru</h2>
-                <p style="margin: 5px 0 0; opacity: 0.8;">Tiket #${nomor_tiket}</p>
-              </div>
-              <div style="padding: 20px; background-color: #f9fafb;">
-                <p>Halo Admin,</p>
-                <p>Terdapat pengaduan baru yang masuk melalui portal layanan masyarakat. Berikut adalah rinciannya:</p>
-                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                  <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; width: 130px; font-weight: bold; color: #4b5563;">Kategori</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${kategori}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #4b5563;">Pelapor</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${is_anonim ? 'Anonim' : nama_pelapor}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #4b5563;">Lokasi</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${lokasi}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 10px; font-weight: bold; color: #4b5563; vertical-align: top;">Deskripsi</td>
-                    <td style="padding: 10px; color: #111827;">${deskripsi}</td>
-                  </tr>
-                </table>
-                <div style="margin-top: 25px; text-align: center;">
-                  <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/dashboard/pengaduan" style="display: inline-block; padding: 12px 24px; background-color: #0b3b60; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Cek di Dasbor</a>
-                </div>
+    try {
+      const [adminRows]: any = await pool.query("SELECT Email FROM user WHERE role = 'admin' AND Email IS NOT NULL AND Email != ''");
+      if (adminRows && adminRows.length > 0) {
+        const emailList = adminRows.map((row: any) => row.Email);
+        
+        const emailHtml = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #0b3b60; color: white; padding: 20px; text-align: center;">
+              <h2 style="margin: 0;">Pemberitahuan Pengaduan Baru</h2>
+              <p style="margin: 5px 0 0; opacity: 0.8;">Tiket #${nomor_tiket}</p>
+            </div>
+            <div style="padding: 20px; background-color: #f9fafb;">
+              <p>Halo Admin,</p>
+              <p>Terdapat pengaduan baru yang masuk melalui portal layanan masyarakat. Berikut adalah rinciannya:</p>
+              <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <tr>
+                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; width: 130px; font-weight: bold; color: #4b5563;">Kategori</td>
+                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${kategori}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #4b5563;">Pelapor</td>
+                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${is_anonim ? 'Anonim' : nama_pelapor}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #4b5563;">Lokasi</td>
+                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${lokasi}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; font-weight: bold; color: #4b5563; vertical-align: top;">Deskripsi</td>
+                  <td style="padding: 10px; color: #111827;">${deskripsi}</td>
+                </tr>
+              </table>
+              <div style="margin-top: 25px; text-align: center;">
+                <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/dashboard/pengaduan" style="display: inline-block; padding: 12px 24px; background-color: #0b3b60; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Cek di Dasbor</a>
               </div>
             </div>
-          `;
+          </div>
+        `;
 
+        emailPromises.push(
           sendEmail({
             to: emailList,
             subject: `[Pengaduan Baru] Tiket ${nomor_tiket} - ${kategori}`,
             html: emailHtml,
             replyTo: email_pelapor || undefined,
-          }).catch(err => console.error('Gagal mengirim email background:', err));
-        }
-      })
-      .catch((err) => console.error('Gagal mengambil email admin dari database:', err));
+          }).catch(err => console.error('Gagal mengirim email ke admin:', err))
+        );
+      }
+    } catch (err) {
+      console.error('Gagal mengambil email admin dari database:', err);
+    }
+
+    // Kirim notifikasi tanda terima ke email masyarakat (Pelapor)
+    if (email_pelapor) {
+      const citizenHtml = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+          <div style="background-color: #0ea5e9; color: white; padding: 20px; text-align: center;">
+            <h2 style="margin: 0;">Terima Kasih Atas Laporan Anda</h2>
+            <p style="margin: 5px 0 0; opacity: 0.9;">Dinas Kelautan dan Perikanan</p>
+          </div>
+          <div style="padding: 20px; background-color: #f9fafb;">
+            <p>Halo ${is_anonim ? 'Sobat Bahari' : nama_pelapor},</p>
+            <p>Pengaduan Anda telah kami terima dan sedang masuk dalam antrean pengecekan oleh petugas kami. Berikut adalah detail tiket Anda:</p>
+            <div style="background-color: white; border: 1px dashed #cbd5e1; padding: 15px; text-align: center; margin: 20px 0; border-radius: 6px;">
+              <p style="margin: 0; color: #64748b; font-size: 14px;">Nomor Tiket Pengaduan</p>
+              <h3 style="margin: 5px 0 0; font-size: 24px; color: #0f172a; tracking-widest;">${nomor_tiket}</h3>
+            </div>
+            <p>Anda dapat menggunakan nomor tiket ini untuk mengecek status pengaduan Anda di website kami.</p>
+            <p>Hormat kami,<br><strong>Sistem Layanan Pengaduan CDKWB</strong></p>
+          </div>
+        </div>
+      `;
+
+      emailPromises.push(
+        sendEmail({
+          to: email_pelapor,
+          subject: `[Tanda Terima] Pengaduan #${nomor_tiket}`,
+          html: citizenHtml,
+        }).catch(err => console.error('Gagal mengirim email ke pelapor:', err))
+      );
+    }
+
+    // WAJIB ditunggu agar Next.js tidak mematikan proses sebelum email terkirim
+    if (emailPromises.length > 0) {
+      await Promise.allSettled(emailPromises);
+    }
 
     return NextResponse.json(
       {
