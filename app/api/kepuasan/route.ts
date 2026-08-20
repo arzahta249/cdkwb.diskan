@@ -76,6 +76,8 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const {
+      nama,
+      whatsapp,
       email,
       jenis_kelamin,
       usia,
@@ -93,9 +95,11 @@ export async function POST(request: Request) {
       kritik_saran
     } = body;
 
+    const contactVal = whatsapp || email || '';
+
     // Validate required fields
-    if (!email || !jenis_kelamin || !usia || !pendidikan || !pekerjaan) {
-      return NextResponse.json({ error: 'Mohon lengkapi seluruh data demografi (Email, Jenis Kelamin, Usia, Pendidikan, Pekerjaan).' }, { status: 400 });
+    if (!nama || !contactVal || !jenis_kelamin || !usia || !pendidikan || !pekerjaan) {
+      return NextResponse.json({ error: 'Mohon lengkapi seluruh data responden (Nama, No. WhatsApp, Jenis Kelamin, Usia, Pendidikan, Pekerjaan).' }, { status: 400 });
     }
 
     if (
@@ -108,12 +112,13 @@ export async function POST(request: Request) {
 
     const [result]: any = await pool.query(
       `INSERT INTO survei_kepuasan 
-      (email, jenis_kelamin, usia, pendidikan, pekerjaan, peran, 
+      (nama, email, jenis_kelamin, usia, pendidikan, pekerjaan, peran, 
        u1_persyaratan, u2_prosedur, u3_kecepatan, u4_biaya, u5_produk, u6_kompetensi, u7_perilaku, u8_sarpras, u9_pengaduan, 
        kualitas_kemudahan, kualitas_kecepatan, kualitas_sikap, kritik_saran) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        email || '',
+        nama || '',
+        contactVal,
         jenis_kelamin || '',
         usia || '',
         pendidikan || '',

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import fs from 'fs/promises';
 import path from 'path';
+import { sendCitizenConfirmation, sendAdminNewAlert } from '@/lib/whatsapp';
 
 export async function GET(request: Request) {
   try {
@@ -104,6 +105,7 @@ export async function POST(request: Request) {
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
     const nomor_tiket = `TKT-${dateStr}-${randomCode}`;
+    const displayName = is_anonim ? 'Anonim' : nama_pelapor;
 
     const [result]: any = await pool.query(
       `INSERT INTO pengaduan 
@@ -111,7 +113,7 @@ export async function POST(request: Request) {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')`,
       [
         nomor_tiket,
-        is_anonim ? 'Anonim' : nama_pelapor,
+        displayName,
         email_pelapor,
         telepon_pelapor,
         kategori,
@@ -121,6 +123,22 @@ export async function POST(request: Request) {
         is_anonim
       ]
     );
+
+    // Trigger WhatsApp Notifications asynchronously so HTTP response is instant
+    sendCitizenConfirmation({
+      nomor_tiket,
+      nama_pelapor: displayName,
+      telepon_pelapor,
+    }).catch(err => console.error('Error sending citizen WA notification:', err));
+
+    sendAdminNewAlert({
+      nomor_tiket,
+      nama_pelapor: displayName,
+      kategori,
+      lokasi,
+      deskripsi,
+      telepon_pelapor,
+    }).catch(err => console.error('Error sending admin WA notification:', err));
 
     return NextResponse.json(
       {
@@ -139,3 +157,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

@@ -25,7 +25,17 @@ import {
   Sparkles,
   ArrowRight,
   TrendingUp,
-  Award
+  Award,
+  Mail,
+  Briefcase,
+  GraduationCap,
+  ThumbsUp,
+  RotateCcw,
+  HeartHandshake,
+  Users,
+  CheckCircle,
+  BarChart3,
+  Sliders
 } from 'lucide-react';
 
 export default function PengaduanPage() {
@@ -67,7 +77,8 @@ export default function PengaduanPage() {
   const [ikmStats, setIkmStats] = useState<any | null>(null);
   const [isLoadingIkm, setIsLoadingIkm] = useState(false);
   const [surveyForm, setSurveyForm] = useState({
-    email: '',
+    nama: '',
+    whatsapp: '',
     jenis_kelamin: '',
     usia: '',
     pendidikan: '',
@@ -258,8 +269,8 @@ export default function PengaduanPage() {
     setSurveySuccessMsg(null);
 
     // Validation
-    if (!surveyForm.email || !surveyForm.jenis_kelamin || !surveyForm.usia || !surveyForm.pendidikan || !surveyForm.pekerjaan) {
-      showError('Mohon lengkapi seluruh kolom demografi (Email, Jenis Kelamin, Usia, Pendidikan, Pekerjaan).');
+    if (!surveyForm.nama || !surveyForm.whatsapp || !surveyForm.jenis_kelamin || !surveyForm.usia || !surveyForm.pendidikan || !surveyForm.pekerjaan) {
+      showError('Mohon lengkapi seluruh data responden (Nama Lengkap, No. WhatsApp, Jenis Kelamin, Usia, Pendidikan, Pekerjaan).');
       return;
     }
 
@@ -285,7 +296,8 @@ export default function PengaduanPage() {
       if (data.success) {
         setSurveySuccessMsg('Jawaban Anda telah direkam. Terima kasih atas partisipasi Anda dalam survei SKM CDKWB!');
         setSurveyForm({
-          email: '',
+          nama: '',
+          whatsapp: '',
           jenis_kelamin: '',
           usia: '',
           pendidikan: '',
@@ -826,525 +838,402 @@ export default function PengaduanPage() {
             </div>
           )}
 
-          {/* TAB 3: KEPUASAN PENGGUNA (SURVEI SKM GOOGLE FORM STYLE) */}
-          {activeTab === 'kepuasan' && (
-            <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-300">
-              
-              {/* IKM Summary Score Banner */}
-              <div className="bg-gradient-to-r from-blue-900/80 via-[#0b2b4d] to-teal-900/80 backdrop-blur-xl border border-[#6FF3C8]/30 rounded-3xl p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                  <span className="eyebrow" style={{ color: '#6FF3C8' }}>Indeks Kepuasan Masyarakat (IKM)</span>
-                  <h2 className="text-xl font-bold text-white mt-1">Survei Kepuasan Pengguna CDKWB</h2>
-                  <p className="text-xs text-gray-300 mt-1">
-                    Berdasarkan Peraturan Menteri PAN-RB No. 14 Tahun 2017 tentang Pedoman Penyusunan Survei Kepuasan Masyarakat.
+          {/* TAB 3: KEPUASAN PENGGUNA (STREAMLINED & EFFICIENT SKM) */}
+          {activeTab === 'kepuasan' && (() => {
+            const answeredCount = [
+              !!surveyForm.email,
+              !!surveyForm.jenis_kelamin,
+              !!surveyForm.usia,
+              !!surveyForm.pendidikan,
+              !!surveyForm.pekerjaan,
+              surveyForm.u1_persyaratan > 0,
+              surveyForm.u2_prosedur > 0,
+              surveyForm.u3_kecepatan > 0,
+              surveyForm.u4_biaya > 0,
+              surveyForm.u5_produk > 0,
+              surveyForm.u6_kompetensi > 0,
+              surveyForm.u7_perilaku > 0,
+              surveyForm.u8_sarpras > 0,
+              surveyForm.u9_pengaduan > 0,
+            ].filter(Boolean).length;
+            const totalRequired = 14;
+            const progressPercent = Math.round((answeredCount / totalRequired) * 100);
+
+            const UNSUR_LIST = [
+              {
+                id: 'u1_persyaratan' as const,
+                num: 1,
+                title: 'Kesesuaian Persyaratan Pelayanan',
+                desc: 'Kesesuaian dan kemudahan kelengkapan berkas/syarat layanan',
+                labels: ['Tidak Sesuai', 'Kurang Sesuai', 'Sesuai', 'Sangat Sesuai']
+              },
+              {
+                id: 'u2_prosedur' as const,
+                num: 2,
+                title: 'Kemudahan Prosedur & Alur Layanan',
+                desc: 'Kemudahan alur pelayanan (praktis, jelas & tidak berbelit)',
+                labels: ['Tidak Mudah', 'Kurang Mudah', 'Mudah', 'Sangat Mudah']
+              },
+              {
+                id: 'u3_kecepatan' as const,
+                num: 3,
+                title: 'Kecepatan Waktu Pelayanan',
+                desc: 'Ketepatan waktu proses pelayanan sesuai standar waktu SOP',
+                labels: ['Tidak Cepat', 'Kurang Cepat', 'Cepat', 'Sangat Cepat']
+              },
+              {
+                id: 'u4_biaya' as const,
+                num: 4,
+                title: 'Kewajaran Biaya / Tarif Pelayanan',
+                desc: 'Kewajaran biaya resmi (sesuai PNBP / Bebas biaya & pungli)',
+                labels: ['Sangat Mahal', 'Cukup Mahal', 'Murah / Wajar', 'Gratis / Tepat']
+              },
+              {
+                id: 'u5_produk' as const,
+                num: 5,
+                title: 'Kesesuaian Produk & Standar Pelayanan',
+                desc: 'Kesesuaian output hasil layanan dengan janji standar pelayanan',
+                labels: ['Tidak Sesuai', 'Kurang Sesuai', 'Sesuai', 'Sangat Sesuai']
+              },
+              {
+                id: 'u6_kompetensi' as const,
+                num: 6,
+                title: 'Kompetensi & Kemampuan Petugas',
+                desc: 'Kecakapan, keahlian, dan penguasaan materi tugas oleh petugas',
+                labels: ['Tidak Kompeten', 'Kurang Kompeten', 'Kompeten', 'Sangat Kompeten']
+              },
+              {
+                id: 'u7_perilaku' as const,
+                num: 7,
+                title: 'Perilaku, Kesopanan & Keramahan Petugas',
+                desc: 'Sikap santun, keramahan, dan ketulusan petugas saat melayani',
+                labels: ['Tidak Sopan', 'Kurang Sopan', 'Sopan', 'Sangat Ramah']
+              },
+              {
+                id: 'u8_sarpras' as const,
+                num: 8,
+                title: 'Kualitas Sarana & Prasarana',
+                desc: 'Kebersihan, kenyamanan ruang, dan kelengkapan fasilitas layanan',
+                labels: ['Tidak Baik', 'Kurang Baik', 'Baik & Layak', 'Sangat Baik']
+              },
+              {
+                id: 'u9_pengaduan' as const,
+                num: 9,
+                title: 'Penanganan Aduan & Konsultasi',
+                desc: 'Respon cepat, kejelasan tindak lanjut, dan solusi atas pengaduan',
+                labels: ['Tidak Ada', 'Tidak Berfungsi', 'Cukup Maksimal', 'Sangat Baik']
+              }
+            ];
+
+            return (
+              <div className="max-w-3xl mx-auto space-y-5 animate-in fade-in duration-300">
+                
+                {/* ── CLEAN MINIMAL HEADER ── */}
+                <div className="text-center space-y-1.5 pb-2">
+                  <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                    Survei Kepuasan Masyarakat (SKM)
+                  </h2>
+                  <p className="text-xs text-white max-w-md mx-auto">
+                    Bantu kami meningkatkan kualitas pelayanan publik dengan memberikan penilaian singkat di bawah ini.
                   </p>
                 </div>
-                <div className="flex items-center gap-3 bg-black/40 px-5 py-3 rounded-2xl border border-white/10 shrink-0">
-                  <Award className="w-8 h-8 text-[#6FF3C8]" />
-                  <div>
-                    <div className="text-2xl font-black text-[#6FF3C8]">
-                      {ikmStats?.stats?.ikmScore || '94.5'} <span className="text-xs font-normal text-gray-400">/ 100</span>
+
+                {/* ── SUCCESS BANNER ── */}
+                {surveySuccessMsg && (
+                  <div className="bg-gradient-to-br from-[#0c2847] to-[#061527] border border-emerald-500/40 rounded-2xl p-8 text-center space-y-4 animate-in zoom-in-95 shadow-xl">
+                    <div className="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto border border-emerald-500/30">
+                      <CheckCircle2 className="w-8 h-8" />
                     </div>
-                    <div className="text-xs font-semibold text-white">Mutu Layanan: A (Sangat Baik)</div>
+                    <div className="space-y-1">
+                      <h3 className="text-xl font-bold text-white">Survei Berhasil Dikirim!</h3>
+                      <p className="text-xs text-emerald-300 font-medium">{surveySuccessMsg}</p>
+                    </div>
+                    <button
+                      onClick={() => setSurveySuccessMsg(null)}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-md cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" /> Kirim Survei Lain
+                    </button>
                   </div>
-                </div>
-              </div>
+                )}
 
-              {/* Success Message Banner */}
-              {surveySuccessMsg && (
-                <div className="bg-[#0b223d] border-t-8 border-t-emerald-500 rounded-2xl p-8 shadow-2xl text-center space-y-4 animate-in zoom-in-95">
-                  <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/30">
-                    <CheckCircle2 className="w-10 h-10" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-extrabold text-white">Survei Kepuasan Masyarakat</h3>
-                    <p className="text-sm text-emerald-400 font-semibold mt-2">{surveySuccessMsg}</p>
-                  </div>
-                  <button
-                    onClick={() => setSurveySuccessMsg(null)}
-                    className="px-6 py-2.5 bg-[#6FF3C8] hover:bg-[#5ce4b7] text-[#0b3b60] font-bold text-xs rounded-xl transition-all shadow-md mt-4"
-                  >
-                    Kirim Jawaban Lain
-                  </button>
-                </div>
-              )}
+                {/* ── FORM ── */}
+                {!surveySuccessMsg && (
+                  <form onSubmit={handleSubmitSurvey} className="space-y-6">
+                    
+                    {/* ══ STEP 1: COMPACT RESPONDENT PROFILE ══ */}
+                    <div className="bg-[#0b203a]/80 border border-white/10 rounded-2xl p-5 shadow-lg space-y-4">
+                      <div className="flex items-center justify-between pb-2.5 border-b border-white/10">
+                        <span className="text-xs font-bold text-white uppercase tracking-wider">Data Responden</span>
+                        <span className="text-[11px] text-slate-400">Wajib diisi (*)</span>
+                      </div>
 
-              {!surveySuccessMsg && (
-                <form onSubmit={handleSubmitSurvey} className="space-y-5">
-                  
-                  {/* Google Forms Header Card */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl relative">
-                    <div className="h-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-teal-400"></div>
-                    <div className="p-6 sm:p-8 space-y-3">
-                      <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-                        Survei Kepuasan Masyarakat (SKM)
-                      </h2>
-                      <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                        Cabang Dinas Kelautan dan Perikanan Wilayah Barat - Dinas Kelautan dan Perikanan Provinsi Jawa Tengah.
-                      </p>
-                      <hr className="border-white/10 my-3" />
-                      <div className="text-xs text-red-400 font-medium flex items-center gap-1">
-                        <span>* Menunjukkan pertanyaan yang wajib diisi</span>
+                      <div className="grid sm:grid-cols-2 gap-3.5">
+                        {/* Nama Lengkap */}
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-300 mb-1 block">
+                            Nama Lengkap <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="Contoh: Budi Santoso"
+                            value={surveyForm.nama}
+                            onChange={(e) => setSurveyForm({ ...surveyForm, nama: e.target.value })}
+                            className="w-full bg-slate-950/70 border border-slate-700/80 focus:border-cyan-400 rounded-xl px-3 py-2 text-white text-xs focus:outline-none transition-colors placeholder-slate-500"
+                          />
+                        </div>
+
+                        {/* No. WhatsApp / HP */}
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-300 mb-1 block">
+                            No. WhatsApp / HP <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="tel"
+                            required
+                            placeholder="Contoh: 081234567890"
+                            value={surveyForm.whatsapp}
+                            onChange={(e) => setSurveyForm({ ...surveyForm, whatsapp: e.target.value })}
+                            className="w-full bg-slate-950/70 border border-slate-700/80 focus:border-cyan-400 rounded-xl px-3 py-2 text-white text-xs focus:outline-none transition-colors placeholder-slate-500"
+                          />
+                        </div>
+
+                        {/* Gender (Toggle Pill) */}
+                        <div className="sm:col-span-2">
+                          <label className="text-[11px] font-semibold text-slate-300 mb-1 block">
+                            Jenis Kelamin <span className="text-rose-400">*</span>
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {['Laki-laki', 'Perempuan'].map((g) => {
+                              const active = surveyForm.jenis_kelamin === g;
+                              return (
+                                <button
+                                  type="button"
+                                  key={g}
+                                  onClick={() => setSurveyForm({ ...surveyForm, jenis_kelamin: g })}
+                                  className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                                    active
+                                      ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200'
+                                      : 'bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-700'
+                                  }`}
+                                >
+                                  {active && <Check className="w-3 h-3 text-cyan-400 stroke-[3]" />}
+                                  <span>{g}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Dropdowns in a 3-col grid */}
+                        <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                          {/* Usia */}
+                          <div>
+                            <label className="text-[11px] font-semibold text-slate-300 mb-1 block">
+                              Rentang Usia <span className="text-rose-400">*</span>
+                            </label>
+                            <select
+                              value={surveyForm.usia}
+                              onChange={(e) => setSurveyForm({ ...surveyForm, usia: e.target.value })}
+                              className="w-full bg-slate-950/70 border border-slate-700/80 focus:border-cyan-400 rounded-xl px-3 py-2 text-white text-xs focus:outline-none transition-colors cursor-pointer"
+                            >
+                              <option value="" disabled>Pilih Usia</option>
+                              {['15 - 20', '21 - 25', '26 - 30', '31 - 35', '36 - 40', '> 40'].map((a) => (
+                                <option key={a} value={a}>{a} Tahun</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Pendidikan */}
+                          <div>
+                            <label className="text-[11px] font-semibold text-slate-300 mb-1 block">
+                              Pendidikan Terakhir <span className="text-rose-400">*</span>
+                            </label>
+                            <select
+                              value={surveyForm.pendidikan}
+                              onChange={(e) => setSurveyForm({ ...surveyForm, pendidikan: e.target.value })}
+                              className="w-full bg-slate-950/70 border border-slate-700/80 focus:border-cyan-400 rounded-xl px-3 py-2 text-white text-xs focus:outline-none transition-colors cursor-pointer"
+                            >
+                              <option value="" disabled>Pilih Pendidikan</option>
+                              {['SD', 'SMP', 'SMA / SMK', 'D1 / D2 / D3', 'S1 / D4', 'S2', 'S3'].map((e) => (
+                                <option key={e} value={e}>{e}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Pekerjaan */}
+                          <div>
+                            <label className="text-[11px] font-semibold text-slate-300 mb-1 block">
+                              Pekerjaan / Profesi <span className="text-rose-400">*</span>
+                            </label>
+                            <select
+                              value={surveyForm.pekerjaan}
+                              onChange={(e) => setSurveyForm({ ...surveyForm, pekerjaan: e.target.value })}
+                              className="w-full bg-slate-950/70 border border-slate-700/80 focus:border-cyan-400 rounded-xl px-3 py-2 text-white text-xs focus:outline-none transition-colors cursor-pointer"
+                            >
+                              <option value="" disabled>Pilih Profesi</option>
+                              {[
+                                { label: 'Nelayan / Petani', val: 'Petani / Nelayan' },
+                                { label: 'Wirausaha / Pedagang', val: 'Wirausaha' },
+                                { label: 'Karyawan Swasta', val: 'Swasta' },
+                                { label: 'PNS / ASN', val: 'PNS' },
+                                { label: 'TNI / POLRI', val: 'TNI' },
+                                { label: 'BUMN / BUMD', val: 'BUMN / BUMD' },
+                                { label: 'Pelajar / Mahasiswa', val: 'Pelajar / Mahasiswa' },
+                                { label: 'Tidak Bekerja', val: 'Putus Sekolah / Tidak Bekerja' },
+                                { label: 'Lainnya', val: 'Lainnya' }
+                              ].map((p) => (
+                                <option key={p.val} value={p.val}>{p.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Card 1: Email */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-2">
-                      Alamat E-mail <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="Jawaban Anda"
-                      value={surveyForm.email}
-                      onChange={(e) => setSurveyForm({ ...surveyForm, email: e.target.value })}
-                      className="w-full bg-transparent border-b border-gray-600 focus:border-[#6FF3C8] text-white py-2 text-sm focus:outline-none transition-colors placeholder-gray-500"
-                    />
-                  </div>
+                    {/* ══ STEP 2: STREAMLINED 9-UNSUR EVALUATION MATRIX ══ */}
+                    <div className="bg-[#0b203a]/80 border border-white/10 rounded-2xl p-5 shadow-lg space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
+                        <span className="text-xs font-bold text-white uppercase tracking-wider">Penilaian Pelayanan</span>
+                        {/* Rating Legend */}
+                        <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                          <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-400" /> 1: Kurang</span>
+                          <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400" /> 2: Cukup</span>
+                          <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-sky-400" /> 3: Baik</span>
+                          <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400" /> 4: Sangat Baik</span>
+                        </div>
+                      </div>
 
-                  {/* Card 2: Jenis Kelamin */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4">
-                      Jenis Kelamin <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {['Laki-laki', 'Perempuan'].map((opt) => (
-                        <label
-                          key={opt}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="jenis_kelamin"
-                            value={opt}
-                            checked={surveyForm.jenis_kelamin === opt}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, jenis_kelamin: e.target.value })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt}</span>
-                        </label>
-                      ))}
+                      {/* Clean Matrix Rows */}
+                      <div className="divide-y divide-white/5">
+                        {UNSUR_LIST.map((q) => {
+                          const val = surveyForm[q.id];
+                          const selectedLabel = val > 0 ? q.labels[val - 1] : null;
+
+                          return (
+                            <div key={q.id} className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group">
+                              {/* Question info */}
+                              <div className="space-y-0.5 pr-2 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/80 px-1.5 py-0.5 rounded border border-cyan-500/30">
+                                    #{q.num}
+                                  </span>
+                                  <h4 className="text-xs sm:text-sm font-semibold text-white group-hover:text-cyan-200 transition-colors leading-snug">
+                                    {q.title} <span className="text-rose-400">*</span>
+                                  </h4>
+                                </div>
+                                <p className="text-[11px] text-slate-400 pl-6 leading-tight">
+                                  {q.desc}
+                                </p>
+                              </div>
+
+                              {/* 4 Segmented Score Buttons & Active Label */}
+                              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center pl-6 sm:pl-0">
+                                {selectedLabel && (
+                                  <span className="text-[11px] font-bold text-cyan-300 hidden md:inline-block bg-cyan-950/60 px-2 py-0.5 rounded-lg border border-cyan-500/30 animate-in fade-in">
+                                    {selectedLabel}
+                                  </span>
+                                )}
+                                <div className="flex bg-slate-950/80 border border-slate-800 p-1 rounded-xl gap-1">
+                                  {[1, 2, 3, 4].map((score) => {
+                                    const isSelected = val === score;
+                                    const optionLabel = q.labels[score - 1];
+                                    return (
+                                      <button
+                                        type="button"
+                                        key={score}
+                                        onClick={() => setSurveyForm({ ...surveyForm, [q.id]: score })}
+                                        title={`${score} - ${optionLabel}`}
+                                        className={`w-9 h-8 rounded-lg text-xs font-bold flex items-center justify-center transition-all cursor-pointer ${
+                                          isSelected
+                                            ? 'bg-gradient-to-br from-cyan-400 to-teal-400 text-slate-950 shadow-md scale-105'
+                                            : 'text-slate-400 hover:text-white hover:bg-slate-850'
+                                        }`}
+                                      >
+                                        {score}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Card 3: Usia */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4">
-                      Usia <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {['15 - 20', '21 - 25', '26 - 30', '31 - 35', '36 - 40', '> 40'].map((opt) => (
-                        <label
-                          key={opt}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="usia"
-                            value={opt}
-                            checked={surveyForm.usia === opt}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, usia: e.target.value })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt}</span>
-                        </label>
-                      ))}
+                    {/* ══ STEP 3: KRITIK / SARAN & ACTIONS ══ */}
+                    <div className="bg-[#0b203a]/80 border border-white/10 rounded-2xl p-5 shadow-lg space-y-3">
+                      <div className="flex items-center gap-2 pb-2 border-b border-white/10">
+                        <span className="text-xs font-bold text-white uppercase tracking-wider">Kritik & Saran (Opsional)</span>
+                      </div>
+                      <textarea
+                        rows={2}
+                        placeholder="Tuliskan masukan atau ulasan pelayanan Anda di sini..."
+                        value={surveyForm.kritik_saran}
+                        onChange={(e) => setSurveyForm({ ...surveyForm, kritik_saran: e.target.value })}
+                        className="w-full bg-slate-950/70 border border-slate-700/80 focus:border-cyan-400 rounded-xl p-3 text-white text-xs focus:outline-none transition-colors placeholder-slate-500 resize-none"
+                      />
                     </div>
-                  </div>
 
-                  {/* Card 4: Pendidikan */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4">
-                      Pendidikan <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {['SD', 'SMP', 'SMA / SMK', 'D1 / D2 / D3', 'S1 / D4', 'S2', 'S3'].map((opt) => (
-                        <label
-                          key={opt}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="pendidikan"
-                            value={opt}
-                            checked={surveyForm.pendidikan === opt}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, pendidikan: e.target.value })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt}</span>
-                        </label>
-                      ))}
+                    {/* ══ BOTTOM CTA BAR ══ */}
+                    <div className="flex items-center justify-between gap-3 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setSurveyForm({
+                          nama: '',
+                          whatsapp: '',
+                          jenis_kelamin: '',
+                          usia: '',
+                          pendidikan: '',
+                          pekerjaan: '',
+                          u1_persyaratan: 0,
+                          u2_prosedur: 0,
+                          u3_kecepatan: 0,
+                          u4_biaya: 0,
+                          u5_produk: 0,
+                          u6_kompetensi: 0,
+                          u7_perilaku: 0,
+                          u8_sarpras: 0,
+                          u9_pengaduan: 0,
+                          kritik_saran: ''
+                        })}
+                        className="px-4 py-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 transition-colors text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" /> Reset
+                      </button>
+
+                      <button
+                        type="submit"
+                        disabled={isSubmittingSurvey}
+                        className="px-7 py-2.5 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      >
+                        {isSubmittingSurvey ? (
+                          <>
+                            <Clock className="w-3.5 h-3.5 animate-spin" /> Mengirim...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-3.5 h-3.5" /> Kirim Survei SKM
+                          </>
+                        )}
+                      </button>
                     </div>
-                  </div>
 
-                  {/* Card 5: Pekerjaan */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4">
-                      Pekerjaan <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        'PNS',
-                        'TNI',
-                        'POLRI',
-                        'Swasta',
-                        'Wirausaha',
-                        'BUMN / BUMD',
-                        'Pelajar / Mahasiswa',
-                        'Putus Sekolah / Tidak Bekerja',
-                        'Petani / Nelayan',
-                        'Lainnya'
-                      ].map((opt) => (
-                        <label
-                          key={opt}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="pekerjaan"
-                            value={opt}
-                            checked={surveyForm.pekerjaan === opt}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, pekerjaan: e.target.value })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                  </form>
+                )}
 
-                  {/* Card 6: U1 Persyaratan */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      1. Bagaimana pendapat Saudara tentang kesesuaian persyaratan pelayanan dengan jenis pelayanannya? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Tidak Sesuai', val: 1 },
-                        { label: 'Kurang Sesuai', val: 2 },
-                        { label: 'Sesuai', val: 3 },
-                        { label: 'Sangat Sesuai', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u1_persyaratan"
-                            value={opt.val}
-                            checked={surveyForm.u1_persyaratan === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u1_persyaratan: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 7: U2 Prosedur */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      2. Bagaimana pendapat Saudara tentang kemudahan prosedur pelayanan di unit ini? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Tidak Mudah', val: 1 },
-                        { label: 'Kurang Mudah', val: 2 },
-                        { label: 'Mudah', val: 3 },
-                        { label: 'Sangat Mudah', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u2_prosedur"
-                            value={opt.val}
-                            checked={surveyForm.u2_prosedur === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u2_prosedur: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 8: U3 Kecepatan */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      3. Bagaimana pendapat Saudara tentang kecepatan waktu dalam memberikan pelayanan? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Tidak Cepat', val: 1 },
-                        { label: 'Kurang Cepat', val: 2 },
-                        { label: 'Cepat', val: 3 },
-                        { label: 'Sangat Cepat', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u3_kecepatan"
-                            value={opt.val}
-                            checked={surveyForm.u3_kecepatan === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u3_kecepatan: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 9: U4 Biaya */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      4. Bagaimana pendapat Saudara tentang kewajaran biaya/tarif dalam pelayanan? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Sangat Mahal', val: 1 },
-                        { label: 'Cukup Mahal', val: 2 },
-                        { label: 'Murah', val: 3 },
-                        { label: 'Gratis', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u4_biaya"
-                            value={opt.val}
-                            checked={surveyForm.u4_biaya === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u4_biaya: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 10: U5 Kesesuaian Produk */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      5. Bagaimana pendapat Saudara tentang kesesuaian produk pelayanan antara yang tercantum dalam standar pelayanan dengan hasil yang diberikan? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Tidak Sesuai', val: 1 },
-                        { label: 'Kurang Sesuai', val: 2 },
-                        { label: 'Sesuai', val: 3 },
-                        { label: 'Sangat Sesuai', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u5_produk"
-                            value={opt.val}
-                            checked={surveyForm.u5_produk === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u5_produk: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 11: U6 Kompetensi Petugas */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      6. Bagaimana pendapat Saudara tentang kompetensi/kemampuan petugas dalam memberikan pelayanan? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Tidak Kompeten', val: 1 },
-                        { label: 'Kurang Kompeten', val: 2 },
-                        { label: 'Kompeten', val: 3 },
-                        { label: 'Sangat Kompeten', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u6_kompetensi"
-                            value={opt.val}
-                            checked={surveyForm.u6_kompetensi === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u6_kompetensi: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 12: U7 Perilaku Petugas */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      7. Bagaimana pendapat Saudara tentang perilaku petugas dalam memberikan pelayanan terkait kesopanan dan keramahan? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Tidak Sopan', val: 1 },
-                        { label: 'Kurang Sopan', val: 2 },
-                        { label: 'Sopan', val: 3 },
-                        { label: 'Sangat Sopan', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u7_perilaku"
-                            value={opt.val}
-                            checked={surveyForm.u7_perilaku === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u7_perilaku: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 13: U8 Sarana Prasarana */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      8. Bagaimana pendapat Saudara tentang kualitas sarana dan prasarana? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Tidak Baik', val: 1 },
-                        { label: 'Kurang Baik', val: 2 },
-                        { label: 'Baik', val: 3 },
-                        { label: 'Sangat Baik', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u8_sarpras"
-                            value={opt.val}
-                            checked={surveyForm.u8_sarpras === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u8_sarpras: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 14: U9 Penanganan Pengaduan */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-4 leading-relaxed">
-                      9. Bagaimana pendapat Saudara tentang penanganan pengaduan pengguna layanan? <span className="text-red-400 font-bold ml-0.5">*</span>
-                    </label>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Tidak ada', val: 1 },
-                        { label: 'Ada tetapi tidak berfungsi', val: 2 },
-                        { label: 'Ada tetapi kurang maksimal', val: 3 },
-                        { label: 'Dikelola dengan baik', val: 4 }
-                      ].map((opt) => (
-                        <label
-                          key={opt.val}
-                          className="flex items-center gap-3 cursor-pointer group p-2 rounded-xl hover:bg-white/5 transition-colors"
-                        >
-                          <input
-                            type="radio"
-                            name="u9_pengaduan"
-                            value={opt.val}
-                            checked={surveyForm.u9_pengaduan === opt.val}
-                            onChange={() => setSurveyForm({ ...surveyForm, u9_pengaduan: opt.val })}
-                            className="w-4 h-4 text-purple-500 border-gray-500 focus:ring-purple-400 cursor-pointer accent-[#6FF3C8]"
-                          />
-                          <span className="text-sm text-gray-200 group-hover:text-white transition-colors">{opt.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 15: Kritik dan Saran */}
-                  <div className="bg-[#0b223d]/90 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all">
-                    <label className="block text-sm font-semibold text-white mb-2">
-                      10. Kritik dan Saran
-                    </label>
-                    <textarea
-                      rows={3}
-                      placeholder="Jawaban Anda"
-                      value={surveyForm.kritik_saran}
-                      onChange={(e) => setSurveyForm({ ...surveyForm, kritik_saran: e.target.value })}
-                      className="w-full bg-transparent border-b border-gray-600 focus:border-[#6FF3C8] text-white py-2 text-sm focus:outline-none transition-colors placeholder-gray-500 resize-y"
-                    />
-                  </div>
-
-                  {/* Footer Submit & Reset Bar */}
-                  <div className="flex items-center justify-between pt-4">
-                    <button
-                      type="submit"
-                      disabled={isSubmittingSurvey}
-                      className="px-8 py-3 bg-[#673ab7] hover:bg-[#5e35b1] text-white font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 text-sm"
-                    >
-                      {isSubmittingSurvey ? 'Mengirim Jawaban...' : 'Kirim'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSurveyForm({
-                        email: '',
-                        jenis_kelamin: '',
-                        usia: '',
-                        pendidikan: '',
-                        pekerjaan: '',
-                        u1_persyaratan: 0,
-                        u2_prosedur: 0,
-                        u3_kecepatan: 0,
-                        u4_biaya: 0,
-                        u5_produk: 0,
-                        u6_kompetensi: 0,
-                        u7_perilaku: 0,
-                        u8_sarpras: 0,
-                        u9_pengaduan: 0,
-                        kritik_saran: ''
-                      })}
-                      className="text-xs text-purple-400 hover:text-purple-300 font-semibold transition-colors"
-                    >
-                      Kosongkan formulir
-                    </button>
-                  </div>
-
-                </form>
-              )}
-
-            </div>
-          )}
+              </div>
+            );
+          })()}
         </section>
       </div>
 
       {/* Success Modal for Complaint Submission */}
       {submitSuccessTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
-          <div className="bg-[#0b223d] border border-[#6FF3C8]/40 rounded-3xl p-6 md:p-8 max-w-md w-full text-center space-y-6 shadow-2xl">
+          <div className="bg-[#0b223d] border border-[#6FF3C8]/40 rounded-3xl p-6 md:p-8 max-w-md w-full text-center space-y-5 shadow-2xl">
             <div className="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto border border-green-500/30">
               <CheckCircle2 className="w-10 h-10" />
             </div>
@@ -1352,7 +1241,7 @@ export default function PengaduanPage() {
             <div>
               <h3 className="text-xl font-bold text-white">Pengaduan Berhasil Terkirim!</h3>
               <p className="text-xs text-gray-300 mt-2">
-                Simpan Nomor Tiket berikut untuk melacak perkembangan penanganan pengaduan Anda.
+                Simpan Nomor Tiket berikut untuk melacak penanganan pengaduan Anda.
               </p>
             </div>
 
@@ -1367,14 +1256,31 @@ export default function PengaduanPage() {
               </button>
             </div>
 
-            <div className="flex gap-3">
+            {/* WhatsApp Notification Alert Badge */}
+            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-left flex items-start gap-3">
+              <MessageSquare className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-emerald-200 leading-relaxed">
+                <span className="font-semibold text-emerald-300">Notifikasi WhatsApp Terkirim:</span> Bukti tanda terima & link lacak otomatis telah dikirimkan ke nomor WhatsApp Anda & petugas admin kami.
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2.5">
+              <a
+                href={`https://wa.me/${(process.env.NEXT_PUBLIC_HOTLINE_WA || '').replace(/[^0-9]/g, '').replace(/^0/, '62')}?text=${encodeURIComponent(`Halo Admin CDKWB, saya baru saja membuat pengaduan dengan No. Tiket: ${submitSuccessTicket}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-colors shadow-lg shadow-emerald-600/20"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Chat WA Admin
+              </a>
+
               <button
                 onClick={async () => {
                   const ticket = submitSuccessTicket!;
                   setSubmitSuccessTicket(null);
                   setActiveTab('tracking');
                   setSearchTicket(ticket);
-                  // Fetch directly with the known ticket value — avoids React async state race
                   setIsSearching(true);
                   setTrackingError(null);
                   setTicketResult(null);
@@ -1392,13 +1298,14 @@ export default function PengaduanPage() {
                     setIsSearching(false);
                   }
                 }}
-                className="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs transition-colors"
+                className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs transition-colors"
               >
-                Lacak Tiket Sekarang
+                Lacak Tiket
               </button>
+
               <button
                 onClick={() => setSubmitSuccessTicket(null)}
-                className="px-5 py-3 bg-white/10 hover:bg-white/20 text-gray-300 font-semibold rounded-xl text-xs transition-colors"
+                className="py-3 px-4 bg-white/10 hover:bg-white/20 text-gray-300 font-semibold rounded-xl text-xs transition-colors"
               >
                 Tutup
               </button>
