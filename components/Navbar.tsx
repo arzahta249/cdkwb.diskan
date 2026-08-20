@@ -31,7 +31,7 @@ const SEARCH_INDEX = [
 export default function Navbar() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeMobileDropdown, setActiveMobileDropdown] = useState<string | null>(null);
+  const [activeMobileDropdown, setActiveMobileDropdown] = useState<string[]>([]);
   
   // Modals for Layanan
   const [isBerkasModalOpen, setIsBerkasModalOpen] = useState(false);
@@ -80,7 +80,9 @@ export default function Navbar() {
   }, [isMobileMenuOpen, isSearchOpen]);
 
   const toggleMobileDropdown = (menu: string) => {
-    setActiveMobileDropdown(activeMobileDropdown === menu ? null : menu);
+    setActiveMobileDropdown((prev) => 
+      prev.includes(menu) ? prev.filter(m => m !== menu) : [...prev, menu]
+    );
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -342,9 +344,9 @@ export default function Navbar() {
               className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
             >
               Profil
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'profil' ? 'rotate-180 text-blue-600' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown.includes('profil') ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'profil' ? 'max-h-56' : 'max-h-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('profil') ? 'max-h-56' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
                 <Link href="/profil/struktur-organisasi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Struktur Organisasi</Link>
                 <Link href="/profil/tugas-pokok" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Tugas Pokok & Fungsi</Link>
@@ -361,9 +363,9 @@ export default function Navbar() {
               className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
             >
               Informasi
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'informasi' ? 'rotate-180 text-blue-600' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown.includes('informasi') ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'informasi' ? 'max-h-48' : 'max-h-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('informasi') ? 'max-h-48' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
                 <Link href="/news" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Berita</Link>
                 <Link href="/artikel" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Artikel</Link>
@@ -378,9 +380,9 @@ export default function Navbar() {
               className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
             >
               Layanan
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'layanan' ? 'rotate-180 text-blue-600' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown.includes('layanan') ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'layanan' ? 'max-h-[800px]' : 'max-h-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('layanan') ? 'max-h-[800px]' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
                 {/* 1. Kawasan Konservasi */}
                 <div>
@@ -389,9 +391,9 @@ export default function Navbar() {
                     className="w-full flex items-center justify-between py-2 px-4 text-sm font-semibold text-gray-700 hover:text-blue-600 rounded-lg transition-colors"
                   >
                     Kawasan Konservasi
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${activeMobileDropdown === 'layanan-kawasan' ? 'rotate-180 text-blue-600' : ''}`} />
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${activeMobileDropdown.includes('layanan-kawasan') ? 'rotate-180 text-blue-600' : ''}`} />
                   </button>
-                  <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'layanan-kawasan' ? 'max-h-48' : 'max-h-0'}`}>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('layanan-kawasan') ? 'max-h-48' : 'max-h-0'}`}>
                     <div className="pl-4 py-1.5 space-y-1 bg-white/80 rounded-lg mt-1 border border-gray-100">
                       <Link href="/konservasi/kawasan/karang-jeruk" className="block py-2 px-3 text-xs text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Karang Jeruk</Link>
                       <Link href="/konservasi/kawasan/ujungnegoro" className="block py-2 px-3 text-xs text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Ujungnegoro</Link>
@@ -412,9 +414,9 @@ export default function Navbar() {
                     className="w-full flex items-center justify-between py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium rounded-lg transition-colors"
                   >
                     Kerja Sama
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${activeMobileDropdown === 'layanan-kerjasama' ? 'rotate-180 text-blue-600' : ''}`} />
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${activeMobileDropdown.includes('layanan-kerjasama') ? 'rotate-180 text-blue-600' : ''}`} />
                   </button>
-                  <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'layanan-kerjasama' ? 'max-h-48' : 'max-h-0'}`}>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('layanan-kerjasama') ? 'max-h-48' : 'max-h-0'}`}>
                     <div className="pl-4 py-1.5 space-y-1 bg-white/80 rounded-lg mt-1 border border-gray-100">
                       <Link href="/kerja-sama/informasi-magang" className="block py-2 px-3 text-xs text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Info Magang</Link>
                     </div>
@@ -477,9 +479,9 @@ export default function Navbar() {
               className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
             >
               Galeri
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'galeri' ? 'rotate-180 text-blue-600' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown.includes('galeri') ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'galeri' ? 'max-h-48' : 'max-h-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('galeri') ? 'max-h-48' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
                 <Link href="/galeri?tab=foto" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Foto</Link>
                 <Link href="/galeri?tab=video" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Video</Link>
@@ -495,9 +497,9 @@ export default function Navbar() {
               className="w-full flex items-center justify-between py-3 px-4 text-base font-semibold text-gray-800 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
             >
               Hubungi Kami
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown === 'hubungi' ? 'rotate-180 text-blue-600' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeMobileDropdown.includes('hubungi') ? 'rotate-180 text-blue-600' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown === 'hubungi' ? 'max-h-56' : 'max-h-0'}`}>
+            <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('hubungi') ? 'max-h-56' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
                 <Link href="/materi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Materi</Link>
                 <Link href="/kontak" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Kontak</Link>

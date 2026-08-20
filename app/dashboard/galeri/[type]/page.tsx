@@ -3,6 +3,7 @@
 import React, { useState, use, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, UploadCloud, Search, FileDown, Image as ImageIcon, Waves } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { showSuccess, showError, showConfirm } from '@/lib/swal';
 
 const TABS = ['foto', 'video', 'infografis'];
 
@@ -59,14 +60,23 @@ export default function GaleriCMSPage({ params }: PageProps) {
   }, [type]);
 
   const handleDelete = async (id: number) => {
-    if(confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+    const isConfirmed = await showConfirm(
+      'Hapus Data?',
+      'Apakah Anda yakin ingin menghapus data ini?',
+      'Ya, Hapus',
+      true
+    );
+    if(isConfirmed) {
       try {
         const res = await fetch(`/api/galeri/${type}?id=${id}`, { method: 'DELETE' });
         if (res.ok) {
+          await showSuccess('Terhapus', 'Data berhasil dihapus.');
           setData(data.filter(item => (item.ID_foto || item.ID_video || item.ID_infografis) !== id));
+        } else {
+          showError('Gagal', 'Gagal menghapus data.');
         }
       } catch (error) {
-        alert("Gagal menghapus data.");
+        showError('Error', 'Terjadi kesalahan sistem.');
       }
     }
   };
@@ -82,7 +92,7 @@ export default function GaleriCMSPage({ params }: PageProps) {
       
       const subPhotos = submitData.getAll('sub_photos');
       if (subPhotos.length > 5) {
-        alert("Maksimal 5 sub-foto yang diperbolehkan!");
+        showError('Validasi', 'Maksimal 5 sub-foto yang diperbolehkan!');
         setIsSaving(false);
         return;
       }
@@ -96,17 +106,17 @@ export default function GaleriCMSPage({ params }: PageProps) {
       });
       
       if (res.ok) {
-        alert(editId ? "Sukses! Perubahan data berhasil disimpan." : "Sukses! Data baru berhasil ditambahkan.");
+        await showSuccess('Berhasil', editId ? "Perubahan data berhasil disimpan." : "Data baru berhasil ditambahkan.");
         fetchData(); 
         setIsModalOpen(false);
         setEditId(null);
       } else {
         const err = await res.json();
-        alert("Gagal menyimpan data: " + (err.error || "Unknown error"));
+        showError('Gagal', "Gagal menyimpan data: " + (err.error || "Unknown error"));
       }
     } catch (error) {
       console.error("Save error:", error);
-      alert("Terjadi kesalahan sistem saat menyimpan data.");
+      showError('Error', "Terjadi kesalahan sistem saat menyimpan data.");
     } finally {
       setIsSaving(false);
     }

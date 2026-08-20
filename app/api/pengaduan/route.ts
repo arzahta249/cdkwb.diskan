@@ -3,6 +3,7 @@ import { pool } from '@/lib/db';
 import fs from 'fs/promises';
 import path from 'path';
 import { sendEmail } from '@/lib/email';
+import { sendCitizenConfirmation, sendAdminNewAlert } from '@/lib/whatsapp';
 
 export async function GET(request: Request) {
   try {
@@ -105,6 +106,7 @@ export async function POST(request: Request) {
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
     const nomor_tiket = `TKT-${dateStr}-${randomCode}`;
+    const displayName = is_anonim ? 'Anonim' : nama_pelapor;
 
     const [result]: any = await pool.query(
       `INSERT INTO pengaduan 
@@ -112,7 +114,7 @@ export async function POST(request: Request) {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')`,
       [
         nomor_tiket,
-        is_anonim ? 'Anonim' : nama_pelapor,
+        displayName,
         email_pelapor,
         telepon_pelapor,
         kategori,
@@ -124,9 +126,9 @@ export async function POST(request: Request) {
     );
 
     // Kirim notifikasi email ke Admin secara asynchronous
-    const emailPromises = [];
+    const notifPromises = [];
 
-    // Ambil daftar email admin langsung dari database
+    // 1. Email Admin
     try {
       const [adminRows]: any = await pool.query("SELECT Email FROM user WHERE role = 'admin' AND Email IS NOT NULL AND Email != ''");
       if (adminRows && adminRows.length > 0) {
@@ -166,7 +168,7 @@ export async function POST(request: Request) {
           </div>
         `;
 
-        emailPromises.push(
+        notifPromises.push(
           sendEmail({
             to: emailList,
             subject: `[Pengaduan Baru] Tiket ${nomor_tiket} - ${kategori}`,
@@ -179,7 +181,7 @@ export async function POST(request: Request) {
       console.error('Gagal mengambil email admin dari database:', err);
     }
 
-    // Kirim notifikasi tanda terima ke email masyarakat (Pelapor)
+    // 2. Email Pelapor
     if (email_pelapor) {
       const citizenHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
@@ -200,7 +202,7 @@ export async function POST(request: Request) {
         </div>
       `;
 
-      emailPromises.push(
+      notifPromises.push(
         sendEmail({
           to: email_pelapor,
           subject: `[Tanda Terima] Pengaduan #${nomor_tiket}`,
@@ -209,9 +211,29 @@ export async function POST(request: Request) {
       );
     }
 
-    // WAJIB ditunggu agar Next.js tidak mematikan proses sebelum email terkirim
-    if (emailPromises.length > 0) {
-      await Promise.allSettled(emailPromises);
+    // 3. WhatsApp Notifications (Citizen & Admin)
+    notifPromises.push(
+      sendCitizenConfirmation({
+        nomor_tiket,
+        nama_pelapor: displayName,
+        telepon_pelapor,
+      }).catch(err => console.error('Error sending citizen WA notification:', err))
+    );
+
+    notifPromises.push(
+      sendAdminNewAlert({
+        nomor_tiket,
+        nama_pelapor: displayName,
+        kategori,
+        lokasi,
+        deskripsi,
+        telepon_pelapor,
+      }).catch(err => console.error('Error sending admin WA notification:', err))
+    );
+
+    // WAJIB ditunggu agar Next.js tidak mematikan proses sebelum notifikasi terkirim
+    if (notifPromises.length > 0) {
+      await Promise.allSettled(notifPromises);
     }
 
     return NextResponse.json(
@@ -231,3 +253,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

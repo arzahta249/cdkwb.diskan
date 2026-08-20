@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+import React from "react";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
   description: "Cabang Dinas Kelautan dan Perikanan Wilayah Barat - Provinsi Jawa Tengah",
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
@@ -39,7 +41,9 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900 selection:bg-teal-500 selection:text-white">{children}</body>
+      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900 selection:bg-teal-500 selection:text-white">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

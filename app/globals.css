@@ -167,14 +167,6 @@ body {
   align-items: center;
   gap: 9px;
 }
-.eyebrow::before {
-  content: "";
-  width: 16px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.55;
-  flex-shrink: 0;
-}
 
 /* ── Light rays decoration ── */
 .rays {

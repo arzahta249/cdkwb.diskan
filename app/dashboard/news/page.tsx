@@ -1,14 +1,19 @@
 import Link from 'next/link';
 import { Plus, Search, FileText, CheckCircle2, Clock, User, Tag } from 'lucide-react';
+import DeleteButton from '@/components/DeleteButton';
+import LeadingToggle from '@/components/LeadingToggle';
 import { pool } from '@/lib/db';
 
 export const revalidate = 0; // Data always fresh
 
 async function getNews() {
   try {
-    const [rows]: any = await pool.query(
-      "SELECT ID_berita, Judul, Slug, status, tanggal, penulis, kategori FROM berita WHERE type = 'berita' OR type IS NULL ORDER BY tanggal DESC"
-    );
+    const [rows]: any = await pool.query(`
+      SELECT b.ID_berita, b.Judul, b.Slug, b.status, b.tanggal, b.kategori, b.is_leading, u.nama as penulis 
+      FROM berita b 
+      LEFT JOIN user u ON b.id_penulis = u.ID_user 
+      ORDER BY b.tanggal DESC
+    `);
     return rows;
   } catch (error) {
     console.error(error);
@@ -26,13 +31,22 @@ export default async function NewsDashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight text-white">Data Berita</h1>
           <p className="text-slate-400 mt-1">Kelola berita resmi dan kegiatan dinas.</p>
         </div>
-        <Link 
-          href="/dashboard/news/create" 
-          className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2.5 rounded-xl font-medium transition-colors shadow-lg shadow-cyan-500/20 text-sm"
-        >
-          <Plus className="w-5 h-5" />
-          Buat Berita Baru
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link 
+            href="/dashboard/news/create-instagram" 
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white px-4 py-2.5 rounded-xl font-medium transition-colors shadow-lg shadow-pink-500/20 text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Via Instagram
+          </Link>
+          <Link 
+            href="/dashboard/news/create" 
+            className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2.5 rounded-xl font-medium transition-colors shadow-lg shadow-cyan-500/20 text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Buat Berita Baru
+          </Link>
+        </div>
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
@@ -56,6 +70,7 @@ export default async function NewsDashboardPage() {
                 <th className="px-6 py-4 font-medium">Penulis / Pengunggah</th>
                 <th className="px-6 py-4 font-medium">Status</th>
                 <th className="px-6 py-4 font-medium">Tanggal</th>
+                <th className="px-6 py-4 font-medium text-center">Di Beranda</th>
                 <th className="px-6 py-4 font-medium text-right">Aksi</th>
               </tr>
             </thead>
@@ -106,14 +121,24 @@ export default async function NewsDashboardPage() {
                         year: 'numeric', month: 'short', day: 'numeric'
                       })}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-center">
+                      <LeadingToggle id={item.ID_berita} type="berita" initialState={item.is_leading === 1} />
+                    </td>
+                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
                       <Link 
                         href={`/news/${item.Slug}`} 
                         target="_blank"
-                        className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-medium mr-3"
+                        className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-medium mr-2"
                       >
                         Lihat
                       </Link>
+                      <Link 
+                        href={`/dashboard/news/edit/${item.ID_berita}`}
+                        className="text-amber-400 hover:text-amber-300 transition-colors text-sm font-medium mr-2"
+                      >
+                        Edit
+                      </Link>
+                      <DeleteButton endpoint="/api/news" id={item.ID_berita} type="berita" />
                     </td>
                   </tr>
                 ))

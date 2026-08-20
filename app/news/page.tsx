@@ -42,11 +42,11 @@ function fmtDate(d: string, short = false) {
 
 async function getContent(cat?: string) {
   try {
-    let q = `SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal, type, penulis, views, kategori
-             FROM berita WHERE status = 'published' AND (type = 'berita' OR type IS NULL)`;
+    let q = `SELECT b.ID_berita, b.Judul, b.Slug, b.image, b.isi_berita, b.tanggal, b.views, b.kategori, u.nama as penulis
+             FROM berita b LEFT JOIN user u ON b.id_penulis = u.ID_user WHERE b.status = 'published'`;
     const p: any[] = [];
-    if (cat && cat !== 'Semua') { q += ' AND kategori = ?'; p.push(cat); }
-    q += ' ORDER BY tanggal DESC';
+    if (cat && cat !== 'Semua') { q += ' AND b.kategori = ?'; p.push(cat); }
+    q += ' ORDER BY b.tanggal DESC';
     const [rows]: any = await pool.query(q, p);
     return rows as any[];
   } catch { return []; }
@@ -54,7 +54,7 @@ async function getContent(cat?: string) {
 
 async function getPopular() {
   try {
-    let q = `SELECT ID_berita, Judul, Slug, views, tanggal FROM berita WHERE status = 'published' AND (type = 'berita' OR type IS NULL)`;
+    let q = `SELECT ID_berita, Judul, Slug, views, tanggal FROM berita WHERE status = 'published'`;
     q += ' ORDER BY views DESC LIMIT 4';
     const [rows]: any = await pool.query(q);
     return rows as any[];

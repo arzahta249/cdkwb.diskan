@@ -9,14 +9,72 @@ import {
   FileText,
   MessageSquare, 
   Award,
-  Image,
   LogOut, 
   ChevronDown,
   Menu,
   X,
   Image as ImageIcon,
-  Waves
+  Waves,
+  Briefcase
 } from 'lucide-react';
+
+const NavItem = ({ href, icon: Icon, children, exact = false }: { href: string; icon: React.ElementType; children: React.ReactNode; exact?: boolean }) => {
+  const pathname = usePathname();
+  const isActive = exact ? pathname === href : pathname.startsWith(href);
+  return (
+    <Link
+      href={href}
+      className={`flex items-center gap-3 px-4 py-2.5 rounded-l-md rounded-r-none transition-all duration-300 ${
+        isActive 
+          ? 'bg-cyan-900/20 text-cyan-400 border-r-2 border-cyan-400 shadow-[inset_0_0_20px_rgba(6,182,212,0.05)] font-medium' 
+          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+      }`}
+    >
+      <Icon className={`w-4 h-4 ${isActive ? 'drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]' : ''}`} />
+      <span className="text-sm tracking-wide">{children}</span>
+    </Link>
+  );
+};
+
+// Dropdown Button Component
+const NavDropdownBtn = ({ isOpen, onClick, icon: Icon, children, activePath }: { isOpen: boolean; onClick: () => void; icon: React.ElementType; children: React.ReactNode; activePath: string }) => {
+  const pathname = usePathname();
+  const isActive = pathname.includes(activePath);
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-l-md rounded-r-none transition-all duration-300 ${
+        isActive
+          ? 'bg-cyan-900/20 text-cyan-400 border-r-2 border-cyan-400 shadow-[inset_0_0_20px_rgba(6,182,212,0.05)] font-medium'
+          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <Icon className={`w-4 h-4 ${isActive ? 'drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]' : ''}`} />
+        <span className="text-sm tracking-wide">{children}</span>
+      </div>
+      <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+    </button>
+  );
+};
+
+// Dropdown Link Component
+const DropdownLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+  return (
+    <Link 
+      href={href}
+      className={`block px-4 py-2 rounded-md text-[13px] transition-all duration-300 ${
+        isActive
+          ? 'text-cyan-300 bg-cyan-900/30'
+          : 'text-slate-400 hover:text-cyan-100 hover:bg-slate-800/50 hover:pl-5'
+      }`}
+    >
+      {children}
+    </Link>
+  );
+};
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -33,64 +91,10 @@ export default function Sidebar() {
       console.error('Logout error:', e);
     }
     localStorage.removeItem('user');
-    router.replace('/login');
+    router.replace('/adminCDKWB');
     router.refresh();
   };
 
-  const NavItem = ({ href, icon: Icon, children, exact = false }: any) => {
-    const isActive = exact ? pathname === href : pathname.startsWith(href);
-    return (
-      <Link
-        href={href}
-        className={`flex items-center gap-3 px-4 py-2.5 rounded-l-md rounded-r-none transition-all duration-300 ${
-          isActive 
-            ? 'bg-cyan-900/20 text-cyan-400 border-r-2 border-cyan-400 shadow-[inset_0_0_20px_rgba(6,182,212,0.05)] font-medium' 
-            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-        }`}
-      >
-        <Icon className={`w-4 h-4 ${isActive ? 'drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]' : ''}`} />
-        <span className="text-sm tracking-wide">{children}</span>
-      </Link>
-    );
-  };
-
-  // Dropdown Button Component
-  const NavDropdownBtn = ({ isOpen, onClick, icon: Icon, children, activePath }: any) => {
-    const isActive = pathname.includes(activePath);
-    return (
-      <button
-        onClick={onClick}
-        className={`w-full flex items-center justify-between px-4 py-2.5 rounded-l-md rounded-r-none transition-all duration-300 ${
-          isActive
-            ? 'bg-cyan-900/20 text-cyan-400 border-r-2 border-cyan-400 shadow-[inset_0_0_20px_rgba(6,182,212,0.05)] font-medium'
-            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <Icon className={`w-4 h-4 ${isActive ? 'drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]' : ''}`} />
-          <span className="text-sm tracking-wide">{children}</span>
-        </div>
-        <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
-    );
-  };
-
-  // Dropdown Link Component
-  const DropdownLink = ({ href, children }: any) => {
-    const isActive = pathname === href;
-    return (
-      <Link 
-        href={href}
-        className={`block px-4 py-2 rounded-md text-[13px] transition-all duration-300 ${
-          isActive
-            ? 'text-cyan-300 bg-cyan-900/30'
-            : 'text-slate-400 hover:text-cyan-100 hover:bg-slate-800/50 hover:pl-5'
-        }`}
-      >
-        {children}
-      </Link>
-    );
-  };
 
   return (
     <>
@@ -204,6 +208,10 @@ export default function Sidebar() {
 
           <NavItem href="/dashboard/materi" icon={FileText}>
             Manajemen Materi
+          </NavItem>
+
+          <NavItem href="/dashboard/magang" icon={Briefcase}>
+            Data Magang
           </NavItem>
         </nav>
 

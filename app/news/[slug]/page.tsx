@@ -15,7 +15,7 @@ async function getNewsBySlug(slug: string) {
   }
 
   const [rows]: any = await pool.query(
-    "SELECT ID_berita, Judul, Slug, image, isi_berita, tanggal, penulis, views FROM berita WHERE Slug = ? AND status = 'published'",
+    "SELECT b.ID_berita, b.Judul, b.Slug, b.image, b.isi_berita, b.tanggal, b.views, b.instagram_url, u.nama as penulis FROM berita b LEFT JOIN user u ON b.id_penulis = u.ID_user WHERE b.Slug = ? AND b.status = 'published'",
     [slug]
   );
   return rows[0] || null;
@@ -30,6 +30,17 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
   }
 
   const imageUrl = news.image || '/placeholder-news.jpg';
+
+  let embedUrl = '';
+  if (news.instagram_url) {
+    try {
+      const urlObj = new URL(news.instagram_url);
+      urlObj.search = '';
+      embedUrl = urlObj.toString().replace(/\/$/, '') + '/embed/captioned/';
+    } catch (e) {
+      embedUrl = news.instagram_url;
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -76,21 +87,35 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
             </div>
           </header>
 
-          {/* Gambar Berita */}
-          <div className="relative w-full h-[400px] md:h-[500px] rounded-3xl overflow-hidden mb-12 shadow-2xl border border-white/5 animate-in fade-in zoom-in-95 duration-700">
-            <Image 
-              src={imageUrl} 
-              alt={news.Judul} 
-              fill 
-              className="object-cover" 
-              priority
-            />
-          </div>
+          {/* Conditional Rendering: Jika ada embedUrl, tampilkan hanya Instagram iframe. Jika tidak, tampilkan gambar & isi berita standar */}
+          {embedUrl ? (
+            <div className="w-full max-w-lg mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+               <iframe 
+                 src={embedUrl}
+                 className="w-full h-[800px] border border-gray-800 rounded-2xl shadow-2xl bg-white"
+                 allow="encrypted-media"
+                 scrolling="yes"
+               />
+            </div>
+          ) : (
+            <>
+              {/* Gambar Berita */}
+              <div className="relative w-full h-[400px] md:h-[500px] rounded-3xl overflow-hidden mb-12 shadow-2xl border border-white/5 animate-in fade-in zoom-in-95 duration-700">
+                <Image 
+                  src={imageUrl} 
+                  alt={news.Judul} 
+                  fill 
+                  className="object-cover" 
+                  priority
+                />
+              </div>
 
-          {/* Isi Berita */}
-          <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed whitespace-pre-wrap animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-            {news.isi_berita}
-          </div>
+              {/* Isi Berita */}
+              <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed whitespace-pre-wrap animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+                {news.isi_berita}
+              </div>
+            </>
+          )}
         </div>
       </article>
 

@@ -13,8 +13,8 @@ export default function AjukanIzinModal({ isOpen, onClose }: AjukanIzinModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-blue-950/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-      <div className="bg-white rounded-3xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh]">
+    <div className="fixed inset-0 bg-blue-950/80 z-[999] flex items-center justify-center p-4 sm:p-6 backdrop-blur-sm transition-opacity">
+      <div className="bg-white rounded-3xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         {/* Header */}
         <div className="bg-blue-600 p-6 flex justify-between items-center relative shrink-0">
           <h3 className="text-2xl font-black text-white flex items-center gap-3">
@@ -27,7 +27,7 @@ export default function AjukanIzinModal({ isOpen, onClose }: AjukanIzinModalProp
         </div>
         
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-gray-50">
+        <div className="p-6 md:p-8 overflow-y-auto space-y-8 flex-1 bg-gray-50">
           
           <div className="bg-green-100 border-l-4 border-green-500 rounded-r-xl p-4 flex items-start gap-3 shadow-sm mb-6">
             <ShieldCheck className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />

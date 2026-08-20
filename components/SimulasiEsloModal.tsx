@@ -13,8 +13,8 @@ export default function SimulasiEsloModal({ isOpen, onClose }: SimulasiEsloModal
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-blue-950/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-      <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-blue-950/80 z-[999] flex items-center justify-center p-4 sm:p-6 backdrop-blur-sm transition-opacity">
+      <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         {/* Header */}
         <div className="bg-blue-600 p-6 flex justify-between items-center relative shrink-0">
           <h3 className="text-2xl font-black text-white flex items-center gap-3">
@@ -27,7 +27,7 @@ export default function SimulasiEsloModal({ isOpen, onClose }: SimulasiEsloModal
         </div>
         
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-6">
+        <div className="p-6 md:p-8 overflow-y-auto space-y-8">
           <p className="text-slate-600 font-medium text-lg">
             Berikut adalah contoh bentuk fisik dokumen yang harus Bapak/Ibu siapkan sebelum mendaftar E-SLO:
           </p>

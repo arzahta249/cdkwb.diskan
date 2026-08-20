@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, FileText, CheckCircle2, Clock, Upload, X, Loader2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { showSuccess, showError, showConfirm } from '@/lib/swal';
 
 export default function AdminMateriPage() {
   const [materiList, setMateriList] = useState<any[]>([]);
@@ -45,7 +46,7 @@ export default function AdminMateriPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file) {
-      alert('File wajib diunggah');
+      showError('Validasi', 'File wajib diunggah');
       return;
     }
     
@@ -68,30 +69,39 @@ export default function AdminMateriPage() {
         setIsModalOpen(false);
         setFormData({ judul: '', deskripsi: '', kategori: 'Regulasi & Hukum', status: 'published' });
         setFile(null);
+        await showSuccess('Berhasil', 'Materi berhasil diunggah.');
         fetchMateri(); // Refresh data
       } else {
-        alert('Gagal mengunggah materi');
+        showError('Gagal', 'Gagal mengunggah materi');
       }
     } catch (error) {
       console.error('Error submitting:', error);
-      alert('Terjadi kesalahan saat mengunggah');
+      showError('Error', 'Terjadi kesalahan saat mengunggah');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus materi ini?')) return;
+    const isConfirmed = await showConfirm(
+      'Hapus Materi?',
+      'Apakah Anda yakin ingin menghapus materi ini?',
+      'Ya, Hapus',
+      true
+    );
+    if (!isConfirmed) return;
     
     try {
       const res = await fetch(`/api/materi/${id}`, { method: 'DELETE' });
       if (res.ok) {
+        await showSuccess('Terhapus', 'Materi berhasil dihapus.');
         fetchMateri();
       } else {
-        alert('Gagal menghapus materi');
+        showError('Gagal', 'Gagal menghapus materi');
       }
     } catch (error) {
       console.error('Error deleting:', error);
+      showError('Error', 'Terjadi kesalahan sistem');
     }
   };
 

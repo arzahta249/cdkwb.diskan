@@ -13,11 +13,11 @@ export function middleware(request: NextRequest) {
 
   if (isProtectedRoute && !token) {
     // Jika tidak ada token dan mencoba akses dashboard, arahkan ke login
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/adminCDKWB', request.url));
   }
 
   // Jika user sudah login dan mencoba ke halaman login/register, arahkan ke dashboard
-  if ((path === '/login' || path === '/register') && token) {
+  if ((path === '/adminCDKWB' || path === '/register') && token) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
@@ -25,5 +25,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login', '/register'],
+  matcher: ['/dashboard/:path*', '/adminCDKWB', '/register'],
 };

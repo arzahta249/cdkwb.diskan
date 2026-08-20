@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import fs from 'fs/promises';
 import path from 'path';
+import { sendCitizenStatusUpdate } from '@/lib/whatsapp';
 
 export async function GET(
   request: Request,
@@ -93,6 +94,14 @@ export async function PATCH(
         [petugas_bidang || 'Bidang Teknis', slaFormatted, ticketId]
       );
 
+      sendCitizenStatusUpdate({
+        nomor_tiket: currentTicket.nomor_tiket,
+        nama_pelapor: currentTicket.nama_pelapor,
+        telepon_pelapor: currentTicket.telepon_pelapor,
+        status: 'DIDISPOSISI',
+        tindakan: `Pengaduan telah didisposisikan ke ${petugas_bidang || 'Bidang Teknis'}`
+      }).catch(err => console.error('Error sending WA update:', err));
+
       return NextResponse.json({ success: true, message: 'Disposisi berhasil disimpan' });
     }
 
@@ -107,6 +116,14 @@ export async function PATCH(
         [alasan_penolakan, ticketId]
       );
 
+      sendCitizenStatusUpdate({
+        nomor_tiket: currentTicket.nomor_tiket,
+        nama_pelapor: currentTicket.nama_pelapor,
+        telepon_pelapor: currentTicket.telepon_pelapor,
+        status: 'DITOLAK',
+        tindakan: `Alasan penolakan: ${alasan_penolakan}`
+      }).catch(err => console.error('Error sending WA update:', err));
+
       return NextResponse.json({ success: true, message: 'Pengaduan telah ditolak' });
     }
 
@@ -115,6 +132,14 @@ export async function PATCH(
         `UPDATE pengaduan SET status = 'DIPROSES' WHERE id = ?`,
         [ticketId]
       );
+
+      sendCitizenStatusUpdate({
+        nomor_tiket: currentTicket.nomor_tiket,
+        nama_pelapor: currentTicket.nama_pelapor,
+        telepon_pelapor: currentTicket.telepon_pelapor,
+        status: 'PROSES',
+        tindakan: 'Petugas sedang menindaklanjuti & memverifikasi laporan di lapangan.'
+      }).catch(err => console.error('Error sending WA update:', err));
 
       return NextResponse.json({ success: true, message: 'Status diubah ke DIPROSES' });
     }
@@ -148,6 +173,14 @@ export async function PATCH(
         [hasil_penyelesaian, proofUrl, ticketId]
       );
 
+      sendCitizenStatusUpdate({
+        nomor_tiket: currentTicket.nomor_tiket,
+        nama_pelapor: currentTicket.nama_pelapor,
+        telepon_pelapor: currentTicket.telepon_pelapor,
+        status: 'SELESAI',
+        tindakan: hasil_penyelesaian
+      }).catch(err => console.error('Error sending WA update:', err));
+
       return NextResponse.json({ success: true, message: 'Hasil penyelesaian berhasil disimpan' });
     }
 
@@ -178,3 +211,4 @@ export async function PATCH(
     return NextResponse.json({ error: 'Gagal memperbarui status pengaduan' }, { status: 500 });
   }
 }
+
