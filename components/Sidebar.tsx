@@ -15,7 +15,8 @@ import {
   X,
   Image as ImageIcon,
   Waves,
-  Briefcase
+  Briefcase,
+  Megaphone
 } from 'lucide-react';
 
 const NavItem = ({ href, icon: Icon, children, exact = false }: { href: string; icon: React.ElementType; children: React.ReactNode; exact?: boolean }) => {
@@ -208,6 +209,10 @@ export default function Sidebar() {
 
           <NavItem href="/dashboard/materi" icon={FileText}>
             Manajemen Materi
+          </NavItem>
+
+          <NavItem href="/dashboard/kehumasan" icon={Megaphone}>
+            Kehumasan
           </NavItem>
 
           <NavItem href="/dashboard/magang" icon={Briefcase}>

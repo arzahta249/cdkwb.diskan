@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Jika user sudah login dan mencoba ke halaman login/register, arahkan ke dashboard
-  if ((path === '/adminCDKWB' || path === '/register') && token) {
+  if ((path === '/adminCDKWB' || path === '/login' || path === '/register') && token) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
@@ -25,5 +25,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/adminCDKWB', '/register'],
+  matcher: ['/dashboard/:path*', '/adminCDKWB', '/login', '/register'],
 };
+

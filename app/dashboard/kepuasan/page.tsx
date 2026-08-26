@@ -3,15 +3,12 @@
 import { useState, useEffect } from 'react';
 import {
   Search,
-  Award,
   Star,
   Eye,
   Trash2,
   X,
   Filter,
-  User,
-  Briefcase,
-  Sparkles
+  Briefcase
 } from 'lucide-react';
 import { showError, showSuccess } from '@/lib/swal';
 
@@ -130,63 +127,77 @@ export default function AdminKepuasanPage() {
       
       {/* Header Title */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-          <Award className="w-8 h-8 text-cyan-400" />
+        <h1 className="text-2xl font-bold tracking-tight text-white">
           Data Survei Kepuasan Masyarakat (SKM)
         </h1>
         <p className="text-slate-400 mt-1 text-sm">
-          Kelola dan tinjau masukan survei Google Form SKM berdasarkan Peraturan Menteri PAN-RB No. 14 Tahun 2017.
+          Kelola dan pantau hasil survei IKM berdasarkan Peraturan Menteri PAN-RB No. 14 Tahun 2017.
         </p>
       </div>
 
       {/* Metric Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Nilai Indeks IKM</span>
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
-              <Award className="w-5 h-5" />
-            </div>
-          </div>
-          <div className="text-3xl font-black text-cyan-400">
-            {stats?.ikmScore || '94.5'} <span className="text-xs font-medium text-slate-400">/ 100</span>
-          </div>
-          <p className="text-xs text-slate-400 mt-1">Mutu Layanan: <strong className="text-white">A (Sangat Baik)</strong></p>
-        </div>
+      {(() => {
+        const ikmNum = parseFloat(stats?.ikmScore || '0');
+        let mutuGrade = 'B';
+        let mutuLabel = 'Baik';
+        let mutuColor = 'text-cyan-400';
 
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Responden</span>
-            <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
-              <User className="w-5 h-5" />
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-white">{stats?.totalCount || surveys.length}</div>
-          <p className="text-xs text-slate-400 mt-1">Pengguna layanan terdaftar</p>
-        </div>
+        if (ikmNum >= 88.31) {
+          mutuGrade = 'A';
+          mutuLabel = 'Sangat Baik';
+          mutuColor = 'text-emerald-400';
+        } else if (ikmNum >= 76.61) {
+          mutuGrade = 'B';
+          mutuLabel = 'Baik';
+          mutuColor = 'text-cyan-400';
+        } else if (ikmNum >= 65.31) {
+          mutuGrade = 'C';
+          mutuLabel = 'Kurang Baik';
+          mutuColor = 'text-amber-400';
+        } else if (ikmNum > 0) {
+          mutuGrade = 'D';
+          mutuLabel = 'Tidak Baik';
+          mutuColor = 'text-rose-400';
+        }
 
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Kemudahan Layanan</span>
-            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
-              <Star className="w-5 h-5" />
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl shadow-sm">
+              <span className="text-slate-400 text-xs font-medium uppercase tracking-wider">Nilai Indeks IKM</span>
+              <div className="text-3xl font-bold text-cyan-400 mt-2">
+                {stats?.ikmScore || '0.0'} <span className="text-xs font-normal text-slate-500">/ 100</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1.5">
+                Mutu Layanan: <strong className={mutuColor}>{mutuGrade} ({mutuLabel})</strong>
+              </p>
             </div>
-          </div>
-          <div className="text-3xl font-bold text-amber-400">{stats?.avgKemudahan || '4.8'} <span className="text-xs font-normal text-slate-400">/ 5.0</span></div>
-          <p className="text-xs text-slate-400 mt-1">Rata-rata Kemudahan Prosedur</p>
-        </div>
 
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Sikap & Keramahan</span>
-            <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
-              <Sparkles className="w-5 h-5" />
+            <div className="bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl shadow-sm">
+              <span className="text-slate-400 text-xs font-medium uppercase tracking-wider">Total Responden</span>
+              <div className="text-3xl font-bold text-white mt-2">
+                {stats?.totalCount ?? surveys.length}
+              </div>
+              <p className="text-xs text-slate-400 mt-1.5">Data masuk tersimpan di database</p>
+            </div>
+
+            <div className="bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl shadow-sm">
+              <span className="text-slate-400 text-xs font-medium uppercase tracking-wider">Kemudahan Layanan</span>
+              <div className="text-3xl font-bold text-white mt-2">
+                {stats?.avgKemudahan || '0.0'} <span className="text-xs font-normal text-slate-500">/ 5.0</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1.5">Rata-rata kemudahan prosedur</p>
+            </div>
+
+            <div className="bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl shadow-sm">
+              <span className="text-slate-400 text-xs font-medium uppercase tracking-wider">Sikap & Keramahan</span>
+              <div className="text-3xl font-bold text-white mt-2">
+                {stats?.avgSikap || '0.0'} <span className="text-xs font-normal text-slate-500">/ 5.0</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1.5">Rata-rata perilaku petugas</p>
             </div>
           </div>
-          <div className="text-3xl font-bold text-purple-400">{stats?.avgSikap || '4.9'} <span className="text-xs font-normal text-slate-400">/ 5.0</span></div>
-          <p className="text-xs text-slate-400 mt-1">Rata-rata Perilaku Petugas</p>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* Main Table Container */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">

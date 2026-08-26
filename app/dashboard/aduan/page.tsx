@@ -391,6 +391,19 @@ export default function AduanDashboardPage() {
 
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        {/* WA Pelapor quick contact button */}
+                        {item.telepon_pelapor && (
+                          <a
+                            href={`https://wa.me/${item.telepon_pelapor.replace(/[^0-9]/g, '').replace(/^0/, '62')}?text=${encodeURIComponent(`Halo ${item.nama_pelapor || 'Bapak/Ibu'}, menindaklanjuti pengaduan No. Tiket [${item.nomor_tiket}] perihal ${item.kategori}...`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2.5 py-1.5 bg-emerald-600/80 hover:bg-emerald-500 text-white rounded-lg text-xs transition-colors flex items-center gap-1"
+                            title="Chat WhatsApp Pelapor"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" /> WA
+                          </a>
+                        )}
+
                         {/* Detail button */}
                         <button
                           onClick={() => { setSelectedItem(item); setModalType('detail'); }}

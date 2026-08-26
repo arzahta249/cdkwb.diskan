@@ -51,7 +51,7 @@ function GaleriContent() {
     fetchAll();
   }, []);
 
-  const filterOptions = ['Semua', 'Konservasi', 'Pengawasan', 'Operasional'];
+  const filterOptions = ['Semua', 'Konservasi', 'Pengawasan', 'Operasional', 'Kehumasan', 'Kegiatan', 'Dokumentasi'];
 
   const filteredPhotos = activeFilter === 'Semua' 
     ? fotoData 

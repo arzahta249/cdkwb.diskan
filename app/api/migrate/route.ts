@@ -7,16 +7,27 @@ export async function GET() {
   try {
     // Force add the column — catches error gracefully if it already exists
     try {
-      await pool.query(
-        `ALTER TABLE berita ADD COLUMN kategori VARCHAR(100) NOT NULL DEFAULT 'Umum'`
-      );
-      results.push('SUCCESS: kolom kategori ditambahkan ke berita');
+      await pool.query(`ALTER TABLE berita ADD COLUMN IF NOT EXISTS kategori VARCHAR(100) NOT NULL DEFAULT 'Umum'`);
+      await pool.query(`ALTER TABLE berita ADD COLUMN IF NOT EXISTS instagram_url VARCHAR(500) NULL`);
+      await pool.query(`ALTER TABLE berita ADD COLUMN IF NOT EXISTS is_leading TINYINT(1) DEFAULT 0`);
+      await pool.query(`ALTER TABLE berita ADD COLUMN IF NOT EXISTS id_penulis INT NULL`);
+      await pool.query(`ALTER TABLE berita ADD COLUMN IF NOT EXISTS penulis VARCHAR(150) DEFAULT 'Admin'`);
+      results.push('SUCCESS: kolom berita siap');
     } catch (err: any) {
-      if (err.code === 'ER_DUP_FIELDNAME') {
-        results.push('INFO: kolom kategori sudah ada (tidak ada perubahan)');
-      } else {
-        throw err;
-      }
+      results.push(`INFO: kolom berita (${err.message})`);
+    }
+
+    try {
+      await pool.query(`ALTER TABLE artikel ADD COLUMN IF NOT EXISTS isi_artikel LONGTEXT NULL`);
+      await pool.query(`ALTER TABLE artikel ADD COLUMN IF NOT EXISTS kategori VARCHAR(100) DEFAULT 'Umum'`);
+      await pool.query(`ALTER TABLE artikel ADD COLUMN IF NOT EXISTS penulis VARCHAR(150) DEFAULT 'Admin'`);
+      await pool.query(`ALTER TABLE artikel ADD COLUMN IF NOT EXISTS id_penulis INT NULL`);
+      await pool.query(`ALTER TABLE artikel ADD COLUMN IF NOT EXISTS image VARCHAR(255) NULL`);
+      await pool.query(`ALTER TABLE artikel ADD COLUMN IF NOT EXISTS instagram_url VARCHAR(500) NULL`);
+      await pool.query(`ALTER TABLE artikel ADD COLUMN IF NOT EXISTS is_leading TINYINT(1) DEFAULT 0`);
+      results.push('SUCCESS: kolom artikel siap');
+    } catch (err: any) {
+      results.push(`INFO: kolom artikel (${err.message})`);
     }
 
     // Create pengaduan table
@@ -127,7 +138,7 @@ export async function GET() {
       // Seed default categories
       await pool.query(`
         INSERT IGNORE INTO kategory_foto (name_kategori)
-        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi');
+        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi'), ('Kehumasan');
       `);
       results.push('SUCCESS: tabel kategory_foto siap');
     } catch (err: any) {
@@ -144,7 +155,7 @@ export async function GET() {
       `);
       await pool.query(`
         INSERT IGNORE INTO kategory_video (name_kategori)
-        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi');
+        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi'), ('Kehumasan');
       `);
       results.push('SUCCESS: tabel kategory_video siap');
     } catch (err: any) {
@@ -161,7 +172,7 @@ export async function GET() {
       `);
       await pool.query(`
         INSERT IGNORE INTO kategory_infografis (name_kategori)
-        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi');
+        VALUES ('Konservasi'), ('Pengawasan'), ('Operasional'), ('Kegiatan'), ('Dokumentasi'), ('Kehumasan');
       `);
       results.push('SUCCESS: tabel kategory_infografis siap');
     } catch (err: any) {
@@ -291,7 +302,82 @@ export async function GET() {
       results.push(`INFO: error tabel materi (${err.message})`);
     }
 
-    // ── End Galeri Tables ─────────────────────────────────────────────
+    // ── Kehumasan: Dokumen Humas Table ────────────────────────────────
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS dokumen_humas (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          judul VARCHAR(255) NOT NULL,
+          deskripsi TEXT,
+          file_url VARCHAR(500) NOT NULL,
+          tipe VARCHAR(50) DEFAULT 'PDF',
+          ukuran VARCHAR(30) DEFAULT '',
+          warna VARCHAR(20) DEFAULT '#0ea5e9',
+          urutan INT DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      `);
+      results.push('SUCCESS: tabel dokumen_humas siap');
+    } catch (err: any) {
+      results.push(`INFO: error tabel dokumen_humas (${err.message})`);
+    }
+
+    // ── Kehumasan: Kerjasama Table ─────────────────────────────────────
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS kerjasama (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          nama_mitra VARCHAR(255) NOT NULL,
+          singkatan VARCHAR(100) DEFAULT '',
+          kategori ENUM('akademik', 'teknis', 'pokmaswas') DEFAULT 'akademik',
+          nomor_pks_mitra VARCHAR(255) NOT NULL,
+          nomor_pks_dinas VARCHAR(255) DEFAULT '',
+          tanggal_pks VARCHAR(100) NOT NULL,
+          jangka_waktu VARCHAR(100) NOT NULL,
+          status ENUM('aktif', 'perpanjangan', 'tetap') DEFAULT 'aktif',
+          level VARCHAR(100) DEFAULT 'Provinsi Jawa Tengah',
+          penandatangan VARCHAR(255) DEFAULT '',
+          ringkasan TEXT,
+          ruang_lingkup TEXT,
+          prodi_terlibat TEXT,
+          keluaran_program TEXT,
+          pendanaan VARCHAR(255) DEFAULT '',
+          file_dokumen_url VARCHAR(500) DEFAULT '',
+          urutan INT DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      `);
+      results.push('SUCCESS: tabel kerjasama siap');
+    } catch (err: any) {
+      results.push(`INFO: error tabel kerjasama (${err.message})`);
+    }
+
+    // ── Magang: Pendaftaran Magang Table ──────────────────────────────
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS pendaftaran_magang (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          nama VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          nomor_ponsel VARCHAR(20) NULL,
+          domisili VARCHAR(255) NULL,
+          universitas VARCHAR(255) NOT NULL,
+          jurusan VARCHAR(255) NOT NULL,
+          posisi VARCHAR(100) NOT NULL,
+          motivasi_cv TEXT NOT NULL,
+          cv_file VARCHAR(255) NULL,
+          status ENUM('PENDING', 'DITERIMA', 'DITOLAK') DEFAULT 'PENDING',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      `);
+      results.push('SUCCESS: tabel pendaftaran_magang siap');
+    } catch (err: any) {
+      results.push(`INFO: error tabel pendaftaran_magang (${err.message})`);
+    }
+
+    // ── End Tables ───────────────────────────────────────────────────
 
     // Verify the column exists now
     const [[dbRow]]: any = await pool.query('SELECT DATABASE() AS db');

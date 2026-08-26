@@ -54,6 +54,27 @@ const features = [
   },
 ];
 
+const PARTICLES = Array.from({ length: 20 }, (_, i) => {
+  const seed1 = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+  const rand1 = seed1 - Math.floor(seed1);
+  const seed2 = Math.sin((i + 1) * 39.346 + 11.135) * 43758.5453;
+  const rand2 = seed2 - Math.floor(seed2);
+  const seed3 = Math.sin((i + 2) * 73.156 + 45.164) * 43758.5453;
+  const rand3 = seed3 - Math.floor(seed3);
+  const seed4 = Math.sin((i + 3) * 91.242 + 23.758) * 43758.5453;
+  const rand4 = seed4 - Math.floor(seed4);
+  const size = Math.round((4 + rand1 * 8) * 10) / 10;
+
+  return {
+    width: `${size}px`,
+    height: `${size}px`,
+    left: `${Math.round(rand2 * 1000) / 10}%`,
+    top: `${Math.round(rand3 * 1000) / 10}%`,
+    animation: `float ${Math.round((4 + rand4 * 6) * 10) / 10}s ease-in-out infinite`,
+    animationDelay: `${Math.round(rand1 * 4 * 10) / 10}s`,
+  };
+});
+
 export default function KarangJerukPage() {
   const [heroRef, heroVisible] = useInView(0.1);
   const [statsRef, statsVisible] = useInView(0.1);
@@ -90,18 +111,11 @@ export default function KarangJerukPage() {
             />
           ))}
           {/* Floating particles */}
-          {Array.from({ length: 20 }).map((_, i) => (
+          {PARTICLES.map((style, i) => (
             <div
               key={i}
               className="absolute rounded-full bg-white/5"
-              style={{
-                width: `${4 + Math.random() * 8}px`,
-                height: `${4 + Math.random() * 8}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animation: `float ${4 + Math.random() * 6}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 4}s`,
-              }}
+              style={style}
             />
           ))}
         </div>
@@ -109,7 +123,7 @@ export default function KarangJerukPage() {
         {/* Background image overlay */}
         <div
           className="absolute inset-0 bg-cover bg-center opacity-40"
-          style={{ backgroundImage: "url('/leading/konservasi1.jpg')" }}
+          style={{ backgroundImage: "url('/leading/konservasi_hero.png')" }}
         />
 
         <div ref={heroRef} className="relative z-10 container mx-auto px-6 py-24">
@@ -121,21 +135,14 @@ export default function KarangJerukPage() {
 
           </div>
 
-          {/* Badge */}
-          <div
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-white/80 text-xs font-medium mb-6 transition-all duration-700 delay-100"
-            style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? 'translateY(0)' : 'translateY(20px)' }}
-          >
-            <Anchor className="w-3 h-3" />
-            Kawasan Konservasi Perairan
-          </div>
+        
 
           <h1
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 transition-all duration-700 delay-200"
             style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? 'translateY(0)' : 'translateY(30px)' }}
           >
             Kawasan Konservasi<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-sky-300">
+            <span className="text-white 500">
               Karang Jeruk
             </span>
           </h1>

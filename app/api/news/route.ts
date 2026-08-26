@@ -9,12 +9,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const queryParams: any[] = [];
     let query = `
-      SELECT b.ID_berita, b.Judul, b.Slug, b.image, b.isi_berita, b.status, b.tanggal, b.kategori, b.instagram_url, u.nama as penulis 
+      SELECT b.ID_berita, b.Judul, b.Slug, b.image, b.isi_berita, b.status, b.tanggal, b.kategori, b.instagram_url, b.is_leading,
+             COALESCE(u.nama, b.penulis, 'Admin') as penulis 
       FROM berita b
       LEFT JOIN user u ON b.id_penulis = u.ID_user
     `;
 
-    query += ' ORDER BY tanggal DESC';
+    query += ' ORDER BY b.tanggal DESC';
 
     const [rows]: any = await pool.query(query, queryParams);
     return NextResponse.json({ success: true, data: rows });
@@ -38,6 +39,8 @@ export async function POST(request: Request) {
     const isi_berita = formData.get('isi_berita') as string;
     const status = formData.get('status') as string;
     const kategori = (formData.get('kategori') as string) || 'Umum';
+    const penulis = (formData.get('penulis') as string) || 'Admin';
+    const type = (formData.get('type') as string) || 'berita';
     const imageFile = formData.get('image') as File | null;
     const instagram_url = formData.get('instagramUrl') as string | null;
 
@@ -76,8 +79,8 @@ export async function POST(request: Request) {
     const tanggal = new Date().toISOString().split('T')[0];
 
     const [result]: any = await pool.query(
-      'INSERT INTO berita (Judul, Slug, image, isi_berita, status, tanggal, id_penulis, kategori, instagram_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [judul, slug, imageUrl, isi_berita, status || 'draft', tanggal, token ? parseInt(token) : null, kategori, instagram_url || null]
+      'INSERT INTO berita (Judul, Slug, image, isi_berita, status, tanggal, id_penulis, penulis, kategori, instagram_url, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [judul, slug, imageUrl, isi_berita, status || 'draft', tanggal, token ? parseInt(token) : null, penulis, kategori, instagram_url || null, type]
     );
 
     return NextResponse.json(
@@ -124,6 +127,7 @@ export async function PUT(request: Request) {
     const isi_berita = formData.get('isi_berita') as string;
     const status = formData.get('status') as string;
     const kategori = (formData.get('kategori') as string) || 'Umum';
+    const penulis = formData.get('penulis') as string | null;
     const imageFile = formData.get('image') as File | null;
     const instagram_url = formData.get('instagramUrl') as string | null;
 
@@ -165,8 +169,8 @@ export async function PUT(request: Request) {
     }
 
     const [result]: any = await pool.query(
-      'UPDATE berita SET Judul=?, Slug=?, image=?, isi_berita=?, status=?, kategori=?, instagram_url=? WHERE ID_berita=?',
-      [judul, slug, imageUrl, isi_berita, status || 'draft', kategori, instagram_url || null, id]
+      'UPDATE berita SET Judul=?, Slug=?, image=?, isi_berita=?, status=?, kategori=?, instagram_url=?, penulis=COALESCE(?, penulis) WHERE ID_berita=?',
+      [judul, slug, imageUrl, isi_berita, status || 'draft', kategori, instagram_url || null, penulis, id]
     );
 
     return NextResponse.json(

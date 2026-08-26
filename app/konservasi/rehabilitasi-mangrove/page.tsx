@@ -115,6 +115,25 @@ const species = [
   { name: 'Ceriops tagal', local: 'Tengar', habitat: 'Zona intertidal atas, substrat berpasir' },
 ];
 
+const LEAVES = Array.from({ length: 12 }, (_, i) => {
+  const seed1 = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+  const rand1 = seed1 - Math.floor(seed1);
+  const seed2 = Math.sin((i + 1) * 39.346 + 11.135) * 43758.5453;
+  const rand2 = seed2 - Math.floor(seed2);
+  const seed3 = Math.sin((i + 2) * 73.156 + 45.164) * 43758.5453;
+  const rand3 = seed3 - Math.floor(seed3);
+  const seed4 = Math.sin((i + 3) * 91.242 + 23.758) * 43758.5453;
+  const rand4 = seed4 - Math.floor(seed4);
+
+  return {
+    left: `${Math.round(rand1 * 1000) / 10}%`,
+    top: `${Math.round(rand2 * 1000) / 10}%`,
+    animation: `sway ${Math.round((3 + rand3 * 4) * 10) / 10}s ease-in-out infinite alternate`,
+    animationDelay: `${Math.round(rand4 * 3 * 10) / 10}s`,
+    fontSize: `${Math.round(16 + rand1 * 16)}px`,
+  };
+});
+
 export default function RehabilitasiMangrovePage() {
   const [heroRef, heroVisible] = useInView(0.1);
   const [statsRef, statsVisible] = useInView(0.1);
@@ -144,17 +163,11 @@ export default function RehabilitasiMangrovePage() {
         />
 
         {/* Animated leaves */}
-        {Array.from({ length: 12 }).map((_, i) => (
+        {LEAVES.map((style, i) => (
           <div
             key={i}
             className="absolute text-green-400/20 text-2xl select-none"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `sway ${3 + Math.random() * 4}s ease-in-out infinite alternate`,
-              animationDelay: `${Math.random() * 3}s`,
-              fontSize: `${16 + Math.random() * 16}px`,
-            }}
+            style={style}
           >
             🌿
           </div>

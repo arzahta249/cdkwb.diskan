@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { X, FileText, CheckCircle } from 'lucide-react';
-import Image from 'next/image';
 
 interface SimulasiEsloModalProps {
   isOpen: boolean;

@@ -841,7 +841,7 @@ export default function PengaduanPage() {
           {/* TAB 3: KEPUASAN PENGGUNA (STREAMLINED & EFFICIENT SKM) */}
           {activeTab === 'kepuasan' && (() => {
             const answeredCount = [
-              !!surveyForm.email,
+              !!surveyForm.whatsapp,
               !!surveyForm.jenis_kelamin,
               !!surveyForm.usia,
               !!surveyForm.pendidikan,

@@ -6,7 +6,7 @@ import { Save, ArrowLeft, Loader2, Image as ImageIcon, X, Tag, Camera, ImagePlus
 import Link from 'next/link';
 import Image from 'next/image';
 
-const KATEGORI_OPTIONS = ['Umum', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan'];
+const KATEGORI_OPTIONS = ['Umum', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan', 'Siaran Pers'];
 
 export default function EditArtikelForm({ initialData }: { initialData: any }) {
   const router = useRouter();

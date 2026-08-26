@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { X, PlayCircle, Video } from 'lucide-react';
+import { X, PlayCircle } from 'lucide-react';
 
 interface DaftarAkunModalProps {
   isOpen: boolean;

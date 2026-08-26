@@ -11,7 +11,7 @@ import {
 
 export const revalidate = 0;
 
-const CATEGORIES = ['Semua', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan', 'Umum'];
+const CATEGORIES = ['Semua', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan', 'Umum', 'Siaran Pers'];
 const PAGE_SIZE = 6;
 
 const CAT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -20,6 +20,7 @@ const CAT_COLORS: Record<string, { bg: string; text: string; border: string }> =
   Konservasi:   { bg: 'rgba(100,210,135,0.18)', text: '#64D287', border: 'rgba(100,210,135,0.35)' },
   Pemberdayaan: { bg: 'rgba(255,121,90,0.18)',  text: '#FF795A', border: 'rgba(255,121,90,0.35)' },
   Umum:         { bg: 'rgba(180,180,255,0.18)', text: '#B4B4FF', border: 'rgba(180,180,255,0.35)' },
+  'Siaran Pers':{ bg: 'rgba(56,189,248,0.18)',  text: '#38BDF8', border: 'rgba(56,189,248,0.35)' },
 };
 
 function getCat(cat: string) {

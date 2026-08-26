@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Search, ChevronDown, Menu, X, ChevronRight, ArrowRight, FileText, Compass, Phone, FolderDown, Sparkles, PlayCircle, Ship, PhoneCall } from 'lucide-react';
 import SimulasiEsloModal from './SimulasiEsloModal';
 import DaftarAkunModal from './DaftarAkunModal';
@@ -18,7 +17,8 @@ const SEARCH_INDEX = [
   { title: 'Rehabilitasi Mangrove', category: 'Layanan Konservasi', href: '/konservasi/rehabilitasi-mangrove', keywords: 'mangrove rehabilitasi bibit tanam pesisir', icon: Compass },
   { title: 'Layanan Pengaduan & Survei SKM', category: 'Layanan Publik', href: '/pengaduan', keywords: 'pengaduan aduan tiket survei kepuasan ikm skm lapor', icon: Phone },
   { title: 'Kontak Resmi & Alamat', category: 'Hubungi Kami', href: '/kontak', keywords: 'kontak telepon email alamat kantor hubungi', icon: Phone },
-  { title: 'Lokasi Peta Kantor CDKWB', category: 'Hubungi Kami', href: '/kontak#lokasi', keywords: 'lokasi peta alamat gmaps kantor cabang', icon: Phone },
+  { title: 'Direktori Kerjasama & Kemitraan', category: 'Kehumasan', href: '/kehumasan/kerjasama', keywords: 'kerjasama mou pks kemitraan mitra perguruan tinggi ngo yayasan pokmaswas', icon: FolderDown },
+  { title: 'Program Kadet Magang & Riset', category: 'Layanan Publik', href: '/kerja-sama/informasi-magang', keywords: 'magang riset program mahasiswa penelitian internship kerja sama praktek', icon: FileText },
   { title: 'Struktur Organisasi', category: 'Profil', href: '/profil/struktur-organisasi', keywords: 'struktur organisasi pejabat kepala cabang hirarki', icon: FileText },
   { title: 'Tugas Pokok & Fungsi', category: 'Profil', href: '/profil/tugas-pokok', keywords: 'tugas pokok fungsi tupoksi dkp', icon: FileText },
   { title: 'Visi & Misi', category: 'Profil', href: '/profil/visi-misi', keywords: 'visi misi tujuan strategi arah', icon: FileText },
@@ -184,7 +184,7 @@ export default function Navbar() {
                     <Link href="/kehumasan" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/60 transition-colors">
                       <div>
                         <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan & Publikasi</div>
-                        <div className="text-xs text-slate-500">Layanan informasi publik & humas</div>
+                        <div className="text-xs text-slate-500">Siaran pers, kerjasama & portal linkup</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-400 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
                     </Link>
@@ -407,21 +407,8 @@ export default function Navbar() {
                 {/* 3. Kehumasan */}
                 <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan</Link>
 
-                {/* 4. Kerja Sama */}
-                <div>
-                  <button 
-                    onClick={() => toggleMobileDropdown('layanan-kerjasama')}
-                    className="w-full flex items-center justify-between py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium rounded-lg transition-colors"
-                  >
-                    Kerja Sama
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${activeMobileDropdown.includes('layanan-kerjasama') ? 'rotate-180 text-blue-600' : ''}`} />
-                  </button>
-                  <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('layanan-kerjasama') ? 'max-h-48' : 'max-h-0'}`}>
-                    <div className="pl-4 py-1.5 space-y-1 bg-white/80 rounded-lg mt-1 border border-gray-100">
-                      <Link href="/kerja-sama/informasi-magang" className="block py-2 px-3 text-xs text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Info Magang</Link>
-                    </div>
-                  </div>
-                </div>
+                {/* 4. Info Magang */}
+                <Link href="/kerja-sama/informasi-magang" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Info Magang</Link>
 
                 {/* 5. Layanan SUOP */}
                 <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Layanan SUOP</Link>
@@ -565,8 +552,8 @@ export default function Navbar() {
               {filteredResults.length === 0 ? (
                 <div className="py-12 text-center text-gray-400 space-y-2">
                   <Sparkles className="w-8 h-8 mx-auto opacity-30 text-blue-500" />
-                  <p className="text-sm font-medium">Tidak ada hasil pencarian untuk "{searchQuery}"</p>
-                  <p className="text-xs text-gray-400">Cobalah kata kunci lain seperti "berita", "mangrove", atau "pengaduan".</p>
+                  <p className="text-sm font-medium">Tidak ada hasil pencarian untuk &quot;{searchQuery}&quot;</p>
+                  <p className="text-xs text-gray-400">Cobalah kata kunci lain seperti &quot;berita&quot;, &quot;mangrove&quot;, atau &quot;pengaduan&quot;.</p>
                 </div>
               ) : (
                 filteredResults.map((item, idx) => {

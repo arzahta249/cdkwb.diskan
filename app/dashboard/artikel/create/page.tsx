@@ -6,7 +6,7 @@ import { Save, ArrowLeft, Loader2, Image as ImageIcon, X, User, Tag } from 'luci
 import Link from 'next/link';
 import Image from 'next/image';
 
-const KATEGORI_OPTIONS = ['Umum', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan'];
+const KATEGORI_OPTIONS = ['Umum', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan', 'Siaran Pers'];
 
 const KATEGORI_COLORS: Record<string, string> = {
   Kelautan:     '#6FF3C8',
@@ -14,6 +14,7 @@ const KATEGORI_COLORS: Record<string, string> = {
   Konservasi:   '#64D287',
   Pemberdayaan: '#FF795A',
   Umum:         '#B4B4FF',
+  'Siaran Pers':'#38BDF8',
 };
 
 export default function CreateArtikelPage() {
