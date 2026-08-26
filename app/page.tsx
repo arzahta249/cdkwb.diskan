@@ -55,7 +55,7 @@ export default async function HomePage() {
       <div className="ocean-bg">
 
         {/* 1. Hero Section */}
-        <section className="relative min-h-[90vh] sm:min-h-screen flex items-center pt-32 sm:pt-40 pb-32 sm:pb-48 overflow-hidden bg-[#093345]">
+        <section className="relative min-h-[85vh] sm:min-h-screen flex items-center pt-24 sm:pt-32 pb-24 sm:pb-32 overflow-hidden bg-[#093345]">
           {/* Background image & gradient overlay (placed ON TOP of light rays) */}
           <div className="absolute inset-0 z-0">
             {/* Light rays layer behind image */}
@@ -82,13 +82,13 @@ export default async function HomePage() {
               <span className="eyebrow text-xs" style={{ color: '#6FF3C8' }}>
                 Dinas Kelautan dan Perikanan · Provinsi Jawa Tengah
               </span>
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mt-6 sm:mt-8 mb-6 sm:mb-8 leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mt-6 sm:mt-8 mb-4 sm:mb-6 leading-tight">
                 Cabang Dinas Kelautan<br className="hidden sm:block" />Wilayah Barat
               </h1>
-              <p className="text-base sm:text-lg md:text-xl mb-10 sm:mb-14 leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,0.75)' }}>
+              <p className="text-sm sm:text-base md:text-lg mb-8 sm:mb-12 leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,0.75)' }}>
                 Mewujudkan pengelolaan ruang laut yang berkelanjutan, aman, dan sejahtera untuk masa depan maritim Jawa Tengah.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-12 sm:mb-16 w-full">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-10 w-full">
                 <Link href="#layanan" className="btn-coral-ocean justify-center text-center w-[260px]">
                   Jelajahi Layanan
                 </Link>
@@ -132,13 +132,13 @@ export default async function HomePage() {
         </section>
 
         {/* 2. Sekilas Layanan */}
-        <section id="layanan" className="py-16 sm:py-24 relative">
+        <section id="layanan" className="py-12 sm:py-16 relative">
           <div className="glow-particles" aria-hidden="true" id="glowLayanan" />
           <div className="container mx-auto px-4 sm:px-6 max-w-5xl relative z-10">
-            <div className="text-center mb-10 sm:mb-16">
+            <div className="text-center mb-8 sm:mb-12">
               <span className="eyebrow" style={{ color: '#6FF3C8' }}>Zona Dangkal</span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mt-3 sm:mt-4 mb-3">Sekilas Layanan</h2>
-              <p className="text-sm sm:text-base mt-2 sm:mt-3" style={{ color: 'rgba(255,255,255,0.65)' }}>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mt-2 sm:mt-3 mb-2">Sekilas Layanan</h2>
+              <p className="text-xs sm:text-sm mt-2 sm:mt-3" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 Layanan inti untuk nelayan, pelaku usaha, dan masyarakat pesisir.
               </p>
             </div>
@@ -152,13 +152,13 @@ export default async function HomePage() {
         </section>
 
         {/* 3. Berita & Kegiatan Terbaru */}
-        <section className="py-16 sm:py-24 relative">
+        <section className="py-12 sm:py-16 relative">
           <div className="container mx-auto px-4 sm:px-6 max-w-6xl relative z-10">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-4">
               <div>
                 <span className="eyebrow" style={{ color: '#6FF3C8' }}>Zona Twilight · Terkini</span>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white mt-3 sm:mt-4 mb-3">Berita &amp; Kegiatan Terbaru</h2>
-                <p className="text-sm sm:text-base" style={{ color: 'rgba(255,255,255,0.65)' }}>Pembaruan aktivitas dan dokumentasi lapangan terkini.</p>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mt-2 sm:mt-3 mb-2">Berita &amp; Kegiatan Terbaru</h2>
+                <p className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>Pembaruan aktivitas dan dokumentasi lapangan terkini.</p>
               </div>
               <Link href="/news" className="text-xs sm:text-sm font-semibold flex items-center gap-1 transition-colors hover:text-white self-start sm:self-auto" style={{ color: '#6FF3C8' }}>
                 Lihat Semua <ArrowRight className="w-4 h-4" />
@@ -172,7 +172,7 @@ export default async function HomePage() {
                   <Link
                     href={linkHref}
                     key={`${item.type}-${item.id}`}
-                    className="group relative flex flex-col h-[380px] sm:h-[420px] md:h-[480px] w-[85vw] sm:w-[350px] md:w-[400px] lg:w-[450px] shrink-0 snap-center sm:snap-start overflow-hidden transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_50px_-10px_rgba(111,243,200,0.25)] border border-white/10 hover:border-[#6FF3C8]/40"
+                    className="group relative flex flex-col h-[320px] sm:h-[360px] md:h-[400px] w-[85vw] sm:w-[300px] md:w-[340px] lg:w-[380px] shrink-0 snap-center sm:snap-start overflow-hidden transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_50px_-10px_rgba(111,243,200,0.25)] border border-white/10 hover:border-[#6FF3C8]/40"
                     style={{ 
                       borderRadius: '40px 10px 40px 10px', // Organic wave-like shape
                       animation: `floatBob ${6 + (index % 3)}s ease-in-out infinite ${index * 0.5}s` 
@@ -231,7 +231,7 @@ export default async function HomePage() {
                         </div>
                         
                         {/* Title with elegant typography, no excessive sizing */}
-                        <h3 className="text-lg sm:text-xl font-semibold text-white/90 leading-relaxed mb-6 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#6FF3C8] group-hover:to-cyan-300 transition-all duration-300">
+                        <h3 className="text-base sm:text-lg font-semibold text-white/90 leading-relaxed mb-4 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#6FF3C8] group-hover:to-cyan-300 transition-all duration-300">
                           {item.Judul}
                         </h3>
                         
@@ -256,18 +256,18 @@ export default async function HomePage() {
         </section>
 
         {/* 4. Portal Layanan Terpadu */}
-        <section className="relative pt-20 sm:pt-28 pb-16 sm:pb-24 text-center overflow-hidden">
+        <section className="relative pt-16 sm:pt-20 pb-12 sm:pb-16 text-center overflow-hidden">
           <div className="glow-particles" aria-hidden="true" id="glowPortal" />
           {/* Decorative rings */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.05)' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.04)' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[400px] h-[280px] sm:h-[400px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.05)' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[560px] h-[400px] sm:h-[560px] rounded-full pointer-events-none" style={{ border: '1px solid rgba(255,255,255,0.04)' }} />
 
           <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-3xl flex flex-col items-center">
-            <span className="eyebrow mb-3 sm:mb-4" style={{ color: '#6FF3C8' }}>Zona Tengah Malam</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 sm:mb-6 tracking-tight leading-tight">
+            <span className="eyebrow mb-2 sm:mb-3" style={{ color: '#6FF3C8' }}>Zona Tengah Malam</span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-5 tracking-tight leading-tight">
               Portal Layanan Terpadu
             </h2>
-            <p className="text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 leading-relaxed max-w-2xl px-4 sm:px-0" style={{ color: 'rgba(255,255,255,0.7)' }}>
+            <p className="text-sm sm:text-base lg:text-lg mb-6 sm:mb-8 leading-relaxed max-w-2xl px-4 sm:px-0" style={{ color: 'rgba(255,255,255,0.7)' }}>
               Akses cepat ke berbagai layanan publik, informasi kelautan terpusat, dan pelaporan perizinan untuk wilayah barat dalam satu platform terintegrasi.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
@@ -290,13 +290,13 @@ export default async function HomePage() {
 
 function ServiceCard({ icon: Icon, title, desc, num }: { icon: any; title: string; desc: string; num: string }) {
   return (
-    <div className="ocean-card flex flex-col items-center text-center p-6 sm:p-8" style={{ transition: 'all 0.3s ease' }}>
-      <span className="mb-3 text-xs font-mono" style={{ color: 'rgba(111,243,200,0.7)' }}>{num}</span>
-      <div className="w-14 h-14 rounded-full flex items-center justify-center mb-5" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>
-        <Icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+    <div className="ocean-card flex flex-col items-center text-center p-5 sm:p-6" style={{ transition: 'all 0.3s ease' }}>
+      <span className="mb-2 text-[10px] font-mono" style={{ color: 'rgba(111,243,200,0.7)' }}>{num}</span>
+      <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>
+        <Icon className="w-5 h-5 text-white" strokeWidth={1.5} />
       </div>
-      <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-      <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>{desc}</p>
+      <h3 className="text-base font-bold text-white mb-2">{title}</h3>
+      <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>{desc}</p>
     </div>
   );
 }

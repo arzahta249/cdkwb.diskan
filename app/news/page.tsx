@@ -136,10 +136,10 @@ export default async function NewsListPage({
 
           <div className="container mx-auto px-6 max-w-6xl relative z-10">
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2 leading-tight">
               Berita & Kegiatan
             </h1>
-            <p className="text-gray-300 text-base mb-10 max-w-xl leading-relaxed">
+            <p className="text-gray-300 text-sm md:text-base mb-6 max-w-xl leading-relaxed">
               Informasi resmi, laporan kegiatan lapangan, dan kabar terkini seputar DKP Jawa Tengah Wilayah Barat.
             </p>
 
@@ -219,10 +219,10 @@ export default async function NewsListPage({
                           </span>
                         )}
                       </div>
-                      <h2 className="text-3xl font-bold text-white leading-tight mb-3 group-hover:text-[#6FF3C8] transition-colors">
+                      <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3 group-hover:text-[#6FF3C8] transition-colors">
                         {featured.Judul}
                       </h2>
-                      <p className="text-sm text-gray-300 leading-relaxed mb-5 max-w-2xl line-clamp-2">
+                      <p className="text-xs md:text-sm text-gray-300 leading-relaxed mb-4 max-w-2xl line-clamp-2">
                         {stripHtml(featured.isi_berita)}
                       </p>
                       <div className="flex items-center gap-4 text-xs font-medium text-gray-400">
@@ -259,12 +259,12 @@ export default async function NewsListPage({
                           <div className="absolute top-3 left-3"><CatBadge cat={item.kategori || 'Umum'} /></div>
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
-                        <div className="p-5 flex-1 flex flex-col">
-                          <h3 className="text-base font-bold text-white leading-snug mb-2 group-hover:text-[#6FF3C8] transition-colors line-clamp-2">
+                        <div className="p-4 flex-1 flex flex-col">
+                          <h3 className="text-sm font-bold text-white leading-snug mb-2 group-hover:text-[#6FF3C8] transition-colors line-clamp-2">
                             {item.Judul}
                           </h3>
-                          <p className="text-sm text-gray-400 line-clamp-2 mb-4 flex-1">{stripHtml(item.isi_berita)}</p>
-                          <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                          <p className="text-xs text-gray-400 line-clamp-2 mb-3 flex-1">{stripHtml(item.isi_berita)}</p>
+                          <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
                             <span className="text-[11px] text-gray-400 flex items-center gap-1">
                               <Clock className="w-3.5 h-3.5" /> {fmtDate(item.tanggal, true)}
                             </span>
@@ -287,10 +287,10 @@ export default async function NewsListPage({
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col justify-between">
                           <div>
-                            <h3 className="text-sm font-bold text-white line-clamp-2 group-hover:text-[#6FF3C8] transition-colors leading-snug mb-1">
+                            <h3 className="text-xs md:text-sm font-bold text-white line-clamp-2 group-hover:text-[#6FF3C8] transition-colors leading-snug mb-1">
                               {item.Judul}
                             </h3>
-                            <p className="text-xs text-gray-400 line-clamp-2">{stripHtml(item.isi_berita)}</p>
+                            <p className="text-[10px] md:text-xs text-gray-400 line-clamp-2">{stripHtml(item.isi_berita)}</p>
                           </div>
                           <div className="flex items-center gap-4 mt-2 text-xs text-white">
                             {item.penulis && (
