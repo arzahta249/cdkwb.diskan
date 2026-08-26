@@ -1,11 +1,14 @@
 import { pool } from '@/lib/db';
-import { Activity, Users, FileText, AlertCircle, Waves, Bell, ArrowUpRight } from 'lucide-react';
+import { Activity, Users, FileText, AlertCircle, Waves, Bell, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function DashboardHome() {
   let totalPengguna = 0;
   let totalBerita = 0;
   let aduanMasuk = 0;
-  const kunjunganBulanIni = 1204; // Hardcoded for now, update if there is a visits table
+  let aduanSelesai = 0;
+  let recentActivities: any[] = [];
+  let totalAduan = 0;
 
   try {
     const [userRows]: any = await pool.query('SELECT COUNT(*) as count FROM user');
@@ -16,9 +19,21 @@ export default async function DashboardHome() {
 
     const [aduanRows]: any = await pool.query("SELECT COUNT(*) as count FROM pengaduan WHERE status = 'PENDING'");
     aduanMasuk = aduanRows[0]?.count || 0;
+
+    const [aduanSelesaiRows]: any = await pool.query("SELECT COUNT(*) as count FROM pengaduan WHERE status IN ('SELESAI', 'DITUTUP')");
+    aduanSelesai = aduanSelesaiRows[0]?.count || 0;
+
+    const [totalAduanRows]: any = await pool.query("SELECT COUNT(*) as count FROM pengaduan");
+    totalAduan = totalAduanRows[0]?.count || 0;
+
+    const [recentRows]: any = await pool.query("SELECT id, nomor_tiket, nama_pelapor, kategori, status, created_at FROM pengaduan ORDER BY created_at DESC LIMIT 5");
+    recentActivities = recentRows || [];
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
   }
+
+  const penyelesaianPercent = totalAduan > 0 ? Math.round((aduanSelesai / totalAduan) * 100) : 0;
+  const pendingPercent = totalAduan > 0 ? Math.round((aduanMasuk / totalAduan) * 100) : 0;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -49,7 +64,7 @@ export default async function DashboardHome() {
         <StatCard title="Total Pengguna" value={totalPengguna} icon={Users} color="text-blue-400" bgColor="bg-blue-500/10" borderColor="border-blue-500/20" trend="Aktif" />
         <StatCard title="Total Berita" value={totalBerita} icon={FileText} color="text-emerald-400" bgColor="bg-emerald-500/10" borderColor="border-emerald-500/20" trend="Terbaru" />
         <StatCard title="Aduan Masuk (Pending)" value={aduanMasuk} icon={AlertCircle} color="text-rose-400" bgColor="bg-rose-500/10" borderColor="border-rose-500/20" trend="Baru" />
-        <StatCard title="Kunjungan Bulan Ini" value={kunjunganBulanIni.toLocaleString()} icon={Activity} color="text-cyan-400" bgColor="bg-cyan-500/10" borderColor="border-cyan-500/20" trend="+12%" />
+        <StatCard title="Pengaduan Selesai" value={aduanSelesai} icon={CheckCircle2} color="text-cyan-400" bgColor="bg-cyan-500/10" borderColor="border-cyan-500/20" trend="Tuntas" />
       </div>
 
       {/* Main Content Area */}
@@ -62,44 +77,73 @@ export default async function DashboardHome() {
           
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-semibold text-white flex items-center gap-2">
-              <Activity className="w-4 h-4 text-cyan-500" /> Log Aktivitas Terkini
+              <Activity className="w-4 h-4 text-cyan-500" /> Pengaduan Terkini
             </h2>
-            <button className="text-xs text-cyan-500 hover:text-cyan-400 flex items-center gap-1 transition-colors font-medium">
+            <Link href="/dashboard/aduan" className="text-xs text-cyan-500 hover:text-cyan-400 flex items-center gap-1 transition-colors font-medium">
               Lihat Semua <ArrowUpRight className="w-3 h-3" />
-            </button>
+            </Link>
           </div>
           
-          <div className="text-slate-500 text-sm flex flex-col items-center justify-center h-48 border border-dashed border-slate-800 rounded-xl bg-slate-950/50">
-            <Waves className="w-8 h-8 text-slate-700 mb-3" />
-            <span>Sistem pemantauan aktif. Belum ada aktivitas baru.</span>
+          <div className="space-y-3">
+            {recentActivities.length > 0 ? (
+              recentActivities.map((activity) => (
+                <div key={activity.id} className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-slate-700 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                      <FileText className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-white">{activity.nomor_tiket}</div>
+                      <div className="text-xs text-slate-400">{activity.nama_pelapor || 'Anonim'} - {activity.kategori}</div>
+                    </div>
+                  </div>
+                  <div className="text-right hidden sm:block">
+                    <div className="text-xs font-medium text-white mb-1">{activity.status}</div>
+                    <div className="text-[10px] text-slate-500">
+                      {new Date(activity.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-slate-500 text-sm flex flex-col items-center justify-center h-48 border border-dashed border-slate-800 rounded-xl bg-slate-950/50">
+                <Waves className="w-8 h-8 text-slate-700 mb-3" />
+                <span>Belum ada data pengaduan masuk.</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Status Server / Info Singkat */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <h2 className="text-base font-semibold text-white mb-4">Status Instrumen</h2>
+          <h2 className="text-base font-semibold text-white mb-4">Statistik Pengaduan</h2>
           
           <div className="space-y-4">
             <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-xs text-slate-400">Database Server</span>
-                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online
-                </span>
+                <span className="text-xs text-slate-400">Tingkat Penyelesaian</span>
+                <span className="text-xs font-bold text-emerald-400">{penyelesaianPercent}%</span>
               </div>
               <div className="w-full bg-slate-800 rounded-full h-1.5 mt-2">
-                <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: '98%' }}></div>
+                <div className="bg-emerald-500 h-1.5 rounded-full transition-all duration-1000" style={{ width: `${penyelesaianPercent}%` }}></div>
               </div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-xs text-slate-400">Penyimpanan Storage</span>
-                <span className="text-xs font-bold text-cyan-400">32%</span>
+                <span className="text-xs text-slate-400">Menunggu Tindakan (Pending)</span>
+                <span className="text-xs font-bold text-rose-400">{pendingPercent}%</span>
               </div>
               <div className="w-full bg-slate-800 rounded-full h-1.5 mt-2">
-                <div className="bg-cyan-500 h-1.5 rounded-full" style={{ width: '32%' }}></div>
+                <div className="bg-rose-500 h-1.5 rounded-full transition-all duration-1000" style={{ width: `${pendingPercent}%` }}></div>
               </div>
+            </div>
+            
+            <div className="pt-4 border-t border-slate-800 mt-2">
+               <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400">Total Tiket Keseluruhan</span>
+                  <span className="text-sm font-bold text-white">{totalAduan} Tiket</span>
+               </div>
             </div>
           </div>
         </div>
