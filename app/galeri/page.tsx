@@ -95,10 +95,10 @@ function GaleriContent() {
             <Droplets className="w-4 h-4 text-cyan-400" />
             Jendela Kelautan & Perikanan
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 drop-shadow-lg">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-4 drop-shadow-lg">
             Galeri <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-300">Terpadu</span>
           </h1>
-          <p className="text-lg md:text-xl text-cyan-100/80 max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-base md:text-lg text-cyan-100/80 max-w-2xl mx-auto leading-relaxed font-light">
             Eksplorasi dokumentasi kegiatan, video edukasi, serta data infografis terkini dari Cabang Dinas Kelautan Wilayah Barat.
           </p>
         </div>
@@ -165,10 +165,10 @@ function GaleriContent() {
               {/* TAB 1: GALERI FOTO */}
               {activeTab === 'foto' && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                      <h2 className="text-3xl font-bold text-slate-800 mb-2">Potret Maritim</h2>
-                      <p className="text-slate-500">Kumpulan lensa aktivitas dan program kerja CDKWB.</p>
+                      <h2 className="text-2xl font-bold text-slate-800 mb-1">Potret Maritim</h2>
+                      <p className="text-sm text-slate-500">Kumpulan lensa aktivitas dan program kerja CDKWB.</p>
                     </div>
                     
                     {/* Filters */}
@@ -211,7 +211,11 @@ function GaleriContent() {
                           <div className="absolute inset-x-0 bottom-0 p-4 md:p-5 bg-gradient-to-t from-cyan-950 via-cyan-950/90 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex flex-col justify-end h-3/4 sm:h-1/2 opacity-0 group-hover:opacity-100 z-10">
                             <p className="text-cyan-50 text-xs sm:text-sm line-clamp-2 mb-2 font-medium drop-shadow-md">
                               {(() => {
-                                try { const d = JSON.parse(photo.value).deskripsi; return d ? d : 'Lihat dokumentasi lengkap kegiatan ini.'; }
+                                try { 
+                                  const val = typeof photo.value === 'string' ? JSON.parse(photo.value) : (photo.value || {});
+                                  const d = val.deskripsi;
+                                  return d ? d : 'Lihat dokumentasi lengkap kegiatan ini.'; 
+                                }
                                 catch(e) { return 'Lihat dokumentasi lengkap kegiatan ini.'; }
                               })()}
                             </p>
@@ -221,8 +225,8 @@ function GaleriContent() {
                           </div>
                         </div>
                         
-                        <div className="p-5 flex flex-col flex-grow bg-white">
-                          <h3 className="font-bold text-slate-800 text-lg leading-snug mb-4 group-hover:text-cyan-700 transition-colors line-clamp-2">
+                        <div className="p-4 flex flex-col flex-grow bg-white">
+                          <h3 className="font-bold text-slate-800 text-base leading-snug mb-3 group-hover:text-cyan-700 transition-colors line-clamp-2">
                             {photo.Judul}
                           </h3>
                           <div className="mt-auto flex items-center text-xs text-slate-500 font-medium">
@@ -246,9 +250,9 @@ function GaleriContent() {
               {/* TAB 2: GALERI VIDEO */}
               {activeTab === 'video' && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  <div className="mb-10">
-                    <h2 className="text-3xl font-bold text-slate-800 mb-2">Sinema & Dokumenter</h2>
-                    <p className="text-slate-500">Saksikan ragam video edukasi, profil, dan liputan kegiatan kelautan.</p>
+                  <div className="mb-8">
+                    <h2 className="text-2xl font-bold text-slate-800 mb-1">Sinema & Dokumenter</h2>
+                    <p className="text-sm text-slate-500">Saksikan ragam video edukasi, profil, dan liputan kegiatan kelautan.</p>
                   </div>
 
                   {/* Video Grid */}
@@ -273,7 +277,11 @@ function GaleriContent() {
                           <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-slate-950 via-slate-900/90 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex flex-col justify-end h-3/4 sm:h-1/2 opacity-0 group-hover:opacity-100 z-20">
                             <p className="text-white text-xs sm:text-sm line-clamp-2 mb-1.5 font-medium drop-shadow-md">
                               {(() => {
-                                try { const d = JSON.parse(video.value).deskripsi; return d ? d : 'Klik untuk memutar video dokumenter.'; }
+                                try { 
+                                  const val = typeof video.value === 'string' ? JSON.parse(video.value) : (video.value || {});
+                                  const d = val.deskripsi;
+                                  return d ? d : 'Klik untuk memutar video dokumenter.'; 
+                                }
                                 catch(e) { return 'Klik untuk memutar video dokumenter.'; }
                               })()}
                             </p>
@@ -293,12 +301,14 @@ function GaleriContent() {
                           </div>
                         </div>
                         
-                        <h3 className="font-bold text-slate-800 text-lg leading-snug group-hover:text-cyan-700 transition-colors">
-                          {video.Judul}
-                        </h3>
-                        <div className="mt-2 flex items-center text-xs text-slate-500 font-medium">
-                          <Calendar className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
-                          {video.tanggal ? video.tanggal.split('T')[0] : '-'}
+                        <div className="p-2">
+                          <h3 className="font-bold text-slate-800 text-base leading-snug group-hover:text-cyan-700 transition-colors line-clamp-2 mt-2">
+                            {video.Judul}
+                          </h3>
+                          <div className="mt-1 flex items-center text-xs text-slate-500 font-medium">
+                            <Calendar className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
+                            {video.tanggal ? video.tanggal.split('T')[0] : '-'}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -315,10 +325,10 @@ function GaleriContent() {
               {/* TAB 3: INFOGRAFIS */}
               {activeTab === 'infografis' && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                      <h2 className="text-3xl font-bold text-slate-800 mb-2">Pusat Data Visual</h2>
-                      <p className="text-slate-500">Informasi layanan publik, visualisasi data, dan statistik perikanan.</p>
+                      <h2 className="text-2xl font-bold text-slate-800 mb-1">Pusat Data Visual</h2>
+                      <p className="text-sm text-slate-500">Informasi layanan publik, visualisasi data, dan statistik perikanan.</p>
                     </div>
                   </div>
 
@@ -327,7 +337,7 @@ function GaleriContent() {
                     {infografisData.map((info: any) => {
                       let desc = '';
                       try {
-                         const val = JSON.parse(info.value);
+                         const val = typeof info.value === 'string' ? JSON.parse(info.value) : (info.value || {});
                          desc = val.deskripsi || '';
                       } catch(e) {}
                       return (
@@ -351,11 +361,11 @@ function GaleriContent() {
                         </div>
                         
                         {/* Content */}
-                        <div className="p-6 flex flex-col flex-grow">
-                          <h3 className="font-bold text-xl text-slate-800 mb-3 leading-tight group-hover:text-cyan-700 transition-colors">
+                        <div className="p-5 flex flex-col flex-grow">
+                          <h3 className="font-bold text-lg text-slate-800 mb-2 leading-tight group-hover:text-cyan-700 transition-colors">
                             {info.Judul}
                           </h3>
-                          <p className="text-slate-600 text-sm mb-6 flex-grow leading-relaxed">
+                          <p className="text-slate-600 text-xs mb-5 flex-grow leading-relaxed">
                             {desc}
                           </p>
                           
@@ -457,9 +467,9 @@ function GaleriContent() {
                   
                   {(() => {
                     let desc = '';
-                    let subPhotos = [];
+                    let subPhotos: string[] = [];
                     try {
-                      const val = JSON.parse(selectedItem.value);
+                      const val = typeof selectedItem.value === 'string' ? JSON.parse(selectedItem.value) : (selectedItem.value || {});
                       desc = val.deskripsi || '';
                       subPhotos = val.sub_photos || [];
                     } catch(e) {}

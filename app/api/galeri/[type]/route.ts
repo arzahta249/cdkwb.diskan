@@ -154,7 +154,7 @@ export async function PUT(request: Request, context: { params: Promise<{ type: s
       const [existing]: any = await pool.query('SELECT value FROM foto WHERE ID_foto = ?', [id]);
       let valueData = { deskripsi: '', sub_photos: [] };
       if (existing.length > 0 && existing[0].value) {
-        try { valueData = JSON.parse(existing[0].value); } catch(e) {}
+        try { valueData = typeof existing[0].value === 'string' ? JSON.parse(existing[0].value) : existing[0].value; } catch(e) {}
       }
       valueData.deskripsi = deskripsi;
 
@@ -167,7 +167,7 @@ export async function PUT(request: Request, context: { params: Promise<{ type: s
        const [existing]: any = await pool.query('SELECT value FROM video WHERE ID_video = ?', [id]);
        let valueData = { deskripsi: '' };
        if (existing.length > 0 && existing[0].value) {
-         try { valueData = JSON.parse(existing[0].value); } catch(e) {}
+         try { valueData = typeof existing[0].value === 'string' ? JSON.parse(existing[0].value) : existing[0].value; } catch(e) {}
        }
        valueData.deskripsi = deskripsi;
 

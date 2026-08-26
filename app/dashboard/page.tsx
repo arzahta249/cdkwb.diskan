@@ -1,6 +1,25 @@
+import { pool } from '@/lib/db';
 import { Activity, Users, FileText, AlertCircle, Waves, Bell, ArrowUpRight } from 'lucide-react';
 
-export default function DashboardHome() {
+export default async function DashboardHome() {
+  let totalPengguna = 0;
+  let totalBerita = 0;
+  let aduanMasuk = 0;
+  const kunjunganBulanIni = 1204; // Hardcoded for now, update if there is a visits table
+
+  try {
+    const [userRows]: any = await pool.query('SELECT COUNT(*) as count FROM user');
+    totalPengguna = userRows[0]?.count || 0;
+
+    const [beritaRows]: any = await pool.query('SELECT COUNT(*) as count FROM berita');
+    totalBerita = beritaRows[0]?.count || 0;
+
+    const [aduanRows]: any = await pool.query("SELECT COUNT(*) as count FROM pengaduan WHERE status = 'PENDING'");
+    aduanMasuk = aduanRows[0]?.count || 0;
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+  }
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
@@ -27,10 +46,10 @@ export default function DashboardHome() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard title="Total Pengguna" value="12" icon={Users} color="text-blue-400" bgColor="bg-blue-500/10" borderColor="border-blue-500/20" trend="+2" />
-        <StatCard title="Total Berita" value="45" icon={FileText} color="text-emerald-400" bgColor="bg-emerald-500/10" borderColor="border-emerald-500/20" trend="+5" />
-        <StatCard title="Aduan Masuk" value="8" icon={AlertCircle} color="text-rose-400" bgColor="bg-rose-500/10" borderColor="border-rose-500/20" trend="Baru" />
-        <StatCard title="Kunjungan Bulan Ini" value="1,204" icon={Activity} color="text-cyan-400" bgColor="bg-cyan-500/10" borderColor="border-cyan-500/20" trend="+12%" />
+        <StatCard title="Total Pengguna" value={totalPengguna} icon={Users} color="text-blue-400" bgColor="bg-blue-500/10" borderColor="border-blue-500/20" trend="Aktif" />
+        <StatCard title="Total Berita" value={totalBerita} icon={FileText} color="text-emerald-400" bgColor="bg-emerald-500/10" borderColor="border-emerald-500/20" trend="Terbaru" />
+        <StatCard title="Aduan Masuk (Pending)" value={aduanMasuk} icon={AlertCircle} color="text-rose-400" bgColor="bg-rose-500/10" borderColor="border-rose-500/20" trend="Baru" />
+        <StatCard title="Kunjungan Bulan Ini" value={kunjunganBulanIni.toLocaleString()} icon={Activity} color="text-cyan-400" bgColor="bg-cyan-500/10" borderColor="border-cyan-500/20" trend="+12%" />
       </div>
 
       {/* Main Content Area */}

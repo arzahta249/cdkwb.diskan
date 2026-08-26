@@ -134,7 +134,7 @@ export default function GaleriCMSPage({ params }: PageProps) {
     
     let desc = '';
     try {
-       const val = JSON.parse(item.value);
+       const val = typeof item.value === 'string' ? JSON.parse(item.value) : (item.value || {});
        desc = val.deskripsi || '';
     } catch(e) {}
 
