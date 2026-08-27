@@ -339,18 +339,7 @@ export default function InformasiMagangLeviathanPage() {
               </div>
             </details>
 
-            {/* Accordion Item 3 */}
-            <details className="group bg-[#021529] border border-cyan-900/40 rounded-2xl overflow-hidden open:bg-[#032040] transition-colors duration-300">
-              <summary className="flex items-center justify-between p-5 md:p-6 cursor-pointer list-none text-base md:text-lg font-bold text-white">
-                Apakah ada fasilitas mess/penginapan?
-                <span className="w-8 h-8 rounded-full bg-[#010b14] flex items-center justify-center text-cyan-500 group-open:-rotate-180 transition-transform duration-300">
-                  <ChevronDown className="w-4 h-4" />
-                </span>
-              </summary>
-              <div className="px-5 md:px-6 pb-5 md:pb-6 text-blue-100/70 text-sm font-light leading-[1.8] border-t border-cyan-900/30 pt-4">
-                Saat ini CDKWB belum menyediakan fasilitas mess tetap untuk peserta magang. Akomodasi dan transportasi harian menjadi tanggung jawab pribadi mahasiswa.
-              </div>
-            </details>
+
           </div>
         </div>
       </section>

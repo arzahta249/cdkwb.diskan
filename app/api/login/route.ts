@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { pool } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
@@ -13,38 +12,50 @@ export async function POST(request: Request) {
       );
     }
 
-    // Query ke database
-    const [rows]: any = await pool.query(
-      'SELECT ID_user, username, Email, nama, role, password FROM user WHERE username = ?',
-      [username]
+    const adminUsers = [
+      {
+        ID_user: 'admin1',
+        username: process.env.ADMIN1_USERNAME,
+        password: process.env.ADMIN1_PASSWORD,
+        nama: 'Admin 1',
+        role: 'admin',
+        Email: 'admin1@example.com'
+      },
+      {
+        ID_user: 'admin2',
+        username: process.env.ADMIN2_USERNAME,
+        password: process.env.ADMIN2_PASSWORD,
+        nama: 'Admin 2',
+        role: 'admin',
+        Email: 'admin2@example.com'
+      },
+      {
+        ID_user: 'admin3',
+        username: process.env.ADMIN3_USERNAME,
+        password: process.env.ADMIN3_PASSWORD,
+        nama: 'Admin 3',
+        role: 'admin',
+        Email: 'admin3@example.com'
+      },
+    ];
+
+    const user = adminUsers.find(
+      (u) => u.username === username && u.password === password && u.username !== undefined
     );
 
-    if (rows.length === 0) {
+    if (!user) {
       return NextResponse.json(
-        { error: 'Username tidak ditemukan' },
-        { status: 401 }
-      );
-    }
-
-    const user = rows[0];
-
-    // Catatan: Jika password di-hash di database (misal dengan bcrypt), 
-    // gunakan bcrypt.compare() di sini. 
-    // Untuk saat ini kita asumsikan plain text berdasarkan struktur standar, 
-    // namun sangat disarankan untuk menggunakan hashing.
-    if (password !== user.password) {
-      return NextResponse.json(
-        { error: 'Password salah' },
+        { error: 'Username atau password salah' },
         { status: 401 }
       );
     }
 
     // Hapus password dari object response untuk keamanan
-    delete user.password;
+    const { password: _, ...userWithoutPassword } = user;
 
     // Set cookie untuk autentikasi
     const cookieStore = await cookies();
-    cookieStore.set('auth_token', user.ID_user.toString(), {
+    cookieStore.set('auth_token', userWithoutPassword.ID_user.toString(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
@@ -54,7 +65,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: 'Login berhasil',
-      user
+      user: userWithoutPassword
     });
   } catch (error) {
     console.error('Login error:', error);

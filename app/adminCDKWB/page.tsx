@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock, User, Loader2, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -112,12 +112,6 @@ export default function LoginPage() {
           </form>
           
           <div className="mt-8 text-center text-sm text-gray-500 space-y-2">
-            <p>
-              Belum punya akun?{' '}
-              <Link href="/register" className="text-blue-400 hover:text-blue-300 transition-colors">
-                Daftar di sini
-              </Link>
-            </p>
             <p>&copy; {new Date().getFullYear()} Dinas Kelautan dan Perikanan</p>
           </div>
         </div>
