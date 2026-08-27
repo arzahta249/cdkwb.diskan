@@ -183,7 +183,7 @@ export default function Navbar() {
 
                     <Link href="/kehumasan" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/60 transition-colors">
                       <div>
-                        <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan & Publikasi</div>
+                        <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan & Kerja Sama</div>
                         <div className="text-xs text-slate-500">Siaran pers, kerjasama & portal linkup</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-400 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
@@ -191,8 +191,16 @@ export default function Navbar() {
 
                     <Link href="/kerja-sama/informasi-magang" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                       <div>
-                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Info Magang & Kerja Sama</div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Info Magang</div>
                         <div className="text-xs text-slate-500">Kemitraan akademis & penelitian</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
+
+                    <Link href="/galeri" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Arsip Dokumentasi</div>
+                        <div className="text-xs text-slate-500">Galeri foto dan video kegiatan</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
                     </Link>
@@ -405,10 +413,13 @@ export default function Navbar() {
                 <Link href="/konservasi/rehabilitasi-mangrove" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Rehabilitasi Mangrove</Link>
 
                 {/* 3. Kehumasan */}
-                <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan</Link>
+                <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan & Kerja Sama</Link>
 
                 {/* 4. Info Magang */}
                 <Link href="/kerja-sama/informasi-magang" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Info Magang</Link>
+
+                {/* 4.1. Arsip Dokumentasi */}
+                <Link href="/galeri" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Arsip Dokumentasi</Link>
 
                 {/* 5. Layanan SUOP */}
                 <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Layanan SUOP</Link>
