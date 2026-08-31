@@ -1,4 +1,4 @@
-import { pool } from './lib/db'; 
+import { pool } from '../lib/db'; 
 async function run() { 
   try {
     await pool.query('ALTER TABLE artikel DROP COLUMN id_kategori;');
