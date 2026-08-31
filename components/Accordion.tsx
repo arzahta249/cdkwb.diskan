@@ -26,21 +26,21 @@ export default function Accordion({ items }: AccordionProps) {
         return (
           <div
             key={idx}
-            className="border border-white/10 rounded-2xl bg-white/5 overflow-hidden transition-colors"
+            className="border border-slate-200 rounded-2xl bg-white overflow-hidden transition-colors shadow-sm"
           >
             <button
               onClick={() => toggle(idx)}
-              className="w-full px-6 py-4 flex items-center justify-between text-left font-semibold text-white hover:bg-white/5 transition-colors"
+              className="w-full px-6 py-4 flex items-center justify-between text-left font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
             >
               <span>{item.title}</span>
               <ChevronDown
-                className={`w-5 h-5 text-cyan-400 transition-transform duration-300 ${
+                className={`w-5 h-5 text-cyan-600 transition-transform duration-300 ${
                   isOpen ? 'rotate-180' : ''
                 }`}
               />
             </button>
             {isOpen && (
-              <div className="px-6 pb-5 pt-1 text-sm text-white/70 leading-relaxed border-t border-white/5">
+              <div className="px-6 pb-5 pt-1 text-sm text-slate-600 leading-relaxed border-t border-slate-100">
                 {item.content}
               </div>
             )}
