@@ -364,3 +364,10 @@ body {
   .bubbles i, .glow-particles i { animation: none; opacity: 0.2; }
   .scroll-line::after { animation: none; }
 }
+
+/* -- Accessibility Classes -- */
+body.high-contrast { filter: contrast(1.5) grayscale(0.2); }
+body.highlight-links a { text-decoration: underline !important; text-decoration-thickness: 3px !important; text-underline-offset: 4px !important; color: #ffeb3b !important; background-color: #000 !important; }
+body.large-text { font-size: 115% !important; }
+body.text-spacing { letter-spacing: 0.1em !important; word-spacing: 0.16em !important; line-height: 1.8 !important; }
+
