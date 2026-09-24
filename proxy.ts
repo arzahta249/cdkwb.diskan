@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Ambil path yang sedang dikunjungi
-  const path = request.nextUrl.pathname;
+  const pathname = request.nextUrl.pathname;
 
   // Cek apakah user mengunjungi rute yang dilindungi
-  const isProtectedRoute = path.startsWith('/dashboard');
+  const isProtectedRoute = pathname.startsWith('/dashboard');
 
   // Ambil token dari cookie
   const token = request.cookies.get('auth_token')?.value;
@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Jika user sudah login dan mencoba ke halaman login/register, arahkan ke dashboard
-  if ((path === '/adminCDKWB' || path === '/login' || path === '/register') && token) {
+  if ((pathname === '/adminCDKWB' || pathname === '/login' || pathname === '/register') && token) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

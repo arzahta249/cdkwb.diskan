@@ -1,6 +1,9 @@
 import path from 'path';
 import fs from 'fs/promises';
 
+/** Subdirectory under /public where uploads are stored. */
+const UPLOAD_SUBDIR = path.join('upload', 'galeri');
+
 /**
  * Saves an uploaded File object to /public/upload/galeri and returns its public URL.
  * Supports images, videos, and PDFs.
@@ -19,11 +22,11 @@ export async function uploadFile(file: File): Promise<string | null> {
     .replace(/(^-|-$)+/g, '');
   const filename = `${baseName}-${uniqueSuffix}${ext}`;
 
-  const uploadDir = path.join(process.cwd(), 'public', 'upload', 'galeri');
+  const uploadDir = path.join(process.cwd(), 'public', UPLOAD_SUBDIR);
   await fs.mkdir(uploadDir, { recursive: true });
 
   const filepath = path.join(uploadDir, filename);
   await fs.writeFile(filepath, buffer);
 
-  return `/upload/galeri/${filename}`;
+  return `/${UPLOAD_SUBDIR.replace(/\\/g, '/')}/${filename}`;
 }
