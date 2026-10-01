@@ -24,79 +24,16 @@ const offices = [
   {
     id: 1,
     icon: Building2,
-    tag: 'Kantor Utama',
-    tagColor: '#6FF3C8',
-    name: 'Dinas Kelautan, Perikanan, Pertanian dan Pangan Kota Tegal',
-    rating: '4.0',
-    type: 'Kantor Pemerintah Kota',
-    address: 'Jl. Lele No. 6, Tegalsari, Tegal Barat, Kota Tegal, Jawa Tengah 52111',
-    phone: '(0283) 351191',
-    contact: 'Rena Eka Saputra, S.STP (Sekretaris)',
-    instagram: 'https://www.instagram.com/cdkwbjateng/',
-    mapsUrl: 'https://maps.google.com/?q=Jl.+Lele+No.+6+Tegalsari+Tegal+Barat+Kota+Tegal',
-    hours: [
-      { day: 'Senin – Kamis', time: '07.30 – 16.00' },
-      { day: 'Jumat', time: '07.30 – 11.00' },
-    ],
-    description:
-      'Kantor pemerintah daerah utama yang bertanggung jawab atas urusan perikanan, kelautan, pertanian, dan ketahanan pangan di wilayah Kota Tegal.',
-    accent: 'from-cyan-500 to-blue-600',
-    border: 'border-cyan-500/20',
-  },
-  {
-    id: 2,
-    icon: Fish,
-    tag: 'Kabupaten Tegal',
-    tagColor: '#FFC14D',
-    name: 'Dinas Perikanan Kabupaten Tegal',
-    rating: '4.3',
-    type: 'Kantor Dinas Kabupaten',
-    address: 'Jl. Jenderal Ahmad Yani No. 9, Procot, Slawi, Kabupaten Tegal, Jawa Tengah 52401',
-    phone: '(0283) 491480',
-    contact: null,
-    mapsUrl: 'https://maps.google.com/?q=Jl.+Jenderal+Ahmad+Yani+No.+9+Procot+Slawi+Kabupaten+Tegal',
-    hours: [
-      { day: 'Senin – Kamis', time: '07.15 – 16.15' },
-      { day: 'Jumat', time: '07.15 – 10.45' },
-    ],
-    description:
-      'Melayani urusan perikanan untuk wilayah Kabupaten Tegal (berbeda dengan Kota Tegal), mencakup pembinaan nelayan, budidaya, dan perizinan usaha perikanan.',
-    accent: 'from-amber-400 to-orange-500',
-    border: 'border-amber-400/20',
-  },
-  {
-    id: 3,
-    icon: Anchor,
-    tag: 'Pelabuhan Perikanan',
-    tagColor: '#FF7A59',
-    name: 'Dinas Kelautan & Perikanan – Pelabuhan Perikanan Pantai Tegalsari',
-    rating: '4.4',
-    type: 'Kantor Pemerintah – Pelabuhan',
-    address: 'Jl. Blanak No. 10C, Tegalsari, Tegal Barat, Kota Tegal',
-    phone: '(0283) 358787',
-    contact: null,
-    mapsUrl: 'https://maps.google.com/?q=Jl.+Blanak+No.+10C+Tegalsari+Tegal+Barat+Kota+Tegal',
-    hours: [
-      { day: 'Senin – Jumat', time: '08.00 – 16.00' },
-    ],
-    description:
-      'Kantor pemerintah perikanan yang berlokasi langsung di dalam kawasan Pelabuhan Perikanan Pantai Tegalsari, melayani administrasi kapal dan pengawasan hasil tangkapan.',
-    accent: 'from-orange-500 to-rose-600',
-    border: 'border-orange-400/20',
-  },
-  {
-    id: 4,
-    icon: Building2,
     tag: 'Kantor Cabang Dinas',
     tagColor: '#3B82F6',
     name: 'Cabang Dinas Kelautan Wilayah Barat (CDKWB) Provinsi Jawa Tengah',
     rating: '4.6',
     type: 'Kantor Cabang Dinas Provinsi',
-    address: 'Jl. Blanak No. 10C, Tegalsari, Tegal Barat, Kota Tegal, Jawa Tengah 52111',
-    phone: '(0283) 358787',
-    contact: 'Pos Wilayah Operasional CDKWB',
+    address: 'Jl. Bandeng Larangan, Desa Munjungagung, Kec. Kramat, Kabupaten Tegal Kode Pos 52181',
+    phone: '0851 1327 0623',
+    email: 'kcdkwv@gmail.com',
     instagram: 'https://www.instagram.com/cdkwbjateng/',
-    mapsUrl: 'https://maps.google.com/?q=Jl.+Blanak+No.+10C+Tegalsari+Tegal+Barat+Kota+Tegal',
+    mapsUrl: 'https://maps.google.com/?q=Jl.+Bandeng+Larangan,+Desa+Munjungagung,+Kec.+Kramat,+Kabupaten+Tegal',
     hours: [
       { day: 'Senin – Kamis', time: '07.30 – 16.00' },
       { day: 'Jumat', time: '07.30 – 11.30' },
@@ -165,8 +102,8 @@ export default function HubungiKamiPage() {
             </span>
           </h1>
           <p className="text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto font-light">
-            Tiga titik layanan resmi Dinas Kelautan dan Perikanan yang siap membantu
-            masyarakat, nelayan, dan pelaku usaha di wilayah Tegal.
+            Kantor layanan resmi Cabang Dinas Kelautan Wilayah Barat yang siap membantu
+            masyarakat, nelayan, dan pelaku usaha di wilayah kerja kami.
           </p>
 
           {/* Quick contact chips */}
@@ -195,13 +132,13 @@ export default function HubungiKamiPage() {
 
           <div className="text-center mb-14">
             <span className="inline-block text-xs font-mono tracking-[0.15em] uppercase text-cyan-600 bg-cyan-50 border border-cyan-100 px-3 py-1 rounded-full mb-4">
-              3 Kantor Layanan
+              Kantor Layanan
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-[#001e36] mb-3">
               Lokasi & Informasi Kantor
             </h2>
             <p className="text-slate-500 max-w-xl mx-auto">
-              Kunjungi salah satu kantor kami sesuai kebutuhan dan wilayah Anda.
+              Kunjungi kantor kami untuk informasi lebih lanjut mengenai layanan kelautan dan perikanan.
             </p>
           </div>
 
@@ -289,15 +226,17 @@ export default function HubungiKamiPage() {
                             </div>
                           </div>
 
-                          {/* Contact person */}
-                          {office.contact && (
+                          {/* Email */}
+                          {office.email && (
                             <div className="flex items-start gap-3">
                               <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
                                 <Mail className="w-4 h-4 text-slate-400" />
                               </div>
                               <div>
-                                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Kontak Teknis</p>
-                                <p className="text-sm text-slate-700 font-medium">{office.contact}</p>
+                                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Email</p>
+                                <a href={`mailto:${office.email}`} className="text-sm font-semibold text-[#0b3b60] hover:text-cyan-600 transition-colors">
+                                  {office.email}
+                                </a>
                               </div>
                             </div>
                           )}
@@ -388,18 +327,18 @@ export default function HubungiKamiPage() {
             <div className="text-center">
               <span className="eyebrow text-cyan-600 mb-4 inline-flex">Peta Lokasi</span>
               <h2 className="text-3xl font-extrabold text-[#001e36] mt-2">
-                Kantor Pusat – Kota Tegal
+                Kantor CDKWB
               </h2>
             </div>
           </div>
           <div className="w-full h-[420px] relative overflow-hidden">
             <iframe
-              title="Lokasi Kantor Dinas Kelautan Kota Tegal"
+              title="Lokasi Kantor Cabang Dinas Kelautan Wilayah Barat"
               className="w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-700"
               loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.6938!2d109.1302!3d-6.8697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6fb51c0e6f8f1b%3A0x2f9f2f2f2f2f2f2f!2sJl.+Lele+No.6%2C+Tegalsari%2C+Tegal+Barat%2C+Kota+Tegal%2C+Jawa+Tengah+52111!5e0!3m2!1sid!2sid!4v1234567890"
+              src="https://maps.google.com/maps?q=Jl.+Bandeng+Larangan,+Desa+Munjungagung,+Kec.+Kramat,+Kabupaten+Tegal&t=&z=15&ie=UTF8&iwloc=&output=embed"
             />
           </div>
         </div>

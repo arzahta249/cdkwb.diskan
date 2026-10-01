@@ -110,14 +110,25 @@ export default function Navbar() {
         <div className="container mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 sm:gap-3 z-50">
-            <div className="relative w-8 h-10 sm:w-10 sm:h-12 flex items-center justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src="/leading/logo.jateng.jpg" 
-                alt="Logo Jawa Tengah" 
-                className="w-8 h-10 sm:w-10 sm:h-12 object-contain"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="relative w-8 h-10 sm:w-10 sm:h-12 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src="/leading/logo.jateng.jpg" 
+                  alt="Logo Jawa Tengah" 
+                  className="w-8 h-10 sm:w-10 sm:h-12 object-contain"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              </div>
+              <div className="relative w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src="/leading/sikawan.jpeg" 
+                  alt="Logo Sikawan Barat" 
+                  className="w-9 h-9 sm:w-11 sm:h-11 object-contain"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              </div>
             </div>
             <div className="text-xl sm:text-2xl font-bold text-[#0b3b60] tracking-tight">CDKWB</div>
           </Link>
@@ -157,6 +168,30 @@ export default function Navbar() {
                 <div className="space-y-3">
                   <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">Konservasi & Kehumasan</div>
                   <div className="space-y-1">
+                    <Link href="/kehumasan" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/60 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan</div>
+                        <div className="text-xs text-slate-500">Siaran pers & portal linkup</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
+
+                    <Link href="/galeri" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Arsip Dokumen</div>
+                        <div className="text-xs text-slate-500">Galeri foto dan video kegiatan</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
+
+                    <Link href="/kerja-sama" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Kerja Sama & Magang</div>
+                        <div className="text-xs text-slate-500">Kemitraan akademis & penelitian</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
+
                     <Link href="/konservasi/kawasan/karang-jeruk" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                       <div>
                         <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">KKP Karang Jeruk</div>
@@ -177,30 +212,6 @@ export default function Navbar() {
                       <div>
                         <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Rehabilitasi Mangrove</div>
                         <div className="text-xs text-slate-500">Penanaman & pelestarian pesisir</div>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
-                    </Link>
-
-                    <Link href="/kehumasan" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/60 transition-colors">
-                      <div>
-                        <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan & Kerja Sama</div>
-                        <div className="text-xs text-slate-500">Siaran pers, kerjasama & portal linkup</div>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
-                    </Link>
-
-                    <Link href="/kerja-sama/informasi-magang" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-                      <div>
-                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Info Magang</div>
-                        <div className="text-xs text-slate-500">Kemitraan akademis & penelitian</div>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
-                    </Link>
-
-                    <Link href="/galeri" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-                      <div>
-                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Arsip Dokumentasi</div>
-                        <div className="text-xs text-slate-500">Galeri foto dan video kegiatan</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
                     </Link>
@@ -392,7 +403,16 @@ export default function Navbar() {
             </button>
             <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('layanan') ? 'max-h-[800px]' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                {/* 1. Kawasan Konservasi */}
+                {/* 1. Kehumasan */}
+                <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan</Link>
+
+                {/* 2. Arsip Dokumen */}
+                <Link href="/galeri" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Arsip Dokumen</Link>
+
+                {/* 3. Kerja Sama */}
+                <Link href="/kerja-sama" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kerja Sama & Magang</Link>
+
+                {/* 4. Kawasan Konservasi */}
                 <div>
                   <button 
                     onClick={() => toggleMobileDropdown('layanan-kawasan')}
@@ -409,19 +429,10 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                {/* 2. Rehabilitasi Mangrove */}
+                {/* 5. Rehabilitasi Mangrove */}
                 <Link href="/konservasi/rehabilitasi-mangrove" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Rehabilitasi Mangrove</Link>
 
-                {/* 3. Kehumasan */}
-                <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan & Kerja Sama</Link>
-
-                {/* 4. Info Magang */}
-                <Link href="/kerja-sama/informasi-magang" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Info Magang</Link>
-
-                {/* 4.1. Arsip Dokumentasi */}
-                <Link href="/galeri" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Arsip Dokumentasi</Link>
-
-                {/* 5. Layanan SUOP */}
+                {/* 6. Layanan SUOP */}
                 <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Layanan SUOP</Link>
 
                 {/* 6. Layanan E-SLO */}

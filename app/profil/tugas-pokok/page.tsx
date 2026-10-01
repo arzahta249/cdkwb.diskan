@@ -10,12 +10,8 @@ export const metadata = {
 export default function TugasPokokPage() {
   const landasanHukum = [
     {
-      title: "Peraturan Gubernur Jawa Tengah Nomor 80 Tahun 2023",
-      content: "Tentang Kedudukan, Susunan Organisasi, Tugas Pokok, Fungsi, Tata Kerja, dan Uraian Tugas Jabatan Cabang Dinas Kelautan Wilayah Barat pada Dinas Kelautan dan Perikanan Provinsi Jawa Tengah."
-    },
-    {
-      title: "Undang-Undang Republik Indonesia Nomor 23 Tahun 2014",
-      content: "Tentang Pemerintahan Daerah yang mengatur pembagian urusan pemerintahan di bidang kelautan dan perikanan antara Pemerintah Pusat dan Pemerintah Provinsi."
+      title: "Pergub Jawa Tengah No. 4 Tahun 2026",
+      content: ""
     }
   ];
 
