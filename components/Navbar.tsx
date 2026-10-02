@@ -170,7 +170,7 @@ export default function Navbar() {
                   <div className="space-y-1">
                     <Link href="/kehumasan" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/60 transition-colors">
                       <div>
-                        <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan</div>
+                        <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan dan Kerjasama</div>
                         <div className="text-xs text-slate-500">Siaran pers & portal linkup</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-400 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
@@ -178,16 +178,16 @@ export default function Navbar() {
 
                     <Link href="/galeri" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                       <div>
-                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Arsip Dokumen</div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Arsip & Dokumentasi</div>
                         <div className="text-xs text-slate-500">Galeri foto dan video kegiatan</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
                     </Link>
 
-                    <Link href="/kerja-sama" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                    <Link href="#" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
                       <div>
-                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Kerja Sama & Magang</div>
-                        <div className="text-xs text-slate-500">Kemitraan akademis & penelitian</div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Barang Milik Daerah dan Rumah Tangga</div>
+                        <div className="text-xs text-slate-500">Layanan inventaris & kerumahtanggaan</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
                     </Link>
@@ -212,6 +212,14 @@ export default function Navbar() {
                       <div>
                         <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Rehabilitasi Mangrove</div>
                         <div className="text-xs text-slate-500">Penanaman & pelestarian pesisir</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
+                    </Link>
+
+                    <Link href="/kerja-sama/informasi-magang" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                      <div>
+                        <div className="text-sm font-semibold text-slate-800 group-hover/item:text-[#0b3b60]">Magang</div>
+                        <div className="text-xs text-slate-500">Program kadet & riset mahasiswa</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-300 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
                     </Link>
@@ -403,14 +411,14 @@ export default function Navbar() {
             </button>
             <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('layanan') ? 'max-h-[800px]' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                {/* 1. Kehumasan */}
-                <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan</Link>
+                {/* 1. Kehumasan dan Kerjasama */}
+                <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan dan Kerjasama</Link>
 
-                {/* 2. Arsip Dokumen */}
-                <Link href="/galeri" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Arsip Dokumen</Link>
+                {/* 2. Arsip & Dokumentasi */}
+                <Link href="/galeri" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Arsip & Dokumentasi</Link>
 
-                {/* 3. Kerja Sama */}
-                <Link href="/kerja-sama" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kerja Sama & Magang</Link>
+                {/* 3. Barang Milik Daerah dan rumah tangga */}
+                <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Barang Milik Daerah dan Rumah Tangga</Link>
 
                 {/* 4. Kawasan Konservasi */}
                 <div>
@@ -434,6 +442,9 @@ export default function Navbar() {
 
                 {/* 6. Layanan SUOP */}
                 <Link href="#" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Layanan SUOP</Link>
+
+                {/* 7. Magang */}
+                <Link href="/kerja-sama/informasi-magang" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Magang</Link>
 
                 {/* 6. Layanan E-SLO */}
                 <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col gap-2">

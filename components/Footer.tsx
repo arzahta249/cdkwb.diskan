@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { MapPin, Mail, ChevronRight, ArrowUp } from 'lucide-react';
+import { MapPin, Mail, ChevronRight, ArrowUp, Phone } from 'lucide-react';
 
 const InstagramIcon = ({ className = "w-5 h-5", style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -72,11 +72,15 @@ export default function Footer() {
             <ul className="space-y-3 sm:space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 mt-0.5" style={{ color: '#6FF3C8' }} />
-                <span className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>Jl. Maritim Barat No. 12, Jawa Tengah</span>
+                <span className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>Jl. Bandeng Larangan, Desa Munjungagung, Kec. Kramat, Kabupaten Tegal Kode Pos 52181</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" style={{ color: '#6FF3C8' }} />
+                <span className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>0851 1327 0623</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" style={{ color: '#6FF3C8' }} />
-                <span className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>info.cdkwb@jateng.go.id</span>
+                <span className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>kcdkwv@gmail.com</span>
               </li>
               <li className="flex items-center gap-3">
                 <InstagramIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" style={{ color: '#6FF3C8' }} />
