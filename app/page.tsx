@@ -143,10 +143,10 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <ServiceCard icon={FileText} title="Kehumasan" desc="Publikasi media dan penyediaan informasi untuk publik." num="01" />
-              <ServiceCard icon={Waves} title="Kawasan Konservasi" desc="Pelestarian alam laut dan rehabilitasi ekosistem mangrove." num="02" />
-              <ServiceCard icon={Ship} title="Layanan SUOP & E-SLO" desc="Fasilitas perizinan dan administrasi kapal perikanan." num="03" />
-              <ServiceCard icon={Users} title="Kerja Sama" desc="Kemitraan strategis lintas sektor dan antar instansi." num="04" />
+              <ServiceCard icon={FileText} title="Kehumasan" desc="Publikasi media dan penyediaan informasi untuk publik." num="01" href="/kehumasan" />
+              <ServiceCard icon={Waves} title="Kawasan Konservasi" desc="Pelestarian alam laut dan rehabilitasi ekosistem mangrove." num="02" href="/konservasi" />
+              <ServiceCard icon={Ship} title="Layanan SUOP & E-SLO" desc="Fasilitas perizinan dan administrasi kapal perikanan." num="03" href="https://eslo.kkp.go.id/" />
+              <ServiceCard icon={Users} title="Kerja Sama" desc="Kemitraan strategis lintas sektor dan antar instansi." num="04" href="/kehumasan/kerjasama" />
             </div>
           </div>
         </section>
@@ -288,15 +288,25 @@ export default async function HomePage() {
   );
 }
 
-function ServiceCard({ icon: Icon, title, desc, num }: { icon: any; title: string; desc: string; num: string }) {
-  return (
-    <div className="ocean-card flex flex-col items-center text-center p-5 sm:p-6" style={{ transition: 'all 0.3s ease' }}>
+function ServiceCard({ icon: Icon, title, desc, num, href }: { icon: any; title: string; desc: string; num: string; href: string }) {
+  const CardContent = (
+    <div className="ocean-card flex flex-col items-center text-center p-5 sm:p-6 h-full" style={{ transition: 'all 0.3s ease' }}>
       <span className="mb-2 text-[10px] font-mono" style={{ color: 'rgba(111,243,200,0.7)' }}>{num}</span>
       <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>
         <Icon className="w-5 h-5 text-white" strokeWidth={1.5} />
       </div>
-      <h3 className="text-base font-bold text-white mb-2">{title}</h3>
+      <h3 className="text-base font-bold text-white mb-2 group-hover:text-[#6FF3C8] transition-colors">{title}</h3>
       <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>{desc}</p>
     </div>
+  );
+
+  return href.startsWith('http') ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="block group h-full hover:-translate-y-2 transition-transform duration-300">
+      {CardContent}
+    </a>
+  ) : (
+    <Link href={href} className="block group h-full hover:-translate-y-2 transition-transform duration-300">
+      {CardContent}
+    </Link>
   );
 }
