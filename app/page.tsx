@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DepthGauge from '@/components/DepthGauge';
-import { ArrowRight, PlayCircle, Ship, Waves, ShieldAlert, FileText, Users, Calendar, User, ChevronRight } from 'lucide-react';
+import { ArrowRight, PlayCircle, Ship, Waves, ShieldAlert, FileText, Users, Calendar, User, ChevronRight, Camera, Package } from 'lucide-react';
 
 async function getLeadingItems() {
   try {
@@ -142,11 +142,10 @@ export default async function HomePage() {
                 Layanan inti untuk nelayan, pelaku usaha, dan masyarakat pesisir.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <ServiceCard icon={FileText} title="Kehumasan" desc="Publikasi media dan penyediaan informasi untuk publik." num="01" href="/kehumasan" />
-              <ServiceCard icon={Waves} title="Kawasan Konservasi" desc="Pelestarian alam laut dan rehabilitasi ekosistem mangrove." num="02" href="/konservasi" />
-              <ServiceCard icon={Ship} title="Layanan SUOP & E-SLO" desc="Fasilitas perizinan dan administrasi kapal perikanan." num="03" href="https://eslo.kkp.go.id/" />
-              <ServiceCard icon={Users} title="Kerja Sama" desc="Kemitraan strategis lintas sektor dan antar instansi." num="04" href="/kehumasan/kerjasama" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <ServiceCard icon={Users} title="Kehumasan & Kerja Sama" desc="Publikasi media, informasi publik, dan kemitraan strategis." num="01" href="/kehumasan" />
+              <ServiceCard icon={Camera} title="Arsip & Dokumentasi" desc="Galeri foto, video operasional, dan dokumentasi kegiatan." num="02" href="/galeri" />
+              <ServiceCard icon={Package} title="Barang Milik Daerah" desc="Layanan inventaris dan kerumahtanggaan." num="03" href="#" />
             </div>
           </div>
         </section>
