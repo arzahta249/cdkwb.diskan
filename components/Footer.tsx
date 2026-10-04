@@ -80,7 +80,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" style={{ color: '#6FF3C8' }} />
-                <span className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>kcdkwv@gmail.com</span>
+                <span className="text-xs sm:text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>kcdkwb@gmail.com</span>
               </li>
               <li className="flex items-center gap-3">
                 <InstagramIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" style={{ color: '#6FF3C8' }} />

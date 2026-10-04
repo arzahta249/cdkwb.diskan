@@ -143,9 +143,9 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <ServiceCard icon={Ship} title="Layanan SUOP & E-SLO" desc="Fasilitas perizinan dan administrasi kapal perikanan." num="01" />
+              <ServiceCard icon={FileText} title="Kehumasan" desc="Publikasi media dan penyediaan informasi untuk publik." num="01" />
               <ServiceCard icon={Waves} title="Kawasan Konservasi" desc="Pelestarian alam laut dan rehabilitasi ekosistem mangrove." num="02" />
-              <ServiceCard icon={FileText} title="Kehumasan" desc="Publikasi media dan penyediaan informasi untuk publik." num="03" />
+              <ServiceCard icon={Ship} title="Layanan SUOP & E-SLO" desc="Fasilitas perizinan dan administrasi kapal perikanan." num="03" />
               <ServiceCard icon={Users} title="Kerja Sama" desc="Kemitraan strategis lintas sektor dan antar instansi." num="04" />
             </div>
           </div>
