@@ -27,7 +27,7 @@ export default async function DashboardHome() {
     totalAduan = totalAduanSnap.data().count;
 
     const recentSnap = await adminDb.collection('pengaduan').orderBy('created_at', 'desc').limit(5).get();
-    recentActivities = recentSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    recentActivities = recentSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
   }

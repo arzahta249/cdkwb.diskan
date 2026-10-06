@@ -376,7 +376,7 @@ export default async function NewsListPage({
                     {popular.length === 0 && (
                       <p className="text-xs text-gray-500">Belum ada data.</p>
                     )}
-                    {popular.map((item, idx) => (
+                    {popular.map((item: any, idx: any) => (
                       <Link key={item.ID_berita} href={`/news/${item.Slug}`}
                         className="group flex items-start gap-3 hover:opacity-90 transition-opacity">
                         <span className="text-2xl font-black shrink-0 leading-none mt-0.5"

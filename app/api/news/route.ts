@@ -10,7 +10,7 @@ export async function GET(request: Request) {
       .orderBy('tanggal', 'desc')
       .get();
       
-    const rows = snapshot.docs.map(doc => {
+    const rows = snapshot.docs.map((doc: any) => {
       const data = doc.data();
       return {
         ID_berita: doc.id,

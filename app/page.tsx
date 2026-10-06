@@ -16,7 +16,7 @@ async function getLeadingItems() {
       .where('is_leading', '==', 1)
       .get();
       
-    beritaSnap.forEach(doc => {
+    beritaSnap.forEach((doc: any) => {
       const data = doc.data();
       items.push({
         id: doc.id,
@@ -34,7 +34,7 @@ async function getLeadingItems() {
       .where('is_leading', '==', 1)
       .get();
       
-    artikelSnap.forEach(doc => {
+    artikelSnap.forEach((doc: any) => {
       const data = doc.data();
       items.push({
         id: doc.id,
