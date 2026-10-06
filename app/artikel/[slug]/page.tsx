@@ -1,4 +1,4 @@
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Calendar, Share2, Folder, User } from 'lucide-react';
@@ -6,25 +6,23 @@ import { notFound } from 'next/navigation';
 
 async function getArtikelBySlug(slug: string) {
   try {
-    const [rows]: any = await pool.query(
-      `SELECT 
-        a.ID_artikel, 
-        a.Judul, 
-        a.Slug, 
-        a.isi_artikel, 
-        a.tanggal, 
-        a.value, 
-        a.kategori as name_kategori,
-        a.instagram_url,
-        u.nama as nama_penulis
-       FROM artikel a
-       LEFT JOIN user u ON a.id_penulis = u.ID_user
-       WHERE a.Slug = ? AND a.status = 'published'`,
-      [slug]
-    );
+    const snapshot = await adminDb.collection('artikel')
+      .where('Slug', '==', slug)
+      .where('status', '==', 'published')
+      .limit(1)
+      .get();
+      
+    if (snapshot.empty) return null;
     
-    if (rows.length === 0) return null;
-    return rows[0];
+    const doc = snapshot.docs[0];
+    const data: any = doc.data();
+    
+    return {
+      ID_artikel: doc.id,
+      ...data,
+      name_kategori: data.kategori,
+      nama_penulis: data.penulis || 'Admin'
+    } as any;
   } catch (error) {
     console.error(error);
     return null;

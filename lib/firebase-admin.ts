@@ -5,10 +5,17 @@ import { getStorage } from 'firebase-admin/storage';
 
 if (!getApps().length) {
   try {
+    // Handle potential quotes and literal vs escaped newlines in Vercel
+    let pk = process.env.FIREBASE_PRIVATE_KEY || '';
+    if (pk.startsWith('"') && pk.endsWith('"')) {
+      pk = pk.slice(1, -1);
+    }
+    pk = pk.replace(/\\n/g, '\n');
+
     const serviceAccount = {
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      privateKey: pk,
     };
     
     initializeApp({

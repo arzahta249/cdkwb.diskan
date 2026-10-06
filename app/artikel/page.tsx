@@ -1,4 +1,4 @@
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
@@ -54,18 +54,21 @@ function stripHtml(html: string) {
 
 async function getArtikel(cat?: string) {
   try {
-    let q = `SELECT a.ID_artikel, a.Judul, a.Slug, a.value, a.isi_artikel, a.tanggal, a.kategori as name_kategori, u.nama as nama_penulis
-             FROM artikel a
-             LEFT JOIN user u ON a.id_penulis = u.ID_user
-             WHERE a.status = 'published'`;
-    const p: any[] = [];
+    const snap = await adminDb.collection('artikel').where('status', '==', 'published').get();
+    let rows = snap.docs.map((doc: any) => ({ ID_artikel: doc.id, ...doc.data() }));
+    
     if (cat && cat !== 'Semua') {
-      q += ' AND a.kategori = ?';
-      p.push(cat);
+      rows = rows.filter((r: any) => r.kategori === cat);
     }
-    q += ' ORDER BY a.tanggal DESC';
-    const [rows]: any = await pool.query(q, p);
-    return rows;
+    
+    // Sort in memory to avoid composite index requirement
+    rows.sort((a: any, b: any) => new Date(b.tanggal || 0).getTime() - new Date(a.tanggal || 0).getTime());
+    
+    return rows.map((r: any) => ({
+      ...r,
+      name_kategori: r.kategori,
+      nama_penulis: r.penulis || 'Admin'
+    }));
   } catch (err) {
     console.error(err);
     return [];
@@ -74,12 +77,15 @@ async function getArtikel(cat?: string) {
 
 async function getPopular() {
   try {
-    // Simulasi populer diambil dari 4 artikel terbaru (atau bisa disesuaikan kalau ada sistem views)
-    const [rows]: any = await pool.query(
-      `SELECT ID_artikel, Judul, Slug, tanggal, kategori as name_kategori 
-       FROM artikel WHERE status = 'published' ORDER BY tanggal ASC LIMIT 4` // ASC sebagai placeholder 'populer'
-    );
-    return rows;
+    const snap = await adminDb.collection('artikel').where('status', '==', 'published').get();
+    let rows = snap.docs.map((doc: any) => ({ ID_artikel: doc.id, ...doc.data() }));
+    
+    rows.sort((a: any, b: any) => new Date(a.tanggal || 0).getTime() - new Date(b.tanggal || 0).getTime());
+    
+    return rows.slice(0, 4).map((r: any) => ({
+      ...r,
+      name_kategori: r.kategori
+    }));
   } catch { return []; }
 }
 

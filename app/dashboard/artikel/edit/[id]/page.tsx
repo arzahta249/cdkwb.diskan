@@ -1,4 +1,4 @@
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 import EditForm from './FormEdit';
 import { notFound } from 'next/navigation';
 
@@ -6,14 +6,13 @@ export const revalidate = 0;
 
 async function getArtikelById(id: string) {
   try {
-    const [rows]: any = await pool.query(
-      `SELECT a.ID_artikel, a.Judul, a.Slug, a.isi_artikel, a.status, a.kategori, a.value, a.instagram_url, u.nama as penulis
-       FROM artikel a 
-       LEFT JOIN user u ON a.id_penulis = u.ID_user
-       WHERE a.ID_artikel = ?`,
-      [id]
-    );
-    return rows[0] || null;
+    const docSnap = await adminDb.collection('artikel').doc(id).get();
+    if (!docSnap.exists) return null;
+    return {
+      ID_artikel: docSnap.id,
+      ...docSnap.data(),
+      penulis: docSnap.data()?.penulis || 'Admin'
+    } as any;
   } catch (error) {
     console.error(error);
     return null;

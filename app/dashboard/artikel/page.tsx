@@ -2,27 +2,17 @@ import Link from 'next/link';
 import { Plus, Search, FileText, CheckCircle2, Clock, User, Tag } from 'lucide-react';
 import DeleteButton from '@/components/DeleteButton';
 import LeadingToggle from '@/components/LeadingToggle';
-import { pool } from '@/lib/db';
-
+import { adminDb } from '@/lib/firebase-admin';
 export const revalidate = 0; // Data always fresh
 
 async function getArticles() {
   try {
-    const [rows]: any = await pool.query(`
-      SELECT 
-        a.ID_artikel, 
-        a.Judul, 
-        a.Slug, 
-        a.status, 
-        a.tanggal, 
-        a.kategori,
-        a.is_leading,
-        u.nama as nama_penulis
-      FROM artikel a
-      LEFT JOIN user u ON a.id_penulis = u.ID_user
-      ORDER BY a.tanggal DESC
-    `);
-    return rows;
+    const snapshot = await adminDb.collection('artikel').orderBy('tanggal', 'desc').get();
+    return snapshot.docs.map((doc: any) => ({
+      ID_artikel: doc.id,
+      ...doc.data(),
+      nama_penulis: doc.data().penulis || 'Admin'
+    }));
   } catch (error) {
     console.error(error);
     return [];

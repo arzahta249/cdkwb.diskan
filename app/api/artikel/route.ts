@@ -1,26 +1,18 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { pool } from '@/lib/db';
-import fs from 'fs/promises';
-import path from 'path';
+import { adminDb } from '@/lib/firebase-admin';
+import { getStorage } from 'firebase-admin/storage';
 
 export async function GET() {
   try {
-    const [rows]: any = await pool.query(`
-      SELECT 
-        a.ID_artikel, 
-        a.Judul, 
-        a.Slug, 
-        a.status, 
-        a.tanggal, 
-        a.value, 
-        a.kategori,
-        a.instagram_url,
-        u.nama as nama_penulis
-      FROM artikel a
-      LEFT JOIN user u ON a.id_penulis = u.ID_user
-      ORDER BY a.tanggal DESC
-    `);
+    const snapshot = await adminDb.collection('artikel').orderBy('tanggal', 'desc').get();
+    const rows = snapshot.docs.map((doc: any) => ({ ID_artikel: doc.id, ...doc.data() }));
+    
+    // Add default author name to mimic old SQL join
+    rows.forEach((r: any) => {
+      r.nama_penulis = r.penulis || 'Admin';
+    });
+
     return NextResponse.json({ success: true, data: rows });
   } catch (error) {
     console.error('Fetch artikel error:', error);
@@ -56,47 +48,42 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate slug
-    const slug = judul
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '');
-
+    const slug = judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     let imageUrl = '';
 
     if (imageFile && imageFile.name) {
       const bytes = await imageFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
-
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const ext = path.extname(imageFile.name);
-      const filename = `${slug}-${uniqueSuffix}${ext}`;
+      const filename = `artikel/${slug}-${uniqueSuffix}`;
       
-      const uploadDir = path.join(process.cwd(), 'public/upload/artikel');
-      
-      // Ensure directory exists
-      try {
-        await fs.access(uploadDir);
-      } catch {
-        await fs.mkdir(uploadDir, { recursive: true });
-      }
-
-      const filepath = path.join(uploadDir, filename);
-      await fs.writeFile(filepath, buffer);
-      
-      imageUrl = `/upload/artikel/${filename}`;
+      const bucket = getStorage().bucket();
+      const file = bucket.file(filename);
+      await file.save(buffer, { contentType: imageFile.type || 'image/jpeg' });
+      await file.makePublic();
+      imageUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
     }
 
     const valueJson = imageUrl ? JSON.stringify({ image: imageUrl }) : null;
-    const tanggal = new Date().toISOString().split('T')[0];
+    const tanggal = new Date().toISOString();
 
-    const [result]: any = await pool.query(
-      'INSERT INTO artikel (Judul, Slug, isi_artikel, status, tanggal, id_penulis, kategori, value, instagram_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [judul, slug, isi_artikel, status || 'draft', tanggal, parseInt(token), kategori, valueJson, instagram_url || null]
-    );
+    const docRef = await adminDb.collection('artikel').add({
+      Judul: judul,
+      Slug: slug,
+      isi_artikel: isi_artikel,
+      status: status || 'draft',
+      tanggal: tanggal,
+      id_penulis: token,
+      penulis: 'Admin', // In real app, fetch from users collection
+      kategori: kategori,
+      value: valueJson,
+      instagram_url: instagram_url || null,
+      created_at: tanggal,
+      updated_at: tanggal
+    });
 
     return NextResponse.json(
-      { success: true, message: 'Artikel berhasil dibuat', id: result.insertId },
+      { success: true, message: 'Artikel berhasil dibuat', id: docRef.id },
       { status: 201 }
     );
   } catch (error) {
@@ -117,11 +104,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    const [result]: any = await pool.query('DELETE FROM artikel WHERE ID_artikel = ?', [id]);
-    
-    if (result.affectedRows === 0) {
-      return NextResponse.json({ error: 'Artikel tidak ditemukan' }, { status: 404 });
-    }
+    await adminDb.collection('artikel').doc(id).delete();
 
     return NextResponse.json({ success: true, message: 'Deleted successfully' });
   } catch (error) {
@@ -149,42 +132,41 @@ export async function PUT(request: Request) {
       );
     }
 
-    const slug = judul
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '');
+    const slug = judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-    // Get old image and value if new one not provided
-    const [oldRows]: any = await pool.query('SELECT value, image FROM artikel WHERE ID_artikel = ?', [id]);
-    if (oldRows.length === 0) {
+    const docRef = adminDb.collection('artikel').doc(id);
+    const docSnap = await docRef.get();
+    
+    if (!docSnap.exists) {
       return NextResponse.json({ error: 'Data tidak ditemukan' }, { status: 404 });
     }
     
-    let imageUrl = oldRows[0].image;
-    let valueJson = oldRows[0].value;
+    let valueJson = docSnap.data()?.value;
 
     if (imageFile && imageFile.name) {
       const bytes = await imageFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
-
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const ext = path.extname(imageFile.name);
-      const filename = `${slug}-${uniqueSuffix}${ext}`;
+      const filename = `artikel/${slug}-${uniqueSuffix}`;
       
-      const uploadDir = path.join(process.cwd(), 'public/upload/artikel');
-      await fs.mkdir(uploadDir, { recursive: true });
-      const filepath = path.join(uploadDir, filename);
-
-      await fs.writeFile(filepath, buffer);
-      
-      imageUrl = `/upload/artikel/${filename}`;
+      const bucket = getStorage().bucket();
+      const file = bucket.file(filename);
+      await file.save(buffer, { contentType: imageFile.type || 'image/jpeg' });
+      await file.makePublic();
+      const imageUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
       valueJson = JSON.stringify({ image: imageUrl });
     }
 
-    const [result]: any = await pool.query(
-      'UPDATE artikel SET Judul=?, Slug=?, isi_artikel=?, status=?, kategori=?, value=?, instagram_url=? WHERE ID_artikel=?',
-      [judul, slug, isi_artikel, status || 'draft', kategori, valueJson, instagram_url || null, id]
-    );
+    await docRef.update({
+      Judul: judul,
+      Slug: slug,
+      isi_artikel: isi_artikel,
+      status: status || 'draft',
+      kategori: kategori,
+      value: valueJson,
+      instagram_url: instagram_url || null,
+      updated_at: new Date().toISOString()
+    });
 
     return NextResponse.json(
       { success: true, message: 'Data berhasil diupdate' },
