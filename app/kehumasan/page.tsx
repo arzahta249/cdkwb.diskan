@@ -208,7 +208,7 @@ export default function KehumasanPage() {
             style={{ opacity: heroVis ? 1 : 0, transform: heroVis ? 'translateY(0)' : 'translateY(20px)' }}>
             <Link href="/" className="hover:text-white transition-colors">Beranda</Link>
             <ChevronRight className="w-3 h-3" />
-            <span className="text-white">Kehumasan</span>
+            <span className="text-white">Kerja Sama</span>
           </div>
 
           {/* Badge */}
@@ -220,7 +220,7 @@ export default function KehumasanPage() {
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 tracking-tight transition-all duration-700 delay-200"
             style={{ opacity: heroVis ? 1 : 0, transform: heroVis ? 'translateY(0)' : 'translateY(30px)' }}>
-            Kehumasan<br />
+            Kerja Sama<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400">
               CDKWB
             </span>

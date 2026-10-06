@@ -168,13 +168,13 @@ export default function Sidebar() {
               icon={FileText}
               activePath="/dashboard/artikel"
             >
-              Artikel
+              Kehumasan
             </NavDropdownBtn>
             
             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isArtikelOpen ? 'max-h-40 opacity-100 mt-1' : 'max-h-0 opacity-0'}`}>
               <div className="pl-11 pr-4 py-1 space-y-1 border-l border-cyan-900/30 ml-6">
-                <DropdownLink href="/dashboard/artikel/create">Buat Artikel</DropdownLink>
-                <DropdownLink href="/dashboard/artikel">Lihat Data Artikel</DropdownLink>
+                <DropdownLink href="/dashboard/artikel/create">Buat Kehumasan</DropdownLink>
+                <DropdownLink href="/dashboard/artikel">Lihat Data Kehumasan</DropdownLink>
               </div>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function Sidebar() {
           </NavItem>
 
           <NavItem href="/dashboard/kehumasan" icon={Megaphone}>
-            Kehumasan
+            Kerja Sama
           </NavItem>
 
           <NavItem href="/dashboard/magang" icon={Briefcase}>

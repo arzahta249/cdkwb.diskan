@@ -85,8 +85,8 @@ export default function CreateArtikelPage() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Buat Artikel Baru</h1>
-          <p className="text-slate-400 mt-1">Tambahkan publikasi edukasi / artikel dinas.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Buat Kehumasan Baru</h1>
+          <p className="text-slate-400 mt-1">Tambahkan publikasi edukasi / kehumasan dinas.</p>
         </div>
       </div>
 
@@ -128,11 +128,11 @@ export default function CreateArtikelPage() {
           {/* Judul */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-slate-300">Judul Artikel</label>
+              <label className="text-sm font-medium text-slate-300">Judul Kehumasan</label>
               <input 
                 type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required
                 className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm placeholder:text-slate-500"
-                placeholder="Masukkan judul artikel"
+                placeholder="Masukkan judul kehumasan"
               />
             </div>
           </div>
@@ -195,11 +195,11 @@ export default function CreateArtikelPage() {
 
           {/* Isi Artikel */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Isi Artikel</label>
+            <label className="text-sm font-medium text-slate-300">Isi Kehumasan</label>
             <textarea 
               rows={10} value={isiArtikel} onChange={(e) => setIsiArtikel(e.target.value)} required
               className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-y leading-relaxed text-sm placeholder:text-slate-500"
-              placeholder="Tuliskan isi artikel di sini..."
+              placeholder="Tuliskan isi kehumasan di sini..."
             />
           </div>
 
@@ -209,7 +209,7 @@ export default function CreateArtikelPage() {
               className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg shadow-cyan-500/20 disabled:opacity-70 disabled:cursor-not-allowed text-sm"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-              {loading ? 'Menyimpan...' : 'Simpan Artikel'}
+              {loading ? 'Menyimpan...' : 'Simpan Kehumasan'}
             </button>
           </div>
         </form>

@@ -296,7 +296,7 @@ export default function GaleriCMSPage({ params }: PageProps) {
                       <option value="Konservasi">Konservasi</option>
                       <option value="Pengawasan">Pengawasan</option>
                       <option value="Operasional">Operasional</option>
-                      <option value="Kehumasan">Kehumasan</option>
+                      <option value="Kerja Sama">Kerja Sama</option>
                       <option value="Kegiatan">Kegiatan</option>
                       <option value="Dokumentasi">Dokumentasi</option>
                     </select>

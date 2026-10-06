@@ -101,7 +101,7 @@ export default async function ArtikelDetailPage({ params }: { params: { slug: st
                 <div className="flex flex-wrap items-center gap-4 mb-6">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">
                     <Folder className="w-3.5 h-3.5" />
-                    {artikel.name_kategori || 'Artikel'}
+                    {artikel.name_kategori || 'Kehumasan'}
                   </span>
                   <div className="flex items-center gap-1.5 text-sm text-gray-500">
                     <Calendar className="w-4 h-4" />
@@ -128,7 +128,7 @@ export default async function ArtikelDetailPage({ params }: { params: { slug: st
                 </div>
 
                 <div className="mt-12 pt-8 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-sm text-gray-500 font-medium">Bagikan artikel ini:</span>
+                  <span className="text-sm text-gray-500 font-medium">Bagikan kehumasan ini:</span>
                   <button className="p-2.5 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors">
                     <Share2 className="w-5 h-5" />
                   </button>

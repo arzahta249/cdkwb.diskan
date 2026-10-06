@@ -137,7 +137,7 @@ export default async function ArtikelPublicPage({
           <div className="container mx-auto px-6 max-w-6xl relative z-10">
             {/* Title */}
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3 leading-tight">
-              Artikel & Wawasan
+              Kehumasan & Wawasan
             </h1>
             <p className="text-gray-300 text-base mb-10 max-w-xl leading-relaxed">
               Jelajahi karya tulis edukatif, inovasi teknologi kelautan, dan panduan maritim untuk mendukung ketahanan hayati di Jawa Tengah.
@@ -152,7 +152,7 @@ export default async function ArtikelPublicPage({
                   <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     type="text" name="q" defaultValue={searchQuery}
-                    placeholder="Cari artikel..."
+                    placeholder="Cari kehumasan..."
                     className="pl-10 pr-4 py-2.5 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#6FF3C8] transition-colors text-sm w-56"
                   />
                 </div>
@@ -197,7 +197,7 @@ export default async function ArtikelPublicPage({
                 {/* Empty state */}
                 {filtered.length === 0 && (
                   <div className="ocean-card text-center py-20 px-6">
-                    <h3 className="text-lg font-bold mb-2">Belum ada artikel</h3>
+                    <h3 className="text-lg font-bold mb-2">Belum ada kehumasan</h3>
                     <p className="text-sm text-gray-400">
                       {searchQuery ? `Tidak ditemukan "${searchQuery}".` : 'Tambahkan melalui Dashboard Admin.'}
                     </p>

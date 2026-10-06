@@ -10,14 +10,14 @@ import AjukanIzinModal from './AjukanIzinModal';
 
 const SEARCH_INDEX = [
   { title: 'Berita & Kegiatan Terbaru', category: 'Informasi', href: '/news', keywords: 'berita info kegiatan kabar berita terbaru', icon: FileText },
-  { title: 'Artikel & Wawasan Maritim', category: 'Informasi', href: '/artikel', keywords: 'artikel wawasan jurnal maritim artikel edukasi', icon: FileText },
+  { title: 'Kehumasan & Wawasan Maritim', category: 'Informasi', href: '/artikel', keywords: 'kehumasan wawasan jurnal maritim artikel edukasi', icon: FileText },
   { title: 'Materi & Dokumen Unduhan', category: 'Hubungi Kami', href: '/materi', keywords: 'materi dokumen unduh regulasi laporan pdf peraturan', icon: FolderDown },
   { title: 'Kawasan Konservasi Karang Jeruk', category: 'Layanan Konservasi', href: '/konservasi/kawasan/karang-jeruk', keywords: 'karang jeruk batang terumbu pesisir laut', icon: Compass },
   { title: 'Kawasan Konservasi Ujungnegoro', category: 'Layanan Konservasi', href: '/konservasi/kawasan/ujungnegoro', keywords: 'ujungnegoro batang tanjung pantai', icon: Compass },
   { title: 'Rehabilitasi Mangrove', category: 'Layanan Konservasi', href: '/konservasi/rehabilitasi-mangrove', keywords: 'mangrove rehabilitasi bibit tanam pesisir', icon: Compass },
   { title: 'Layanan Pengaduan & Survei SKM', category: 'Layanan Publik', href: '/pengaduan', keywords: 'pengaduan aduan tiket survei kepuasan ikm skm lapor', icon: Phone },
   { title: 'Kontak Resmi & Alamat', category: 'Hubungi Kami', href: '/kontak', keywords: 'kontak telepon email alamat kantor hubungi', icon: Phone },
-  { title: 'Direktori Kerjasama & Kemitraan', category: 'Kehumasan', href: '/kehumasan/kerjasama', keywords: 'kerjasama mou pks kemitraan mitra perguruan tinggi ngo yayasan pokmaswas', icon: FolderDown },
+  { title: 'Direktori Kerjasama & Kemitraan', category: 'Kerja Sama', href: '/kehumasan/kerjasama', keywords: 'kerjasama mou pks kemitraan mitra perguruan tinggi ngo yayasan pokmaswas', icon: FolderDown },
   { title: 'Program Kadet Magang & Riset', category: 'Layanan Publik', href: '/kerja-sama/informasi-magang', keywords: 'magang riset program mahasiswa penelitian internship kerja sama praktek', icon: FileText },
   { title: 'Struktur Organisasi', category: 'Profil', href: '/profil/struktur-organisasi', keywords: 'struktur organisasi pejabat kepala cabang hirarki', icon: FileText },
   { title: 'Tugas Pokok & Fungsi', category: 'Profil', href: '/profil/tugas-pokok', keywords: 'tugas pokok fungsi tupoksi dkp', icon: FileText },
@@ -155,7 +155,7 @@ export default function Navbar() {
               Informasi <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180 text-slate-400 group-hover:text-[#0b3b60]" />
               <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-slate-100 shadow-xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2 flex flex-col translate-y-2 group-hover:translate-y-0 cursor-default">
                 <Link href="/news" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Berita</Link>
-                <Link href="/artikel" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Artikel</Link>
+                <Link href="/artikel" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Kehumasan</Link>
               </div>
             </div>
 
@@ -166,11 +166,11 @@ export default function Navbar() {
                 
                 {/* Column 1: Layanan Utama & Konservasi */}
                 <div className="space-y-3">
-                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">Konservasi & Kehumasan</div>
+                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">Konservasi & Kerja Sama</div>
                   <div className="space-y-1">
                     <Link href="/kehumasan" className="group/item flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50/60 transition-colors">
                       <div>
-                        <div className="text-sm font-semibold text-[#0b3b60]">Kehumasan dan Kerjasama</div>
+                        <div className="text-sm font-semibold text-[#0b3b60]">Kerja Sama</div>
                         <div className="text-xs text-slate-500">Siaran pers & portal linkup</div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-400 group-hover/item:text-[#0b3b60] transition-transform group-hover/item:translate-x-0.5" />
@@ -395,7 +395,7 @@ export default function Navbar() {
             <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('informasi') ? 'max-h-48' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
                 <Link href="/news" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Berita</Link>
-                <Link href="/artikel" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Artikel</Link>
+                <Link href="/artikel" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan</Link>
               </div>
             </div>
           </div>
@@ -412,7 +412,7 @@ export default function Navbar() {
             <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('layanan') ? 'max-h-[800px]' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
                 {/* 1. Kehumasan dan Kerjasama */}
-                <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kehumasan dan Kerjasama</Link>
+                <Link href="/kehumasan" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Kerja Sama</Link>
 
                 {/* 2. Arsip & Dokumentasi */}
                 <Link href="/galeri" className="block py-2 px-4 text-sm text-gray-600 hover:text-blue-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Arsip & Dokumentasi</Link>

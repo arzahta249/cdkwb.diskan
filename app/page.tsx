@@ -143,7 +143,7 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <ServiceCard icon={Users} title="Kehumasan & Kerja Sama" desc="Publikasi media, informasi publik, dan kemitraan strategis." num="01" href="/kehumasan" />
+              <ServiceCard icon={Users} title="Kerja Sama" desc="Publikasi media, informasi publik, dan kemitraan strategis." num="01" href="/kehumasan" />
               <ServiceCard icon={Camera} title="Arsip & Dokumentasi" desc="Galeri foto, video operasional, dan dokumentasi kegiatan." num="02" href="/galeri" />
               <ServiceCard icon={Package} title="Barang Milik Daerah" desc="Layanan inventaris dan kerumahtanggaan." num="03" href="#" />
             </div>
@@ -210,7 +210,7 @@ export default async function HomePage() {
                     {/* Floating Glassmorphism Badge */}
                     <div className="absolute top-6 right-6 z-20">
                       <span className="backdrop-blur-md bg-[#093345]/50 border border-[#6FF3C8]/20 text-[#6FF3C8] text-[10px] font-bold px-4 py-2 rounded-full shadow-lg uppercase tracking-widest group-hover:bg-[#6FF3C8]/10 group-hover:border-[#6FF3C8]/40 transition-colors duration-500">
-                        {item.type === 'artikel' ? 'Artikel' : 'Berita'}
+                        {item.type === 'artikel' ? 'Kehumasan' : 'Berita'}
                       </span>
                     </div>
 

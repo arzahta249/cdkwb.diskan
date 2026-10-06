@@ -50,7 +50,7 @@ export default function CreateArtikelInstagramPage() {
       const res = await fetch('/api/artikel', { method: 'POST', body: formData });
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan saat menyimpan artikel');
+      if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan saat menyimpan kehumasan');
 
       router.push('/dashboard/artikel');
       router.refresh();
@@ -73,7 +73,7 @@ export default function CreateArtikelInstagramPage() {
           <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
             Upload via Instagram
           </h1>
-          <p className="text-slate-400 mt-1">Tambahkan artikel/publikasi langsung dari postingan Instagram.</p>
+          <p className="text-slate-400 mt-1">Tambahkan kehumasan/publikasi langsung dari postingan Instagram.</p>
         </div>
       </div>
 
@@ -140,7 +140,7 @@ export default function CreateArtikelInstagramPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-slate-300">Judul Artikel (Untuk di Daftar)</label>
+              <label className="text-sm font-medium text-slate-300">Judul Kehumasan (Untuk di Daftar)</label>
               <input 
                 type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required
                 className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm placeholder:text-slate-500"
@@ -191,7 +191,7 @@ export default function CreateArtikelInstagramPage() {
               className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg shadow-pink-500/20 disabled:opacity-70 disabled:cursor-not-allowed text-sm"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-              {loading ? 'Menyimpan...' : 'Simpan Artikel'}
+              {loading ? 'Menyimpan...' : 'Simpan Kehumasan'}
             </button>
           </div>
         </form>

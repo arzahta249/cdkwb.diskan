@@ -36,8 +36,8 @@ export default async function ArtikelDashboardPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Data Artikel</h1>
-          <p className="text-slate-400 mt-1">Kelola artikel dan publikasi edukasi.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Data Kehumasan</h1>
+          <p className="text-slate-400 mt-1">Kelola kehumasan dan publikasi edukasi.</p>
         </div>
         <div className="flex items-center gap-2">
           <Link 
@@ -52,7 +52,7 @@ export default async function ArtikelDashboardPage() {
             className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2.5 rounded-xl font-medium transition-colors shadow-lg shadow-cyan-500/20 text-sm"
           >
             <Plus className="w-4 h-4" />
-            Buat Artikel Baru
+            Buat Kehumasan Baru
           </Link>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default async function ArtikelDashboardPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input 
               type="text" 
-              placeholder="Cari artikel..." 
+              placeholder="Cari kehumasan..." 
               className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors text-sm placeholder:text-slate-500"
             />
           </div>
@@ -73,7 +73,7 @@ export default async function ArtikelDashboardPage() {
           <table className="w-full text-left text-sm text-slate-300">
             <thead className="bg-slate-950/50 text-slate-400 uppercase text-xs">
               <tr>
-                <th className="px-6 py-4 font-medium">Judul Artikel</th>
+                <th className="px-6 py-4 font-medium">Judul Kehumasan</th>
                 <th className="px-6 py-4 font-medium">Kategori</th>
                 <th className="px-6 py-4 font-medium">Penulis / Pengunggah</th>
                 <th className="px-6 py-4 font-medium">Status</th>
@@ -88,7 +88,7 @@ export default async function ArtikelDashboardPage() {
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <FileText className="w-12 h-12 mb-3 opacity-20" />
-                      <p>Belum ada data artikel yang ditambahkan.</p>
+                      <p>Belum ada data kehumasan yang ditambahkan.</p>
                     </div>
                   </td>
                 </tr>

@@ -66,7 +66,7 @@ export default function EditArtikelForm({ initialData }: { initialData: any }) {
       const res = await fetch('/api/artikel', { method: 'PUT', body: formData });
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan saat mengupdate artikel');
+      if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan saat mengupdate kehumasan');
 
       router.push('/dashboard/artikel');
       router.refresh();
@@ -87,9 +87,9 @@ export default function EditArtikelForm({ initialData }: { initialData: any }) {
         </Link>
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
-            Edit Artikel {isInstagram && '(Via Instagram)'}
+            Edit Kehumasan {isInstagram && '(Via Instagram)'}
           </h1>
-          <p className="text-slate-400 mt-1">Lakukan perubahan pada data artikel Anda.</p>
+          <p className="text-slate-400 mt-1">Lakukan perubahan pada data kehumasan Anda.</p>
         </div>
       </div>
 
@@ -174,7 +174,7 @@ export default function EditArtikelForm({ initialData }: { initialData: any }) {
 
           <div className="grid grid-cols-1 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Judul Artikel</label>
+              <label className="text-sm font-medium text-slate-300">Judul Kehumasan</label>
               <input 
                 type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required
                 className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm placeholder:text-slate-500"
@@ -211,7 +211,7 @@ export default function EditArtikelForm({ initialData }: { initialData: any }) {
 
           {!isInstagram && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Isi Artikel</label>
+              <label className="text-sm font-medium text-slate-300">Isi Kehumasan</label>
               <textarea 
                 rows={15} value={isiArtikel} onChange={(e) => setIsiArtikel(e.target.value)} required
                 className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-y leading-relaxed text-sm placeholder:text-slate-500"
