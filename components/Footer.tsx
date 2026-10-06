@@ -33,8 +33,13 @@ export default function Footer() {
             <ul className="space-y-2.5 sm:space-y-3">
               <li>
                 <Link href="/pengaduan" className="text-xs sm:text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> <span>Pengaduan & Kepuasan Pengguna</span>
+                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> <span>Saran & Masukan</span>
                 </Link>
+              </li>
+              <li>
+                <a href="https://skm.go.id/" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  <ChevronRight className="w-3 h-3 shrink-0" style={{ color: '#6FF3C8' }} /> <span>Survei Kepuasan Masyarakat</span>
+                </a>
               </li>
               <li>
                 <Link href="#" className="text-xs sm:text-sm flex items-center gap-2 transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>

@@ -39,7 +39,7 @@ import {
 } from 'lucide-react';
 
 export default function PengaduanPage() {
-  const [activeTab, setActiveTab] = useState<'form' | 'tracking' | 'kepuasan'>('form');
+  const [activeTab, setActiveTab] = useState<'form' | 'tracking'>('form');
 
   // Form State
   const [formData, setFormData] = useState({
@@ -345,10 +345,10 @@ export default function PengaduanPage() {
               Pusat Layanan Masyarakat CDKWB Jawa Tengah
             </span>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white mt-4 mb-4 leading-tight">
-              Pengaduan Online & Kepuasan Pengguna
+              Saran & Masukan Online
             </h1>
             <p className="text-base md:text-lg max-w-2xl mx-auto text-gray-300 mb-8 leading-relaxed">
-              Sampaikan pengaduan, masukan, serta penilaian kualitas pelayanan publik Cabang Dinas Kelautan Wilayah Barat secara cepat, transparan, dan terukur.
+              Sampaikan saran, masukan, maupun aduan terkait pelayanan publik Cabang Dinas Kelautan Wilayah Barat secara cepat, transparan, dan terukur.
             </p>
 
             {/* Navigation Tabs */}
@@ -375,18 +375,6 @@ export default function PengaduanPage() {
               >
                 <Search className="w-4 h-4" />
                 Cek Status Tiket
-              </button>
-
-              <button
-                onClick={() => setActiveTab('kepuasan')}
-                className={`flex items-center gap-2.5 px-5 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
-                  activeTab === 'kepuasan'
-                    ? 'bg-[#6FF3C8] text-[#0b3b60] shadow-lg shadow-[#6FF3C8]/20 font-semibold'
-                    : 'text-gray-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <Smile className="w-4 h-4" />
-                Kepuasan Pengguna
               </button>
             </div>
           </div>

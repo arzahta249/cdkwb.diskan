@@ -126,7 +126,7 @@ export default function Sidebar() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-600 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.4)]">
               <Waves className="w-4 h-4 text-white" />
             </div>
-            Diskan Admin
+            Admin SIKAWAN BARAT
           </div>
           <button 
             className="md:hidden p-1.5 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
@@ -200,15 +200,7 @@ export default function Sidebar() {
           </div>
 
           <NavItem href="/dashboard/aduan" icon={MessageSquare}>
-            Aduan
-          </NavItem>
-
-          <NavItem href="/dashboard/kepuasan" icon={Award}>
-            Survei Kepuasan
-          </NavItem>
-
-          <NavItem href="/dashboard/materi" icon={FileText}>
-            Manajemen Materi
+            Saran & Masukan
           </NavItem>
 
           <NavItem href="/dashboard/kehumasan" icon={Megaphone}>

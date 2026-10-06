@@ -1,24 +1,43 @@
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Calendar, Share2, Eye } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
-async function getNewsBySlug(slug: string) {
+async function getNewsBySlug(slug: string): Promise<any> {
   try {
-    await pool.query(
-      "UPDATE berita SET views = COALESCE(views, 0) + 1 WHERE Slug = ?",
-      [slug]
-    );
-  } catch (err) {
-    console.error('Error incrementing view count:', err);
-  }
+    const snapshot = await adminDb.collection('berita')
+      .where('Slug', '==', slug)
+      .where('status', '==', 'published')
+      .limit(1)
+      .get();
 
-  const [rows]: any = await pool.query(
-    "SELECT b.ID_berita, b.Judul, b.Slug, b.image, b.isi_berita, b.tanggal, b.views, b.instagram_url, u.nama as penulis FROM berita b LEFT JOIN user u ON b.id_penulis = u.ID_user WHERE b.Slug = ? AND b.status = 'published'",
-    [slug]
-  );
-  return rows[0] || null;
+    if (snapshot.empty) {
+      return null;
+    }
+
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+
+    // Increment views safely without transaction to avoid blocking reads, or just do an update
+    // In Firestore, if we just want a simple increment:
+    try {
+      await doc.ref.update({
+        views: (data.views || 0) + 1
+      });
+    } catch (err) {
+      console.error('Error incrementing view count:', err);
+    }
+
+    return {
+      ID_berita: doc.id,
+      ...data,
+      penulis: data.penulis || 'Admin'
+    };
+  } catch (error) {
+    console.error('Error fetching news by slug:', error);
+    return null;
+  }
 }
 
 export default async function NewsDetailPage({ params }: { params: { slug: string } }) {

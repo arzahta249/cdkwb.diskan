@@ -1,4 +1,4 @@
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
@@ -8,32 +8,52 @@ import { ArrowRight, PlayCircle, Ship, Waves, ShieldAlert, FileText, Users, Cale
 
 async function getLeadingItems() {
   try {
-    const [rows]: any = await pool.query(`
-      SELECT 
-        ID_berita as id, 
-        Judul, 
-        Slug, 
-        image, 
-        tanggal, 
-        'berita' as type
-      FROM berita 
-      WHERE status = 'published' AND is_leading = 1
+    const items: any[] = [];
+    
+    // Fetch leading berita
+    const beritaSnap = await adminDb.collection('berita')
+      .where('status', '==', 'published')
+      .where('is_leading', '==', 1)
+      .get();
       
-      UNION ALL
+    beritaSnap.forEach(doc => {
+      const data = doc.data();
+      items.push({
+        id: doc.id,
+        Judul: data.Judul,
+        Slug: data.Slug,
+        image: data.image,
+        tanggal: data.tanggal,
+        type: 'berita'
+      });
+    });
+    
+    // Fetch leading artikel (assuming it exists)
+    const artikelSnap = await adminDb.collection('artikel')
+      .where('status', '==', 'published')
+      .where('is_leading', '==', 1)
+      .get();
       
-      SELECT 
-        ID_artikel as id, 
-        Judul, 
-        Slug, 
-        NULL as image, 
-        tanggal, 
-        'artikel' as type
-      FROM artikel 
-      WHERE status = 'published' AND is_leading = 1
-      
-      ORDER BY tanggal DESC
-    `);
-    return rows;
+    artikelSnap.forEach(doc => {
+      const data = doc.data();
+      items.push({
+        id: doc.id,
+        Judul: data.Judul,
+        Slug: data.Slug,
+        image: null,
+        tanggal: data.tanggal,
+        type: 'artikel'
+      });
+    });
+
+    // Sort combined items by tanggal descending
+    items.sort((a, b) => {
+      const dateA = new Date(a.tanggal || 0).getTime();
+      const dateB = new Date(b.tanggal || 0).getTime();
+      return dateB - dateA;
+    });
+
+    return items;
   } catch (err) {
     console.error(err);
     return [];

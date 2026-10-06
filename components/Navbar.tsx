@@ -11,11 +11,11 @@ import AjukanIzinModal from './AjukanIzinModal';
 const SEARCH_INDEX = [
   { title: 'Berita & Kegiatan Terbaru', category: 'Informasi', href: '/news', keywords: 'berita info kegiatan kabar berita terbaru', icon: FileText },
   { title: 'Kehumasan & Wawasan Maritim', category: 'Informasi', href: '/artikel', keywords: 'kehumasan wawasan jurnal maritim artikel edukasi', icon: FileText },
-  { title: 'Materi & Dokumen Unduhan', category: 'Hubungi Kami', href: '/materi', keywords: 'materi dokumen unduh regulasi laporan pdf peraturan', icon: FolderDown },
   { title: 'Kawasan Konservasi Karang Jeruk', category: 'Layanan Konservasi', href: '/konservasi/kawasan/karang-jeruk', keywords: 'karang jeruk batang terumbu pesisir laut', icon: Compass },
   { title: 'Kawasan Konservasi Ujungnegoro', category: 'Layanan Konservasi', href: '/konservasi/kawasan/ujungnegoro', keywords: 'ujungnegoro batang tanjung pantai', icon: Compass },
   { title: 'Rehabilitasi Mangrove', category: 'Layanan Konservasi', href: '/konservasi/rehabilitasi-mangrove', keywords: 'mangrove rehabilitasi bibit tanam pesisir', icon: Compass },
-  { title: 'Layanan Pengaduan & Survei SKM', category: 'Layanan Publik', href: '/pengaduan', keywords: 'pengaduan aduan tiket survei kepuasan ikm skm lapor', icon: Phone },
+  { title: 'Saran & Masukan', category: 'Layanan Publik', href: '/pengaduan', keywords: 'saran masukan pengaduan aduan tiket lapor', icon: Phone },
+  { title: 'Survei Kepuasan Masyarakat (SKM)', category: 'Layanan Publik', href: 'https://skm.go.id/', keywords: 'skm survei kepuasan masyarakat', icon: Sparkles },
   { title: 'Kontak Resmi & Alamat', category: 'Hubungi Kami', href: '/kontak', keywords: 'kontak telepon email alamat kantor hubungi', icon: Phone },
   { title: 'Direktori Kerjasama & Kemitraan', category: 'Kerja Sama', href: '/kehumasan/kerjasama', keywords: 'kerjasama mou pks kemitraan mitra perguruan tinggi ngo yayasan pokmaswas', icon: FolderDown },
   { title: 'Program Kadet Magang & Riset', category: 'Layanan Publik', href: '/kerja-sama/informasi-magang', keywords: 'magang riset program mahasiswa penelitian internship kerja sama praktek', icon: FileText },
@@ -291,8 +291,8 @@ export default function Navbar() {
               <div className="absolute top-full -left-12 mt-2 w-52 bg-white border border-slate-100 shadow-xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2 flex flex-col translate-y-2 group-hover:translate-y-0 cursor-default">
                 <Link href="/kontak" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Kontak</Link>
                 <Link href="/kontak#lokasi" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Lokasi Peta</Link>
-                <Link href="/pengaduan" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Pengaduan & SKM</Link>
-                <Link href="/materi" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Materi & Dokumen</Link>
+                <Link href="/pengaduan" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Saran & Masukan</Link>
+                <a href="https://skm.go.id/" target="_blank" rel="noopener noreferrer" className="px-3.5 py-2.5 text-sm text-slate-600 hover:text-[#0b3b60] hover:bg-slate-50 font-medium rounded-xl transition-colors">Survei SKM</a>
               </div>
             </div>
           </div>
@@ -521,10 +521,10 @@ export default function Navbar() {
             </button>
             <div className={`overflow-hidden transition-all duration-300 ${activeMobileDropdown.includes('hubungi') ? 'max-h-56' : 'max-h-0'}`}>
               <div className="pl-4 py-2 space-y-1 bg-gray-50/70 rounded-xl mt-1">
-                <Link href="/materi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Materi</Link>
                 <Link href="/kontak" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Kontak</Link>
                 <Link href="/kontak#lokasi" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Lokasi</Link>
-                <Link href="/pengaduan" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Pengaduan & Kepuasan</Link>
+                <Link href="/pengaduan" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Saran & Masukan</Link>
+                <a href="https://skm.go.id/" target="_blank" rel="noopener noreferrer" className="block py-2.5 px-4 text-sm text-gray-600 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Survei SKM</a>
               </div>
             </div>
           </div>
@@ -559,7 +559,7 @@ export default function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ketik untuk mencari berita, materi, perizinan, atau pengaduan..."
+                placeholder="Ketik untuk mencari berita, perizinan, atau saran..."
                 className="w-full bg-transparent text-base text-gray-900 placeholder-gray-400 focus:outline-none"
               />
               {searchQuery && (
@@ -586,7 +586,7 @@ export default function Navbar() {
                 <div className="py-12 text-center text-gray-400 space-y-2">
                   <Sparkles className="w-8 h-8 mx-auto opacity-30 text-blue-500" />
                   <p className="text-sm font-medium">Tidak ada hasil pencarian untuk &quot;{searchQuery}&quot;</p>
-                  <p className="text-xs text-gray-400">Cobalah kata kunci lain seperti &quot;berita&quot;, &quot;mangrove&quot;, atau &quot;pengaduan&quot;.</p>
+                  <p className="text-xs text-gray-400">Cobalah kata kunci lain seperti &quot;berita&quot;, &quot;mangrove&quot;, atau &quot;saran&quot;.</p>
                 </div>
               ) : (
                 filteredResults.map((item, idx) => {

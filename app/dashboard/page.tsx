@@ -1,4 +1,4 @@
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 import { Activity, Users, FileText, AlertCircle, Waves, Bell, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -11,23 +11,23 @@ export default async function DashboardHome() {
   let totalAduan = 0;
 
   try {
-    const [userRows]: any = await pool.query('SELECT COUNT(*) as count FROM user');
-    totalPengguna = userRows[0]?.count || 0;
+    const usersCountSnap = await adminDb.collection('user').count().get();
+    totalPengguna = usersCountSnap.data().count;
 
-    const [beritaRows]: any = await pool.query('SELECT COUNT(*) as count FROM berita');
-    totalBerita = beritaRows[0]?.count || 0;
+    const beritaCountSnap = await adminDb.collection('berita').count().get();
+    totalBerita = beritaCountSnap.data().count;
 
-    const [aduanRows]: any = await pool.query("SELECT COUNT(*) as count FROM pengaduan WHERE status = 'PENDING'");
-    aduanMasuk = aduanRows[0]?.count || 0;
+    const aduanPendingSnap = await adminDb.collection('pengaduan').where('status', '==', 'PENDING').count().get();
+    aduanMasuk = aduanPendingSnap.data().count;
 
-    const [aduanSelesaiRows]: any = await pool.query("SELECT COUNT(*) as count FROM pengaduan WHERE status IN ('SELESAI', 'DITUTUP')");
-    aduanSelesai = aduanSelesaiRows[0]?.count || 0;
+    const aduanSelesaiSnap = await adminDb.collection('pengaduan').where('status', 'in', ['SELESAI', 'DITUTUP']).count().get();
+    aduanSelesai = aduanSelesaiSnap.data().count;
 
-    const [totalAduanRows]: any = await pool.query("SELECT COUNT(*) as count FROM pengaduan");
-    totalAduan = totalAduanRows[0]?.count || 0;
+    const totalAduanSnap = await adminDb.collection('pengaduan').count().get();
+    totalAduan = totalAduanSnap.data().count;
 
-    const [recentRows]: any = await pool.query("SELECT id, nomor_tiket, nama_pelapor, kategori, status, created_at FROM pengaduan ORDER BY created_at DESC LIMIT 5");
-    recentActivities = recentRows || [];
+    const recentSnap = await adminDb.collection('pengaduan').orderBy('created_at', 'desc').limit(5).get();
+    recentActivities = recentSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
   }
@@ -64,7 +64,7 @@ export default async function DashboardHome() {
         <StatCard title="Total Pengguna" value={totalPengguna} icon={Users} color="text-blue-400" bgColor="bg-blue-500/10" borderColor="border-blue-500/20" trend="Aktif" />
         <StatCard title="Total Berita" value={totalBerita} icon={FileText} color="text-emerald-400" bgColor="bg-emerald-500/10" borderColor="border-emerald-500/20" trend="Terbaru" />
         <StatCard title="Aduan Masuk (Pending)" value={aduanMasuk} icon={AlertCircle} color="text-rose-400" bgColor="bg-rose-500/10" borderColor="border-rose-500/20" trend="Baru" />
-        <StatCard title="Pengaduan Selesai" value={aduanSelesai} icon={CheckCircle2} color="text-cyan-400" bgColor="bg-cyan-500/10" borderColor="border-cyan-500/20" trend="Tuntas" />
+        <StatCard title="Saran & Masukan Selesai" value={aduanSelesai} icon={CheckCircle2} color="text-cyan-400" bgColor="bg-cyan-500/10" borderColor="border-cyan-500/20" trend="Tuntas" />
       </div>
 
       {/* Main Content Area */}
@@ -77,7 +77,7 @@ export default async function DashboardHome() {
           
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-semibold text-white flex items-center gap-2">
-              <Activity className="w-4 h-4 text-cyan-500" /> Pengaduan Terkini
+              <Activity className="w-4 h-4 text-cyan-500" /> Saran & Masukan Terkini
             </h2>
             <Link href="/dashboard/aduan" className="text-xs text-cyan-500 hover:text-cyan-400 flex items-center gap-1 transition-colors font-medium">
               Lihat Semua <ArrowUpRight className="w-3 h-3" />
@@ -108,7 +108,7 @@ export default async function DashboardHome() {
             ) : (
               <div className="text-slate-500 text-sm flex flex-col items-center justify-center h-48 border border-dashed border-slate-800 rounded-xl bg-slate-950/50">
                 <Waves className="w-8 h-8 text-slate-700 mb-3" />
-                <span>Belum ada data pengaduan masuk.</span>
+                <span>Belum ada data saran & masukan masuk.</span>
               </div>
             )}
           </div>
@@ -116,7 +116,7 @@ export default async function DashboardHome() {
 
         {/* Status Server / Info Singkat */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <h2 className="text-base font-semibold text-white mb-4">Statistik Pengaduan</h2>
+          <h2 className="text-base font-semibold text-white mb-4">Statistik Saran & Masukan</h2>
           
           <div className="space-y-4">
             <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">

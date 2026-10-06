@@ -122,11 +122,11 @@ export default function AduanDashboardPage() {
 
       const data = await res.json();
       if (data.success) {
-        await showSuccess('Berhasil', 'Pengaduan ditolak');
+        await showSuccess('Berhasil', 'Saran/Masukan ditolak');
         closeModal();
         fetchComplaints();
       } else {
-        showError('Gagal', data.error || 'Gagal menolak pengaduan');
+        showError('Gagal', data.error || 'Gagal menolak saran/masukan');
       }
     } catch (err) {
       showError('Error', 'Terjadi kesalahan sistem');
@@ -216,7 +216,7 @@ export default function AduanDashboardPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Data Pengaduan Masyarakat</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Data Saran & Masukan</h1>
           <p className="text-slate-400 mt-1">Kelola verifikasi, disposisi bidang teknis, penanganan SLA, dan rating kepuasan.</p>
         </div>
       </div>
@@ -224,7 +224,7 @@ export default function AduanDashboardPage() {
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl">
-          <div className="text-xs text-slate-400">Total Pengaduan</div>
+          <div className="text-xs text-slate-400">Total Saran & Masukan</div>
           <div className="text-2xl font-bold text-white mt-1">{totalCount}</div>
         </div>
         <div className="bg-slate-900 p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 shadow-xl">
@@ -295,7 +295,7 @@ export default function AduanDashboardPage() {
               {loading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                    Memuat data pengaduan...
+                    Memuat data saran & masukan...
                   </td>
                 </tr>
               ) : complaints.length === 0 ? (
@@ -394,7 +394,7 @@ export default function AduanDashboardPage() {
                         {/* WA Pelapor quick contact button */}
                         {item.telepon_pelapor && (
                           <a
-                            href={`https://wa.me/${item.telepon_pelapor.replace(/[^0-9]/g, '').replace(/^0/, '62')}?text=${encodeURIComponent(`Halo ${item.nama_pelapor || 'Bapak/Ibu'}, menindaklanjuti pengaduan No. Tiket [${item.nomor_tiket}] perihal ${item.kategori}...`)}`}
+                            href={`https://wa.me/${item.telepon_pelapor.replace(/[^0-9]/g, '').replace(/^0/, '62')}?text=${encodeURIComponent(`Halo ${item.nama_pelapor || 'Bapak/Ibu'}, menindaklanjuti saran/masukan No. Tiket [${item.nomor_tiket}] perihal ${item.kategori}...`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="px-2.5 py-1.5 bg-emerald-600/80 hover:bg-emerald-500 text-white rounded-lg text-xs transition-colors flex items-center gap-1"
@@ -496,7 +496,7 @@ export default function AduanDashboardPage() {
                 </div>
 
                 <div>
-                  <span className="text-slate-400 block mb-1">Isi Deskripsi Pengaduan</span>
+                  <span className="text-slate-400 block mb-1">Isi Deskripsi Saran & Masukan</span>
                   <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 leading-relaxed">
                     {selectedItem.deskripsi}
                   </div>
@@ -579,7 +579,7 @@ export default function AduanDashboardPage() {
             {modalType === 'reject' && (
               <form onSubmit={handleReject} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Alasan Penolakan Pengaduan</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Alasan Penolakan Saran/Masukan</label>
                   <textarea
                     required
                     rows={4}
@@ -593,7 +593,7 @@ export default function AduanDashboardPage() {
                 <div className="flex justify-end gap-2 pt-4">
                   <button type="button" onClick={closeModal} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-colors">Batal</button>
                   <button type="submit" disabled={actionSubmitting} className="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl text-xs transition-colors">
-                    {actionSubmitting ? 'Memproses...' : 'Tolak Pengaduan'}
+                    {actionSubmitting ? 'Memproses...' : 'Tolak Saran/Masukan'}
                   </button>
                 </div>
               </form>

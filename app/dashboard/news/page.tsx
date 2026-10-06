@@ -2,18 +2,30 @@ import Link from 'next/link';
 import { Plus, Search, FileText, CheckCircle2, Clock, User, Tag } from 'lucide-react';
 import DeleteButton from '@/components/DeleteButton';
 import LeadingToggle from '@/components/LeadingToggle';
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 
 export const revalidate = 0; // Data always fresh
 
 async function getNews() {
   try {
-    const [rows]: any = await pool.query(`
-      SELECT b.ID_berita, b.Judul, b.Slug, b.status, b.tanggal, b.kategori, b.is_leading, u.nama as penulis 
-      FROM berita b 
-      LEFT JOIN user u ON b.id_penulis = u.ID_user 
-      ORDER BY b.tanggal DESC
-    `);
+    const snapshot = await adminDb.collection('berita')
+      .orderBy('tanggal', 'desc')
+      .get();
+      
+    const rows = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ID_berita: doc.id,
+        Judul: data.Judul,
+        Slug: data.Slug,
+        status: data.status,
+        tanggal: data.tanggal,
+        kategori: data.kategori,
+        is_leading: data.is_leading,
+        penulis: data.penulis || 'Admin'
+      };
+    });
+    
     return rows;
   } catch (error) {
     console.error(error);

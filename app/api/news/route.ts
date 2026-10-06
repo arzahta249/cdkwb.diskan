@@ -1,23 +1,32 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 import fs from 'fs/promises';
 import path from 'path';
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const queryParams: any[] = [];
-    let query = `
-      SELECT b.ID_berita, b.Judul, b.Slug, b.image, b.isi_berita, b.status, b.tanggal, b.kategori, b.instagram_url, b.is_leading,
-             COALESCE(u.nama, b.penulis, 'Admin') as penulis 
-      FROM berita b
-      LEFT JOIN user u ON b.id_penulis = u.ID_user
-    `;
+    const snapshot = await adminDb.collection('berita')
+      .orderBy('tanggal', 'desc')
+      .get();
+      
+    const rows = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ID_berita: doc.id,
+        Judul: data.Judul,
+        Slug: data.Slug,
+        image: data.image,
+        isi_berita: data.isi_berita,
+        status: data.status,
+        tanggal: data.tanggal,
+        kategori: data.kategori,
+        instagram_url: data.instagram_url,
+        is_leading: data.is_leading,
+        penulis: data.penulis || 'Admin'
+      };
+    });
 
-    query += ' ORDER BY b.tanggal DESC';
-
-    const [rows]: any = await pool.query(query, queryParams);
     return NextResponse.json({ success: true, data: rows });
   } catch (error) {
     console.error('Fetch news error:', error);
@@ -78,13 +87,25 @@ export async function POST(request: Request) {
 
     const tanggal = new Date().toISOString().split('T')[0];
 
-    const [result]: any = await pool.query(
-      'INSERT INTO berita (Judul, Slug, image, isi_berita, status, tanggal, id_penulis, penulis, kategori, instagram_url, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [judul, slug, imageUrl, isi_berita, status || 'draft', tanggal, token ? parseInt(token) : null, penulis, kategori, instagram_url || null, type]
-    );
+    const newData = {
+      Judul: judul,
+      Slug: slug,
+      image: imageUrl,
+      isi_berita: isi_berita,
+      status: status || 'draft',
+      tanggal: tanggal,
+      id_penulis: token ? parseInt(token) : null,
+      penulis: penulis,
+      kategori: kategori,
+      instagram_url: instagram_url || null,
+      type: type,
+      created_at: new Date()
+    };
+
+    const docRef = await adminDb.collection('berita').add(newData);
 
     return NextResponse.json(
-      { success: true, message: 'Data berhasil dibuat', id: result.insertId },
+      { success: true, message: 'Data berhasil dibuat', id: docRef.id },
       { status: 201 }
     );
   } catch (error) {
@@ -105,11 +126,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    const [result]: any = await pool.query('DELETE FROM berita WHERE ID_berita = ?', [id]);
-    
-    if (result.affectedRows === 0) {
-      return NextResponse.json({ error: 'Berita tidak ditemukan' }, { status: 404 });
-    }
+    await adminDb.collection('berita').doc(id).delete();
 
     return NextResponse.json({ success: true, message: 'Deleted successfully' });
   } catch (error) {
@@ -143,13 +160,14 @@ export async function PUT(request: Request) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '');
 
-    // Get old image if new one not provided
-    const [oldRows]: any = await pool.query('SELECT image FROM berita WHERE ID_berita = ?', [id]);
-    if (oldRows.length === 0) {
+    const docRef = adminDb.collection('berita').doc(id);
+    const doc = await docRef.get();
+    
+    if (!doc.exists) {
       return NextResponse.json({ error: 'Data tidak ditemukan' }, { status: 404 });
     }
     
-    let imageUrl = oldRows[0].image;
+    let imageUrl = doc.data()?.image || '';
 
     if (imageFile && imageFile.name) {
       const bytes = await imageFile.arrayBuffer();
@@ -168,10 +186,21 @@ export async function PUT(request: Request) {
       imageUrl = `/upload/news/${filename}`;
     }
 
-    const [result]: any = await pool.query(
-      'UPDATE berita SET Judul=?, Slug=?, image=?, isi_berita=?, status=?, kategori=?, instagram_url=?, penulis=COALESCE(?, penulis) WHERE ID_berita=?',
-      [judul, slug, imageUrl, isi_berita, status || 'draft', kategori, instagram_url || null, penulis, id]
-    );
+    const updateData: any = {
+      Judul: judul,
+      Slug: slug,
+      image: imageUrl,
+      isi_berita: isi_berita,
+      status: status || 'draft',
+      kategori: kategori,
+      instagram_url: instagram_url || null,
+    };
+    
+    if (penulis) {
+      updateData.penulis = penulis;
+    }
+
+    await docRef.update(updateData);
 
     return NextResponse.json(
       { success: true, message: 'Data berhasil diupdate' },

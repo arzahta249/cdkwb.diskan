@@ -1,4 +1,4 @@
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
@@ -43,23 +43,36 @@ function fmtDate(d: string, short = false) {
 
 async function getContent(cat?: string) {
   try {
-    let q = `SELECT b.ID_berita, b.Judul, b.Slug, b.image, b.isi_berita, b.tanggal, b.views, b.kategori, u.nama as penulis
-             FROM berita b LEFT JOIN user u ON b.id_penulis = u.ID_user WHERE b.status = 'published'`;
-    const p: any[] = [];
-    if (cat && cat !== 'Semua') { q += ' AND b.kategori = ?'; p.push(cat); }
-    q += ' ORDER BY b.tanggal DESC';
-    const [rows]: any = await pool.query(q, p);
-    return rows as any[];
-  } catch { return []; }
+    let ref: any = adminDb.collection('berita').where('status', '==', 'published');
+    if (cat && cat !== 'Semua') {
+      ref = ref.where('kategori', '==', cat);
+    }
+    
+    // Sort by tanggal descending
+    // Note: If sorting by a field after filtering by another, Firestore might require a composite index.
+    // If it fails, you can sort in memory. We'll do it in memory just in case to avoid index errors.
+    const snapshot = await ref.get();
+    let rows = snapshot.docs.map((doc: any) => ({ ID_berita: doc.id, ...doc.data() }));
+    
+    rows.sort((a: any, b: any) => new Date(b.tanggal || 0).getTime() - new Date(a.tanggal || 0).getTime());
+    
+    return rows;
+  } catch (error) { 
+    console.error('Error fetching content:', error);
+    return []; 
+  }
 }
 
 async function getPopular() {
   try {
-    let q = `SELECT ID_berita, Judul, Slug, views, tanggal FROM berita WHERE status = 'published'`;
-    q += ' ORDER BY views DESC LIMIT 4';
-    const [rows]: any = await pool.query(q);
-    return rows as any[];
-  } catch { return []; }
+    const snap = await adminDb.collection('berita').where('status', '==', 'published').get();
+    let rows = snap.docs.map((doc: any) => ({ ID_berita: doc.id, ...doc.data() }));
+    rows.sort((a: any, b: any) => (b.views || 0) - (a.views || 0));
+    return rows.slice(0, 4);
+  } catch (error) {
+    console.error('Error fetching popular:', error);
+    return [];
+  }
 }
 
 function CatBadge({ cat, size = 'sm' }: { cat: string; size?: 'xs' | 'sm' }) {
@@ -90,7 +103,7 @@ export default async function NewsListPage({
   const allItems = await getContent(catForQuery);
   const popular = await getPopular();
 
-  const filtered = allItems.filter(item => {
+  const filtered = allItems.filter((item: any) => {
     if (!searchQuery) return true;
     return (item.Judul + ' ' + stripHtml(item.isi_berita)).toLowerCase().includes(searchQuery);
   });
@@ -99,9 +112,9 @@ export default async function NewsListPage({
   let featured: any = null;
   let rest: any[] = filtered;
   if (filtered.length > 0 && !searchQuery && !catForQuery) {
-    const byViews = [...filtered].sort((a, b) => (b.views || 0) - (a.views || 0));
+    const byViews = [...filtered].sort((a: any, b: any) => (b.views || 0) - (a.views || 0));
     featured = byViews[0];
-    rest = filtered.filter(i => i.ID_berita !== featured.ID_berita);
+    rest = filtered.filter((i: any) => i.ID_berita !== featured.ID_berita);
   }
 
   // Split rest: first 4 go into 2-col grid, remainder into list style
@@ -389,7 +402,7 @@ export default async function NewsListPage({
                   <div className="space-y-2">
                     {CATEGORIES.filter(c => c !== 'Semua').map(cat => {
                       const s = getCat(cat);
-                      const count = allItems.filter(i => (i.kategori || 'Umum') === cat).length;
+                      const count = allItems.filter((i: any) => (i.kategori || 'Umum') === cat).length;
                       return (
                         <Link key={cat} href={buildQuery({ cat, page: '1' })}
                           className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors group ${activeCat === cat ? 'bg-white/10' : 'hover:bg-white/5'}`}>
