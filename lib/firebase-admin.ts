@@ -42,25 +42,18 @@ if (!getApps().length) {
   }
 }
 
-// Export using getter proxies so we don't crash on module load if initialization failed
-export const adminDb = new Proxy({} as any, {
-  get: (target, prop) => {
-    const instance = getFirestore();
-    const val = instance[prop as keyof typeof instance];
-    return typeof val === 'function' ? val.bind(instance) : val;
-  }
-});
-export const adminAuth = new Proxy({} as any, {
-  get: (target, prop) => {
-    const instance = getAuth();
-    const val = instance[prop as keyof typeof instance];
-    return typeof val === 'function' ? val.bind(instance) : val;
-  }
-});
-export const adminStorage = new Proxy({} as any, {
-  get: (target, prop) => {
-    const instance = getStorage();
-    const val = instance[prop as keyof typeof instance];
-    return typeof val === 'function' ? val.bind(instance) : val;
-  }
-});
+export let adminDb: any;
+export let adminAuth: any;
+export let adminStorage: any;
+
+try {
+  adminDb = getFirestore();
+  adminAuth = getAuth();
+  adminStorage = getStorage();
+} catch (error) {
+  // Safe fallback to prevent Next.js framework crashes (e.g. when accessing .then on a Proxy)
+  const throwError = () => { throw new Error('Firebase Admin is not initialized properly: ' + error); };
+  adminDb = { collection: throwError };
+  adminAuth = { verifyIdToken: throwError };
+  adminStorage = { bucket: throwError };
+}

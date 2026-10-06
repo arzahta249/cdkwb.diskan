@@ -15,11 +15,11 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: rows });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Fetch artikel error:', error);
     return NextResponse.json(
-      { error: 'Gagal mengambil data artikel' },
-      { status: 500 }
+      { error: 'Gagal mengambil data artikel', details: error?.message, stack: error?.stack },
+      { status: 200 }
     );
   }
 }
