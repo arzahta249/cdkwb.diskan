@@ -50,9 +50,9 @@ try {
   adminDb = getFirestore();
   adminAuth = getAuth();
   adminStorage = getStorage();
-} catch (error) {
+} catch (error: any) {
   // Safe fallback to prevent Next.js framework crashes (e.g. when accessing .then on a Proxy)
-  const throwError = () => { throw new Error('Firebase Admin is not initialized properly: ' + error); };
+  const throwError = () => { throw new Error('Firebase Admin is not initialized properly: ' + (error?.message || error)); };
   adminDb = { collection: throwError };
   adminAuth = { verifyIdToken: throwError };
   adminStorage = { bucket: throwError };

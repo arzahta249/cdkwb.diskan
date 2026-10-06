@@ -87,10 +87,10 @@ export async function POST(request: Request) {
       { success: true, message: 'Artikel berhasil dibuat', id: docRef.id },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Create artikel error:', error);
     return NextResponse.json(
-      { error: 'Terjadi kesalahan pada server saat membuat artikel' },
+      { error: 'Terjadi kesalahan pada server saat membuat artikel', details: error?.message, stack: error?.stack },
       { status: 500 }
     );
   }
@@ -108,9 +108,9 @@ export async function DELETE(request: Request) {
     await adminDb.collection('artikel').doc(id).delete();
 
     return NextResponse.json({ success: true, message: 'Deleted successfully' });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Delete artikel error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Server error', details: error?.message }, { status: 500 });
   }
 }
 
@@ -173,10 +173,10 @@ export async function PUT(request: Request) {
       { success: true, message: 'Data berhasil diupdate' },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Update artikel error:', error);
     return NextResponse.json(
-      { error: 'Terjadi kesalahan pada server saat update data' },
+      { error: 'Terjadi kesalahan pada server saat update data', details: error?.message, stack: error?.stack },
       { status: 500 }
     );
   }
