@@ -130,9 +130,11 @@ export default async function NewsDashboardPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-xs text-slate-400">
-                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
-                        year: 'numeric', month: 'short', day: 'numeric'
-                      })}
+                      {(() => {
+                        if (!item.tanggal) return '-';
+                        const d = new Date(item.tanggal);
+                        return isNaN(d.getTime()) ? '-' : d.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
+                      })()}
                     </td>
                     <td className="px-6 py-4 text-center">
                       <LeadingToggle id={item.ID_berita} type="berita" initialState={item.is_leading === 1} />

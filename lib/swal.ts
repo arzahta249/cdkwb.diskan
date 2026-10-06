@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-const MySwal = withReactContent(Swal);
+const MySwal = typeof window !== 'undefined' ? withReactContent(Swal) : Swal as any;
 
 // Konfigurasi dasar tema maritim untuk SweetAlert2
 const swalConfig = {
