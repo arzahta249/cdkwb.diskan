@@ -3,6 +3,7 @@ import { Plus, Search, FileText, CheckCircle2, Clock, User, Tag } from 'lucide-r
 import DeleteButton from '@/components/DeleteButton';
 import LeadingToggle from '@/components/LeadingToggle';
 import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 
 export const revalidate = 0; // Data always fresh
 
@@ -13,7 +14,7 @@ async function getNews() {
       .get();
       
     const rows = snapshot.docs.map((doc: any) => {
-      const data = doc.data();
+      const data = convertTimestamps(doc.data());
       return {
         ID_berita: doc.id,
         Judul: data.Judul,

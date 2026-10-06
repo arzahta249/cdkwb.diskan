@@ -3,6 +3,7 @@ import { Plus, Search, FileText, CheckCircle2, Clock, User, Tag } from 'lucide-r
 import DeleteButton from '@/components/DeleteButton';
 import LeadingToggle from '@/components/LeadingToggle';
 import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 export const revalidate = 0; // Data always fresh
 
 async function getArticles() {
@@ -10,7 +11,7 @@ async function getArticles() {
     const snapshot = await adminDb.collection('artikel').orderBy('tanggal', 'desc').get();
     return snapshot.docs.map((doc: any) => ({
       ID_artikel: doc.id,
-      ...doc.data(),
+      ...convertTimestamps(doc.data()),
       nama_penulis: doc.data().penulis || 'Admin'
     }));
   } catch (error) {

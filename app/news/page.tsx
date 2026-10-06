@@ -1,3 +1,4 @@
+import { convertTimestamps } from '@/lib/firebase-utils';
 import { adminDb } from '@/lib/firebase-admin';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -52,7 +53,7 @@ async function getContent(cat?: string) {
     // Note: If sorting by a field after filtering by another, Firestore might require a composite index.
     // If it fails, you can sort in memory. We'll do it in memory just in case to avoid index errors.
     const snapshot = await ref.get();
-    let rows = snapshot.docs.map((doc: any) => ({ ID_berita: doc.id, ...doc.data() }));
+    let rows = snapshot.docs.map((doc: any) => ({ ID_berita: doc.id, ...convertTimestamps(doc.data()) }));
     
     rows.sort((a: any, b: any) => new Date(b.tanggal || 0).getTime() - new Date(a.tanggal || 0).getTime());
     
@@ -66,7 +67,7 @@ async function getContent(cat?: string) {
 async function getPopular() {
   try {
     const snap = await adminDb.collection('berita').where('status', '==', 'published').get();
-    let rows = snap.docs.map((doc: any) => ({ ID_berita: doc.id, ...doc.data() }));
+    let rows = snap.docs.map((doc: any) => ({ ID_berita: doc.id, ...convertTimestamps(doc.data()) }));
     rows.sort((a: any, b: any) => (b.views || 0) - (a.views || 0));
     return rows.slice(0, 4);
   } catch (error) {

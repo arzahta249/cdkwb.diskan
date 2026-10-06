@@ -1,4 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import { Activity, Users, FileText, AlertCircle, Waves, Bell, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -27,7 +28,7 @@ export default async function DashboardHome() {
     totalAduan = totalAduanSnap.data().count;
 
     const recentSnap = await adminDb.collection('pengaduan').orderBy('created_at', 'desc').limit(5).get();
-    recentActivities = recentSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    recentActivities = recentSnap.docs.map((doc: any) => ({ id: doc.id, ...convertTimestamps(doc.data()) }));
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
   }

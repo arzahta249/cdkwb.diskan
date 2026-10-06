@@ -1,4 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import EditForm from './FormEdit';
 import { notFound } from 'next/navigation';
 
@@ -10,7 +11,7 @@ async function getArtikelById(id: string) {
     if (!docSnap.exists) return null;
     return {
       ID_artikel: docSnap.id,
-      ...docSnap.data(),
+      ...convertTimestamps(docSnap.data()),
       penulis: docSnap.data()?.penulis || 'Admin'
     } as any;
   } catch (error) {

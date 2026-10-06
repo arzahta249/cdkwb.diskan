@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { adminDb } from '@/lib/firebase-admin';
 import { getStorage } from 'firebase-admin/storage';
+import { convertTimestamps } from '@/lib/firebase-utils';
 
 export async function GET() {
   try {
     const snapshot = await adminDb.collection('artikel').orderBy('tanggal', 'desc').get();
-    const rows = snapshot.docs.map((doc: any) => ({ ID_artikel: doc.id, ...doc.data() }));
+    const rows = snapshot.docs.map((doc: any) => ({ ID_artikel: doc.id, ...convertTimestamps(doc.data()) }));
     
     // Add default author name to mimic old SQL join
     rows.forEach((r: any) => {

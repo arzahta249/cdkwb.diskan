@@ -1,4 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Calendar, Share2, Folder, User } from 'lucide-react';
@@ -15,7 +16,7 @@ async function getArtikelBySlug(slug: string) {
     if (snapshot.empty) return null;
     
     const doc = snapshot.docs[0];
-    const data: any = doc.data();
+    const data: any = convertTimestamps(doc.data());
     
     return {
       ID_artikel: doc.id,

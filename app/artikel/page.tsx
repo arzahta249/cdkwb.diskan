@@ -1,4 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
@@ -55,7 +56,7 @@ function stripHtml(html: string) {
 async function getArtikel(cat?: string) {
   try {
     const snap = await adminDb.collection('artikel').where('status', '==', 'published').get();
-    let rows = snap.docs.map((doc: any) => ({ ID_artikel: doc.id, ...doc.data() }));
+    let rows = snap.docs.map((doc: any) => ({ ID_artikel: doc.id, ...convertTimestamps(doc.data()) }));
     
     if (cat && cat !== 'Semua') {
       rows = rows.filter((r: any) => r.kategori === cat);
@@ -78,7 +79,7 @@ async function getArtikel(cat?: string) {
 async function getPopular() {
   try {
     const snap = await adminDb.collection('artikel').where('status', '==', 'published').get();
-    let rows = snap.docs.map((doc: any) => ({ ID_artikel: doc.id, ...doc.data() }));
+    let rows = snap.docs.map((doc: any) => ({ ID_artikel: doc.id, ...convertTimestamps(doc.data()) }));
     
     rows.sort((a: any, b: any) => new Date(a.tanggal || 0).getTime() - new Date(b.tanggal || 0).getTime());
     

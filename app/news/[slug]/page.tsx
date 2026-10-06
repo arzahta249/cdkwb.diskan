@@ -1,4 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Calendar, Share2, Eye } from 'lucide-react';
@@ -17,7 +18,7 @@ async function getNewsBySlug(slug: string): Promise<any> {
     }
 
     const doc = snapshot.docs[0];
-    const data = doc.data();
+    const data = convertTimestamps(doc.data());
 
     // Increment views safely without transaction to avoid blocking reads, or just do an update
     // In Firestore, if we just want a simple increment:

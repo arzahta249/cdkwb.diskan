@@ -1,4 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
@@ -17,7 +18,7 @@ async function getLeadingItems() {
       .get();
       
     beritaSnap.forEach((doc: any) => {
-      const data = doc.data();
+      const data = convertTimestamps(doc.data());
       items.push({
         id: doc.id,
         Judul: data.Judul,
@@ -35,7 +36,7 @@ async function getLeadingItems() {
       .get();
       
     artikelSnap.forEach((doc: any) => {
-      const data = doc.data();
+      const data = convertTimestamps(doc.data());
       items.push({
         id: doc.id,
         Judul: data.Judul,
