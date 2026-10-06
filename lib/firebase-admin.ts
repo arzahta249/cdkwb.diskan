@@ -34,6 +34,7 @@ if (!getApps().length) {
     
     initializeApp({
       credential: cert(serviceAccount),
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || `${process.env.FIREBASE_PROJECT_ID}.appspot.com`
     });
     console.log('Firebase Admin Initialized Successfully!');
   } catch (error) {
@@ -43,11 +44,23 @@ if (!getApps().length) {
 
 // Export using getter proxies so we don't crash on module load if initialization failed
 export const adminDb = new Proxy({} as any, {
-  get: (target, prop) => getFirestore()[prop as keyof typeof getFirestore]
+  get: (target, prop) => {
+    const instance = getFirestore();
+    const val = instance[prop as keyof typeof instance];
+    return typeof val === 'function' ? val.bind(instance) : val;
+  }
 });
 export const adminAuth = new Proxy({} as any, {
-  get: (target, prop) => getAuth()[prop as keyof typeof getAuth]
+  get: (target, prop) => {
+    const instance = getAuth();
+    const val = instance[prop as keyof typeof instance];
+    return typeof val === 'function' ? val.bind(instance) : val;
+  }
 });
 export const adminStorage = new Proxy({} as any, {
-  get: (target, prop) => getStorage()[prop as keyof typeof getStorage]
+  get: (target, prop) => {
+    const instance = getStorage();
+    const val = instance[prop as keyof typeof instance];
+    return typeof val === 'function' ? val.bind(instance) : val;
+  }
 });
