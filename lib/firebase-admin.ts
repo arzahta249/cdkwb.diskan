@@ -1,5 +1,4 @@
 import { cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 
@@ -72,5 +71,4 @@ function unavailable(service: string): never {
 }
 
 export const adminDb = app ? getFirestore(app) : { collection: () => unavailable('Firestore') };
-export const adminAuth = app ? getAuth(app) : { verifyIdToken: () => unavailable('Authentication') };
 export const adminStorage = app ? getStorage(app) : { bucket: () => unavailable('Storage') };
