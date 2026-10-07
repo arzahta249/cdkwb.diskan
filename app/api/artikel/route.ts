@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { adminDb } from '@/lib/firebase-admin';
 import { convertTimestamps } from '@/lib/firebase-utils';
-import { deleteImageKitFile, uploadImageKitImage } from '@/lib/imagekit';
+import { deleteImageKitFile, uploadImageKitFile } from '@/lib/imagekit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -45,7 +45,7 @@ async function uploadArtikelImage(imageFile: File, slug: string) {
     throw new ApiError('Ukuran gambar maksimal 2MB', 400);
   }
 
-  return uploadImageKitImage(imageFile, slug);
+  return uploadImageKitFile(imageFile, slug);
 }
 
 export async function GET() {

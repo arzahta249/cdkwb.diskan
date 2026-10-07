@@ -36,7 +36,7 @@ function sanitizeFilename(filename: string) {
   return sanitized || 'gambar';
 }
 
-export async function uploadImageKitImage(file: File, slug: string) {
+export async function uploadImageKitFile(file: File, slug: string) {
   const config = getImageKitConfig();
   const extension = file.name.includes('.') ? file.name.slice(file.name.lastIndexOf('.')) : '';
   const filename = `${slug || 'berita'}-${Date.now()}-${crypto.randomUUID()}${extension}`;

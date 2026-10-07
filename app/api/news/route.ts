@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { adminDb } from '@/lib/firebase-admin';
-import { deleteImageKitFile, uploadImageKitImage } from '@/lib/imagekit';
+import { deleteImageKitFile, uploadImageKitFile } from '@/lib/imagekit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
 
     if (imageFile) {
       validateImage(imageFile);
-      const upload = await uploadImageKitImage(imageFile, slug);
+      const upload = await uploadImageKitFile(imageFile, slug);
       imageUrl = upload.url;
       imagekitFileId = upload.fileId;
     }
@@ -197,7 +197,7 @@ export async function PUT(request: Request) {
 
     if (imageFile) {
       validateImage(imageFile);
-      const upload = await uploadImageKitImage(imageFile, slug);
+      const upload = await uploadImageKitFile(imageFile, slug);
       replacedImagekitFileId = imagekitFileId;
       imageUrl = upload.url;
       imagekitFileId = upload.fileId;

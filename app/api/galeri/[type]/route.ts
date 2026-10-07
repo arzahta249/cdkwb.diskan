@@ -1,8 +1,8 @@
-import { randomUUID } from 'crypto';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { adminDb, adminStorage } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 import { convertTimestamps } from '@/lib/firebase-utils';
+import { deleteImageKitFile, uploadImageKitFile } from '@/lib/imagekit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic';
 const TYPES = ['foto', 'video', 'infografis'] as const;
 type GalleryType = (typeof TYPES)[number];
 type GalleryData = Record<string, unknown>;
+type ImageKitFileIds = Record<string, string | string[]>;
 
 class ApiError extends Error {
   constructor(message: string, public readonly status: number) {
@@ -59,17 +60,19 @@ async function uploadFile(file: File, type: GalleryType) {
     throw new ApiError(`Ukuran file maksimal ${maxSize / 1024 / 1024}MB`, 400);
   }
 
-  const extension = file.name.includes('.') ? file.name.slice(file.name.lastIndexOf('.')).toLowerCase() : '';
-  const filename = `galeri/${type}/${Date.now()}-${randomUUID()}${extension}`;
-  const token = randomUUID();
-  const bucket = adminStorage.bucket();
+  return uploadImageKitFile(file, `galeri-${type}`);
+}
 
-  await bucket.file(filename).save(Buffer.from(await file.arrayBuffer()), {
-    contentType: file.type || 'application/octet-stream',
-    metadata: { metadata: { firebaseStorageDownloadTokens: token } },
-  });
+function getImageKitFileIds(data: GalleryData): ImageKitFileIds {
+  const value = data.imagekit_file_ids;
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? value as ImageKitFileIds
+    : {};
+}
 
-  return `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(filename)}?alt=media&token=${token}`;
+function flattenFileIds(fileIds: ImageKitFileIds) {
+  return Object.values(fileIds).flatMap((value) => Array.isArray(value) ? value : [value])
+    .filter((value): value is string => typeof value === 'string' && value.length > 0);
 }
 
 export async function GET(_request: Request, context: { params: Promise<{ type: string }> }) {
@@ -120,10 +123,13 @@ export async function POST(request: Request, context: { params: Promise<{ type: 
     if (type === 'foto') {
       const image = getFile(formData, 'image');
       if (!image) throw new ApiError('Gambar utama wajib diunggah', 400);
-      data.URL_image = await uploadFile(image, type);
+      const imageUpload = await uploadFile(image, type);
+      data.URL_image = imageUpload.url;
       const subPhotos = formData.getAll('sub_photos').filter((value): value is File => value instanceof File && value.size > 0);
       if (subPhotos.length > 5) throw new ApiError('Maksimal 5 sub-foto', 400);
-      data.value = JSON.stringify({ deskripsi, sub_photos: await Promise.all(subPhotos.map((file) => uploadFile(file, type))) });
+      const subPhotoUploads = await Promise.all(subPhotos.map((file) => uploadFile(file, type)));
+      data.value = JSON.stringify({ deskripsi, sub_photos: subPhotoUploads.map((upload) => upload.url) });
+      data.imagekit_file_ids = { image: imageUpload.fileId, sub_photos: subPhotoUploads.map((upload) => upload.fileId) };
     } else if (type === 'video') {
       const thumbnail = getFile(formData, 'thumbnail');
       const durasi = getString(formData, 'durasi');
@@ -133,18 +139,25 @@ export async function POST(request: Request, context: { params: Promise<{ type: 
       if (sourceType === 'upload') {
         const video = getFile(formData, 'videoFile');
         if (!video) throw new ApiError('File video wajib diunggah', 400);
-        videoUrl = await uploadFile(video, type);
+        const videoUpload = await uploadFile(video, type);
+        videoUrl = videoUpload.url;
+        data.imagekit_file_ids = { video: videoUpload.fileId };
       }
       if (!videoUrl) throw new ApiError('URL video wajib diisi', 400);
-      data.URL_thumbnail = await uploadFile(thumbnail, type);
+      const thumbnailUpload = await uploadFile(thumbnail, type);
+      data.URL_thumbnail = thumbnailUpload.url;
       data.URL_video = videoUrl;
       data.durasi_video = durasi;
+      data.imagekit_file_ids = { ...(getImageKitFileIds(data)), thumbnail: thumbnailUpload.fileId };
     } else {
       const thumbnail = getFile(formData, 'thumbnail');
       const pdf = getFile(formData, 'pdf');
       if (!thumbnail || !pdf) throw new ApiError('Thumbnail dan dokumen PDF wajib diunggah', 400);
-      data.URL_thumbnail = await uploadFile(thumbnail, type);
-      data.URL_dokumen = await uploadFile(pdf, type);
+      const thumbnailUpload = await uploadFile(thumbnail, type);
+      const documentUpload = await uploadFile(pdf, type);
+      data.URL_thumbnail = thumbnailUpload.url;
+      data.URL_dokumen = documentUpload.url;
+      data.imagekit_file_ids = { thumbnail: thumbnailUpload.fileId, document: documentUpload.fileId };
     }
 
     const document = await adminDb.collection(collectionName(type)).add(data);
@@ -186,8 +199,25 @@ export async function PUT(request: Request, context: { params: Promise<{ type: s
     };
 
     const image = getFile(formData, type === 'foto' ? 'image' : 'thumbnail');
-    if (image) update[type === 'foto' ? 'URL_image' : 'URL_thumbnail'] = await uploadFile(image, type);
+    let replacedFileId = '';
+    if (image) {
+      const field = type === 'foto' ? 'URL_image' : 'URL_thumbnail';
+      const fileIdKey = type === 'foto' ? 'image' : 'thumbnail';
+      const upload = await uploadFile(image, type);
+      const currentFileIds = getImageKitFileIds(currentData);
+      const currentFileId = currentFileIds[fileIdKey];
+      replacedFileId = typeof currentFileId === 'string' ? currentFileId : '';
+      update[field] = upload.url;
+      update.imagekit_file_ids = { ...currentFileIds, [fileIdKey]: upload.fileId };
+    }
     await docRef.update(update);
+    if (replacedFileId) {
+      try {
+        await deleteImageKitFile(replacedFileId);
+      } catch (error) {
+        console.error('Delete replaced ImageKit gallery file error:', error);
+      }
+    }
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     return errorResponse(error, `Gagal memperbarui galeri ${type}`);
@@ -201,7 +231,18 @@ export async function DELETE(request: Request, context: { params: Promise<{ type
 
   try {
     ensureSignedIn(await cookies());
-    await adminDb.collection(collectionName(type)).doc(id).delete();
+    const docRef = adminDb.collection(collectionName(type)).doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new ApiError('Data galeri tidak ditemukan', 404);
+    const fileIds = getImageKitFileIds(doc.data() as GalleryData);
+    await docRef.delete();
+    await Promise.all(flattenFileIds(fileIds).map(async (fileId) => {
+      try {
+        await deleteImageKitFile(fileId);
+      } catch (error) {
+        console.error('Delete ImageKit gallery file error:', error);
+      }
+    }));
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     return errorResponse(error, `Gagal menghapus galeri ${type}`);
