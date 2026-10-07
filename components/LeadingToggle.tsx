@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 interface LeadingToggleProps {
-  id: number;
+  id: string | number;
   type: 'berita' | 'artikel';
   initialState: boolean;
 }

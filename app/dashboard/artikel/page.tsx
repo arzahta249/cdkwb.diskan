@@ -4,26 +4,49 @@ import DeleteButton from '@/components/DeleteButton';
 import LeadingToggle from '@/components/LeadingToggle';
 import { adminDb } from '@/lib/firebase-admin';
 import { convertTimestamps } from '@/lib/firebase-utils';
-export const revalidate = 0; // Data always fresh
+// Firebase Admin must only run at request time, never during the Vercel build.
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-async function getArticles() {
+type Article = {
+  ID_artikel: string;
+  Judul?: string;
+  Slug?: string;
+  kategori?: string;
+  nama_penulis?: string;
+  status?: string;
+  tanggal?: string;
+  is_leading?: boolean | number;
+};
+
+type ArticleResult = Article[] | { error: string };
+
+async function getArticles(): Promise<ArticleResult> {
   try {
     const snapshot = await adminDb.collection('artikel').orderBy('tanggal', 'desc').get();
-    return snapshot.docs.map((doc: any) => ({
-      ID_artikel: doc.id,
-      ...convertTimestamps(doc.data()),
-      nama_penulis: doc.data().penulis || 'Admin'
-    }));
-  } catch (error: any) {
+    return snapshot.docs.map((doc: { id: string; data: () => Record<string, unknown> }) => {
+      const data = convertTimestamps(doc.data()) as Record<string, unknown>;
+      return {
+        ID_artikel: doc.id,
+        Judul: typeof data.Judul === 'string' ? data.Judul : '',
+        Slug: typeof data.Slug === 'string' ? data.Slug : '',
+        kategori: typeof data.kategori === 'string' ? data.kategori : 'Umum',
+        nama_penulis: typeof data.penulis === 'string' ? data.penulis : 'Admin',
+        status: typeof data.status === 'string' ? data.status : 'draft',
+        tanggal: typeof data.tanggal === 'string' ? data.tanggal : undefined,
+        is_leading: data.is_leading === true || data.is_leading === 1,
+      };
+    });
+  } catch (error: unknown) {
     console.error(error);
-    return { error: error?.message || String(error) };
+    return { error: error instanceof Error ? error.message : String(error) };
   }
 }
 
 export default async function ArtikelDashboardPage() {
   const articles = await getArticles();
 
-  if (!Array.isArray(articles) && articles.error) {
+  if (!Array.isArray(articles)) {
     return (
       <div className="p-8 m-6 bg-red-900/50 border border-red-500 rounded-xl text-white">
         <h2 className="text-2xl font-bold text-red-400 mb-4">ERROR KONEKSI FIREBASE (SERVER)</h2>
@@ -97,7 +120,7 @@ export default async function ArtikelDashboardPage() {
                   </td>
                 </tr>
               ) : (
-                articles.map((item: any) => (
+                articles.map((item) => (
                   <tr key={item.ID_artikel} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-medium text-white">{item.Judul}</div>
@@ -136,7 +159,11 @@ export default async function ArtikelDashboardPage() {
                       })()}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <LeadingToggle id={item.ID_artikel} type="artikel" initialState={item.is_leading === 1} />
+                      <LeadingToggle
+                        id={item.ID_artikel}
+                        type="artikel"
+                        initialState={item.is_leading === true || item.is_leading === 1}
+                      />
                     </td>
                     <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
                       <Link 
