@@ -5,10 +5,21 @@ import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft, Loader2, Image as ImageIcon, X, Tag, Camera, ImagePlus, Type, AlignLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { readApiResponse } from '@/lib/api-response';
 
 const KATEGORI_OPTIONS = ['Umum', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan', 'Siaran Pers'];
 
-export default function FormEdit({ initialData }: { initialData: any }) {
+type ArticleInitialData = {
+  ID_artikel: string;
+  Judul?: string;
+  status?: string;
+  kategori?: string;
+  isi_artikel?: string;
+  instagram_url?: string | null;
+  image?: string | null;
+};
+
+export default function FormEdit({ initialData }: { initialData: ArticleInitialData }) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isInstagram = !!initialData.instagram_url;
@@ -64,14 +75,14 @@ export default function FormEdit({ initialData }: { initialData: any }) {
       }
 
       const res = await fetch('/api/artikel', { method: 'PUT', body: formData });
-      const data = await res.json();
+      const data = await readApiResponse(res);
 
       if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan saat mengupdate artikel');
 
       router.push('/dashboard/artikel');
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Terjadi kesalahan saat memperbarui artikel');
       setLoading(false);
     }
   };

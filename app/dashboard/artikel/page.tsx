@@ -14,14 +14,27 @@ async function getArticles() {
       ...convertTimestamps(doc.data()),
       nama_penulis: doc.data().penulis || 'Admin'
     }));
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    return [];
+    return { error: error?.message || String(error) };
   }
 }
 
 export default async function ArtikelDashboardPage() {
   const articles = await getArticles();
+
+  if (!Array.isArray(articles) && articles.error) {
+    return (
+      <div className="p-8 m-6 bg-red-900/50 border border-red-500 rounded-xl text-white">
+        <h2 className="text-2xl font-bold text-red-400 mb-4">ERROR KONEKSI FIREBASE (SERVER)</h2>
+        <p className="mb-2">Aplikasi gagal mengambil data dari Firebase karena error berikut:</p>
+        <pre className="bg-black/50 p-4 rounded-lg overflow-x-auto text-red-200">{articles.error}</pre>
+        <p className="mt-4 text-sm text-red-300">
+          *Pastikan Environment Variables di Vercel (FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY) sudah disetting dan Anda sudah melakukan Redeploy.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

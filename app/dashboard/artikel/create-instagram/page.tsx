@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft, Loader2, Tag, Camera, ImagePlus } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { readApiResponse } from '@/lib/api-response';
 
 const KATEGORI_OPTIONS = ['Umum', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan', 'Siaran Pers'];
 
@@ -48,14 +49,14 @@ export default function CreateArtikelInstagramPage() {
       formData.append('isi_artikel', 'Konten Instagram'); 
 
       const res = await fetch('/api/artikel', { method: 'POST', body: formData });
-      const data = await res.json();
+      const data = await readApiResponse(res);
 
       if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan saat menyimpan kehumasan');
 
       router.push('/dashboard/artikel');
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan kehumasan');
       setLoading(false);
     }
   };

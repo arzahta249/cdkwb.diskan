@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Loader2, Image as ImageIcon, X, User, Tag } from 'lucide-react';
+import { Save, ArrowLeft, Loader2, Image as ImageIcon, X, Tag } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { readApiResponse } from '@/lib/api-response';
 
 const KATEGORI_OPTIONS = ['Umum', 'Kelautan', 'Perikanan', 'Konservasi', 'Pemberdayaan', 'Siaran Pers'];
 
@@ -63,14 +64,14 @@ export default function CreateArtikelPage() {
       if (imageFile) formData.append('image', imageFile);
 
       const res = await fetch('/api/artikel', { method: 'POST', body: formData });
-      const data = await res.json();
+      const data = await readApiResponse(res);
 
       if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan saat menyimpan artikel');
 
       router.push('/dashboard/artikel');
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan artikel');
       setLoading(false);
     }
   };
