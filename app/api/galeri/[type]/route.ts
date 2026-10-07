@@ -1,211 +1,210 @@
+import { randomUUID } from 'crypto';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
-import { uploadFile } from '@/lib/upload';
+import { getStorage } from 'firebase-admin/storage';
+import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 
-// Helper to process FormData for all methods
-async function processFormData(request: Request, type: string) {
-  const formData = await request.formData();
-  const judul = formData.get('judul') as string;
-  const tanggal = formData.get('tanggal') as string;
-  const kategori = formData.get('kategori') as string;
-  const status = 'Aktif';
-  const slug = judul ? judul.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now() : '';
-  const deskripsi = formData.get('deskripsi') as string || '';
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-  // Get Category ID
-  const catTableName = `kategory_${type}`;
-  const [catRows]: any = await pool.query(`SELECT ID_kategori FROM ${catTableName} WHERE name_kategori = ?`, [kategori]);
-  let id_kategory = catRows.length > 0 ? catRows[0].ID_kategori : null;
+const TYPES = ['foto', 'video', 'infografis'] as const;
+type GalleryType = (typeof TYPES)[number];
+type GalleryData = Record<string, unknown>;
 
-  return { formData, judul, tanggal, kategori, status, slug, deskripsi, id_kategory };
+class ApiError extends Error {
+  constructor(message: string, public readonly status: number) {
+    super(message);
+  }
 }
 
-// GET all items for a type
-export async function GET(request: Request, context: { params: Promise<{ type: string }> }) {
-  const params = await context.params;
-  const type = params.type;
-  
-  if (!['foto', 'video', 'infografis'].includes(type)) {
-    return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
+function isGalleryType(type: string): type is GalleryType {
+  return TYPES.includes(type as GalleryType);
+}
+
+function collectionName(type: GalleryType) {
+  return `galeri_${type}`;
+}
+
+function idField(type: GalleryType) {
+  return type === 'foto' ? 'ID_foto' : type === 'video' ? 'ID_video' : 'ID_infografis';
+}
+
+function getString(formData: FormData, field: string) {
+  const value = formData.get(field);
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function getFile(formData: FormData, field: string) {
+  const value = formData.get(field);
+  return value instanceof File && value.size > 0 ? value : null;
+}
+
+function ensureSignedIn(cookieStore: Awaited<ReturnType<typeof cookies>>) {
+  if (!cookieStore.get('auth_token')?.value) {
+    throw new ApiError('Unauthorized', 401);
+  }
+}
+
+function errorResponse(error: unknown, fallback: string) {
+  if (error instanceof ApiError) {
+    return NextResponse.json({ error: error.message }, { status: error.status });
+  }
+  console.error(fallback, error);
+  return NextResponse.json({ error: fallback }, { status: 500 });
+}
+
+async function uploadFile(file: File, type: GalleryType) {
+  const maxSize = file.type.startsWith('video/') ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
+  if (file.size > maxSize) {
+    throw new ApiError(`Ukuran file maksimal ${maxSize / 1024 / 1024}MB`, 400);
   }
 
-  try {
-    let query = '';
-    if (type === 'foto') {
-      query = `SELECT f.*, k.name_kategori as kategori_nama 
-               FROM foto f 
-               LEFT JOIN kategory_foto k ON f.id_kategory = k.ID_kategori 
-               ORDER BY f.tanggal DESC`;
-    } else if (type === 'video') {
-      query = `SELECT v.*, k.name_kategori as kategori_nama 
-               FROM video v 
-               LEFT JOIN kategory_video k ON v.id_kategory = k.ID_kategori 
-               ORDER BY v.tanggal DESC`;
-    } else if (type === 'infografis') {
-      query = `SELECT i.*, k.name_kategori as kategori_nama 
-               FROM infografis i 
-               LEFT JOIN kategory_infografis k ON i.id_kategory = k.ID_kategori 
-               ORDER BY i.tanggal DESC`;
-    }
+  const extension = file.name.includes('.') ? file.name.slice(file.name.lastIndexOf('.')).toLowerCase() : '';
+  const filename = `galeri/${type}/${Date.now()}-${randomUUID()}${extension}`;
+  const token = randomUUID();
+  const bucket = getStorage().bucket();
 
-    const [rows] = await pool.query(query);
+  await bucket.file(filename).save(Buffer.from(await file.arrayBuffer()), {
+    contentType: file.type || 'application/octet-stream',
+    metadata: { metadata: { firebaseStorageDownloadTokens: token } },
+  });
+
+  return `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(filename)}?alt=media&token=${token}`;
+}
+
+export async function GET(_request: Request, context: { params: Promise<{ type: string }> }) {
+  const { type } = await context.params;
+  if (!isGalleryType(type)) return NextResponse.json({ error: 'Tipe galeri tidak valid' }, { status: 400 });
+
+  try {
+    const snapshot = await adminDb.collection(collectionName(type)).orderBy('tanggal', 'desc').get();
+    const rows = snapshot.docs.map((doc: { id: string; data: () => unknown }) => ({
+      [idField(type)]: doc.id,
+      ...(convertTimestamps(doc.data()) as GalleryData),
+    }));
     return NextResponse.json({ data: rows });
-  } catch (error: any) {
-    console.error(`Error GET galeri ${type}:`, error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return errorResponse(error, `Gagal mengambil galeri ${type}`);
   }
 }
 
-// POST new item
 export async function POST(request: Request, context: { params: Promise<{ type: string }> }) {
-  const params = await context.params;
-  const type = params.type;
-  
-  if (!['foto', 'video', 'infografis'].includes(type)) {
-    return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
-  }
+  const { type } = await context.params;
+  if (!isGalleryType(type)) return NextResponse.json({ error: 'Tipe galeri tidak valid' }, { status: 400 });
 
   try {
-    const { formData, judul, tanggal, status, slug, deskripsi, id_kategory } = await processFormData(request, type);
+    ensureSignedIn(await cookies());
+    const formData = await request.formData();
+    const judul = getString(formData, 'judul');
+    const kategori = getString(formData, 'kategori');
+    const tanggal = getString(formData, 'tanggal');
+    const deskripsi = getString(formData, 'deskripsi');
 
-    if (!id_kategory) {
-      return NextResponse.json({ error: `Kategori tidak ditemukan di database` }, { status: 400 });
+    if (!judul || !kategori || !tanggal || !deskripsi) {
+      throw new ApiError('Judul, kategori, tanggal, dan deskripsi wajib diisi', 400);
     }
+
+    const slug = `${judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`;
+    const data: GalleryData = {
+      Judul: judul,
+      Slug: slug,
+      kategori_nama: kategori,
+      kategori,
+      status: 'Aktif',
+      tanggal,
+      value: JSON.stringify({ deskripsi }),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
 
     if (type === 'foto') {
-      const file = formData.get('image') as File | null;
-      const imageUrl = file ? await uploadFile(file) : null;
-      
-      // Handle sub photos
-      const subPhotoFiles = formData.getAll('sub_photos') as File[];
-      const subPhotoUrls = [];
-      for (const sp of subPhotoFiles) {
-        if (sp && sp.size > 0) {
-          const url = await uploadFile(sp);
-          if (url) subPhotoUrls.push(url);
-        }
+      const image = getFile(formData, 'image');
+      if (!image) throw new ApiError('Gambar utama wajib diunggah', 400);
+      data.URL_image = await uploadFile(image, type);
+      const subPhotos = formData.getAll('sub_photos').filter((value): value is File => value instanceof File && value.size > 0);
+      if (subPhotos.length > 5) throw new ApiError('Maksimal 5 sub-foto', 400);
+      data.value = JSON.stringify({ deskripsi, sub_photos: await Promise.all(subPhotos.map((file) => uploadFile(file, type))) });
+    } else if (type === 'video') {
+      const thumbnail = getFile(formData, 'thumbnail');
+      const durasi = getString(formData, 'durasi');
+      const sourceType = getString(formData, 'videoSourceType');
+      let videoUrl = getString(formData, 'videoUrl');
+      if (!thumbnail || !durasi) throw new ApiError('Thumbnail dan durasi video wajib diisi', 400);
+      if (sourceType === 'upload') {
+        const video = getFile(formData, 'videoFile');
+        if (!video) throw new ApiError('File video wajib diunggah', 400);
+        videoUrl = await uploadFile(video, type);
       }
-
-      const valueJson = JSON.stringify({ deskripsi, sub_photos: subPhotoUrls });
-
-      await pool.query(
-        `INSERT INTO foto (Judul, Slug, URL_image, status, tanggal, id_kategory, value) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [judul, slug, imageUrl, status, tanggal, id_kategory, valueJson]
-      );
-    } 
-    else if (type === 'video') {
-      const thumbFile = formData.get('thumbnail') as File | null;
-      const thumbUrl = thumbFile ? await uploadFile(thumbFile) : null;
-      
-      const durasi = formData.get('durasi') as string;
-      const srcType = formData.get('videoSourceType') as string;
-      let videoUrl = formData.get('videoUrl') as string;
-      
-      if (srcType === 'upload') {
-        const videoFile = formData.get('videoFile') as File | null;
-        if (videoFile && videoFile.size > 0) videoUrl = await uploadFile(videoFile) || '';
-      }
-
-      const valueJson = JSON.stringify({ deskripsi });
-
-      await pool.query(
-        `INSERT INTO video (Judul, Slug, URL_thumbnail, URL_video, durasi_video, tanggal, id_kategory, value) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [judul, slug, thumbUrl, videoUrl, durasi, tanggal, id_kategory, valueJson]
-      );
-    }
-    else if (type === 'infografis') {
-      const thumbFile = formData.get('thumbnail') as File | null;
-      const thumbUrl = thumbFile ? await uploadFile(thumbFile) : null;
-      
-      const pdfFile = formData.get('pdf') as File | null;
-      const pdfUrl = pdfFile ? await uploadFile(pdfFile) : null;
-      
-      await pool.query(
-        `INSERT INTO infografis (Judul, Slug, URL_thumbnail, URL_dokumen, tanggal, id_kategory, value) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [judul, slug, thumbUrl, pdfUrl, tanggal, id_kategory, JSON.stringify({ deskripsi })]
-      );
+      if (!videoUrl) throw new ApiError('URL video wajib diisi', 400);
+      data.URL_thumbnail = await uploadFile(thumbnail, type);
+      data.URL_video = videoUrl;
+      data.durasi_video = durasi;
+    } else {
+      const thumbnail = getFile(formData, 'thumbnail');
+      const pdf = getFile(formData, 'pdf');
+      if (!thumbnail || !pdf) throw new ApiError('Thumbnail dan dokumen PDF wajib diunggah', 400);
+      data.URL_thumbnail = await uploadFile(thumbnail, type);
+      data.URL_dokumen = await uploadFile(pdf, type);
     }
 
-    return NextResponse.json({ message: 'Success' });
-  } catch (error: any) {
-    console.error(`Error POST galeri ${type}:`, error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const document = await adminDb.collection(collectionName(type)).add(data);
+    return NextResponse.json({ success: true, id: document.id }, { status: 201 });
+  } catch (error: unknown) {
+    return errorResponse(error, `Gagal menyimpan galeri ${type}`);
   }
 }
 
-// PUT item
 export async function PUT(request: Request, context: { params: Promise<{ type: string }> }) {
-  const params = await context.params;
-  const type = params.type;
-  const url = new URL(request.url);
-  const id = url.searchParams.get('id');
-
-  if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+  const { type } = await context.params;
+  const id = new URL(request.url).searchParams.get('id');
+  if (!isGalleryType(type) || !id) return NextResponse.json({ error: 'Permintaan tidak valid' }, { status: 400 });
 
   try {
-    const { formData, judul, tanggal, deskripsi, id_kategory } = await processFormData(request, type);
-    
-    // For simplicity, in PUT we just update text fields and value JSON if provided.
-    // Full file replacement in PUT would require checking if files exist and keeping old ones.
-    // Here we will just update the text and deskripsi.
+    ensureSignedIn(await cookies());
+    const formData = await request.formData();
+    const judul = getString(formData, 'judul');
+    const kategori = getString(formData, 'kategori');
+    const tanggal = getString(formData, 'tanggal');
+    const deskripsi = getString(formData, 'deskripsi');
+    if (!judul || !kategori || !tanggal || !deskripsi) throw new ApiError('Judul, kategori, tanggal, dan deskripsi wajib diisi', 400);
 
-    if (type === 'foto') {
-      // Fetch existing
-      const [existing]: any = await pool.query('SELECT value FROM foto WHERE ID_foto = ?', [id]);
-      let valueData = { deskripsi: '', sub_photos: [] };
-      if (existing.length > 0 && existing[0].value) {
-        try { valueData = typeof existing[0].value === 'string' ? JSON.parse(existing[0].value) : existing[0].value; } catch(e) {}
-      }
-      valueData.deskripsi = deskripsi;
+    const docRef = adminDb.collection(collectionName(type)).doc(id);
+    const current = await docRef.get();
+    if (!current.exists) throw new ApiError('Data galeri tidak ditemukan', 404);
 
-      await pool.query(
-        'UPDATE foto SET Judul = ?, tanggal = ?, id_kategory = ?, value = ? WHERE ID_foto = ?',
-        [judul, tanggal, id_kategory, JSON.stringify(valueData), id]
-      );
-    } 
-    else if (type === 'video') {
-       const [existing]: any = await pool.query('SELECT value FROM video WHERE ID_video = ?', [id]);
-       let valueData = { deskripsi: '' };
-       if (existing.length > 0 && existing[0].value) {
-         try { valueData = typeof existing[0].value === 'string' ? JSON.parse(existing[0].value) : existing[0].value; } catch(e) {}
-       }
-       valueData.deskripsi = deskripsi;
+    const currentData = current.data() as GalleryData;
+    const update: GalleryData = {
+      Judul: judul,
+      Slug: `${judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`,
+      kategori_nama: kategori,
+      kategori,
+      tanggal,
+      value: JSON.stringify({ deskripsi, sub_photos: type === 'foto' ? (() => {
+        try { return JSON.parse(String(currentData.value)).sub_photos || []; } catch { return []; }
+      })() : undefined }),
+      updated_at: new Date().toISOString(),
+    };
 
-       const durasi = formData.get('durasi') as string;
-       await pool.query(
-        'UPDATE video SET Judul = ?, tanggal = ?, id_kategory = ?, durasi_video = ?, value = ? WHERE ID_video = ?',
-        [judul, tanggal, id_kategory, durasi, JSON.stringify(valueData), id]
-      );
-    }
-    else if (type === 'infografis') {
-       await pool.query(
-        'UPDATE infografis SET Judul = ?, tanggal = ?, id_kategory = ?, value = ? WHERE ID_infografis = ?',
-        [judul, tanggal, id_kategory, JSON.stringify({ deskripsi }), id]
-      );
-    }
-    
-    return NextResponse.json({ message: 'Updated' });
-  } catch(e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    const image = getFile(formData, type === 'foto' ? 'image' : 'thumbnail');
+    if (image) update[type === 'foto' ? 'URL_image' : 'URL_thumbnail'] = await uploadFile(image, type);
+    await docRef.update(update);
+    return NextResponse.json({ success: true });
+  } catch (error: unknown) {
+    return errorResponse(error, `Gagal memperbarui galeri ${type}`);
   }
 }
 
-// DELETE item
 export async function DELETE(request: Request, context: { params: Promise<{ type: string }> }) {
-  const params = await context.params;
-  const type = params.type;
-  const url = new URL(request.url);
-  const id = url.searchParams.get('id');
-
-  if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+  const { type } = await context.params;
+  const id = new URL(request.url).searchParams.get('id');
+  if (!isGalleryType(type) || !id) return NextResponse.json({ error: 'Permintaan tidak valid' }, { status: 400 });
 
   try {
-    if (type === 'foto') await pool.query('DELETE FROM foto WHERE ID_foto = ?', [id]);
-    else if (type === 'video') await pool.query('DELETE FROM video WHERE ID_video = ?', [id]);
-    else if (type === 'infografis') await pool.query('DELETE FROM infografis WHERE ID_infografis = ?', [id]);
-    
-    return NextResponse.json({ message: 'Deleted' });
-  } catch(e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    ensureSignedIn(await cookies());
+    await adminDb.collection(collectionName(type)).doc(id).delete();
+    return NextResponse.json({ success: true });
+  } catch (error: unknown) {
+    return errorResponse(error, `Gagal menghapus galeri ${type}`);
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, use, useEffect } from 'react';
-import { Plus, Edit2, Trash2, X, UploadCloud, Search, FileDown, Image as ImageIcon, Waves } from 'lucide-react';
+import React, { useState, use, useEffect, useCallback } from 'react';
+import { Plus, Edit2, Trash2, X, Search, Image as ImageIcon } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { showSuccess, showError, showConfirm } from '@/lib/swal';
 
@@ -9,6 +9,18 @@ const TABS = ['foto', 'video', 'infografis'];
 
 type PageProps = {
   params: Promise<{ type: string }>
+}
+
+type GalleryItem = {
+  ID_foto?: string;
+  ID_video?: string;
+  ID_infografis?: string;
+  Judul?: string;
+  kategori_nama?: string;
+  tanggal?: string;
+  status?: string;
+  value?: string | { deskripsi?: string };
+  URL_video?: string;
 }
 
 export default function GaleriCMSPage({ params }: PageProps) {
@@ -21,8 +33,8 @@ export default function GaleriCMSPage({ params }: PageProps) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [editId, setEditId] = useState<number | null>(null);
-  const [data, setData] = useState<any[]>([]);
+  const [editId, setEditId] = useState<string | number | null>(null);
+  const [data, setData] = useState<GalleryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   
@@ -42,7 +54,7 @@ export default function GaleriCMSPage({ params }: PageProps) {
     infografis: 'Kelola Infografis & Data'
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await fetch(`/api/galeri/${type}`);
@@ -53,13 +65,14 @@ export default function GaleriCMSPage({ params }: PageProps) {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchData();
   }, [type]);
 
-  const handleDelete = async (id: number) => {
+  useEffect(() => {
+    const timer = window.setTimeout(() => void fetchData(), 0);
+    return () => window.clearTimeout(timer);
+  }, [fetchData]);
+
+  const handleDelete = async (id: string | number) => {
     const isConfirmed = await showConfirm(
       'Hapus Data?',
       'Apakah Anda yakin ingin menghapus data ini?',
@@ -75,7 +88,7 @@ export default function GaleriCMSPage({ params }: PageProps) {
         } else {
           showError('Gagal', 'Gagal menghapus data.');
         }
-      } catch (error) {
+      } catch {
         showError('Error', 'Terjadi kesalahan sistem.');
       }
     }
@@ -128,18 +141,19 @@ export default function GaleriCMSPage({ params }: PageProps) {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: GalleryItem) => {
     const id = item.ID_foto || item.ID_video || item.ID_infografis;
+    if (!id) return;
     setEditId(id);
     
     let desc = '';
     try {
        const val = typeof item.value === 'string' ? JSON.parse(item.value) : (item.value || {});
        desc = val.deskripsi || '';
-    } catch(e) {}
+    } catch {}
 
     setFormData({
-      judul: item.Judul,
+      judul: item.Judul || '',
       kategori: item.kategori_nama || '',
       tanggal: item.tanggal ? item.tanggal.split('T')[0] : '', 
       deskripsi: desc,
@@ -205,8 +219,9 @@ export default function GaleriCMSPage({ params }: PageProps) {
                     </div>
                   </td>
                 </tr>
-              ) : data.filter(item => (item.Judul || '').toLowerCase().includes(searchQuery.toLowerCase())).map((row, idx) => {
+              ) : data.filter(item => (item.Judul || '').toLowerCase().includes(searchQuery.toLowerCase())).map((row) => {
                 const rowId = row.ID_foto || row.ID_video || row.ID_infografis;
+                if (!rowId) return null;
                 return (
                 <tr key={rowId} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors group">
                   <td className="px-6 py-4 whitespace-nowrap text-slate-500 font-mono text-xs">#{rowId.toString().padStart(4, '0')}</td>
