@@ -1,17 +1,35 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { adminDb } from '@/lib/firebase-admin';
-import { convertTimestamps } from '@/lib/firebase-utils';
-import fs from 'fs/promises';
-import path from 'path';
+import { deleteImageKitFile, uploadImageKitImage } from '@/lib/imagekit';
 
-export async function GET(request: Request) {
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+function getImageFile(formData: FormData) {
+  const value = formData.get('image');
+  return value instanceof File && value.size > 0 ? value : null;
+}
+
+function validateImage(file: File) {
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    throw new Error('Format gambar harus JPG, PNG, atau WEBP.');
+  }
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error('Ukuran gambar maksimal 2MB.');
+  }
+}
+
+export async function GET() {
   try {
     const snapshot = await adminDb.collection('berita')
       .orderBy('tanggal', 'desc')
       .get();
       
-    const rows = snapshot.docs.map((doc: any) => {
+    const rows = snapshot.docs.map((doc: { id: string; data: () => Record<string, unknown> }) => {
       const data = doc.data();
       return {
         ID_berita: doc.id,
@@ -24,7 +42,7 @@ export async function GET(request: Request) {
         kategori: data.kategori,
         instagram_url: data.instagram_url,
         is_leading: data.is_leading,
-        penulis: data.penulis || 'Admin'
+      penulis: typeof data.penulis === 'string' ? data.penulis : 'Admin'
       };
     });
 
@@ -51,7 +69,7 @@ export async function POST(request: Request) {
     const kategori = (formData.get('kategori') as string) || 'Umum';
     const penulis = (formData.get('penulis') as string) || 'Admin';
     const type = (formData.get('type') as string) || 'berita';
-    const imageFile = formData.get('image') as File | null;
+    const imageFile = getImageFile(formData);
     const instagram_url = formData.get('instagramUrl') as string | null;
 
     if (!judul || !isi_berita) {
@@ -68,22 +86,13 @@ export async function POST(request: Request) {
       .replace(/(^-|-$)+/g, '');
 
     let imageUrl = '';
+    let imagekitFileId = '';
 
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const ext = path.extname(imageFile.name);
-      const filename = `${slug}-${uniqueSuffix}${ext}`;
-      
-      const uploadDir = path.join(process.cwd(), 'public/upload/news');
-      await fs.mkdir(uploadDir, { recursive: true });
-      const filepath = path.join(uploadDir, filename);
-
-      await fs.writeFile(filepath, buffer);
-      
-      imageUrl = `/upload/news/${filename}`;
+    if (imageFile) {
+      validateImage(imageFile);
+      const upload = await uploadImageKitImage(imageFile, slug);
+      imageUrl = upload.url;
+      imagekitFileId = upload.fileId;
     }
 
     const tanggal = new Date().toISOString().split('T')[0];
@@ -92,6 +101,7 @@ export async function POST(request: Request) {
       Judul: judul,
       Slug: slug,
       image: imageUrl,
+      imagekit_file_id: imagekitFileId || null,
       isi_berita: isi_berita,
       status: status || 'draft',
       tanggal: tanggal,
@@ -127,7 +137,19 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    await adminDb.collection('berita').doc(id).delete();
+    const docRef = adminDb.collection('berita').doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) return NextResponse.json({ error: 'Data tidak ditemukan' }, { status: 404 });
+
+    const imagekitFileId = doc.data()?.imagekit_file_id;
+    await docRef.delete();
+    if (typeof imagekitFileId === 'string' && imagekitFileId) {
+      try {
+        await deleteImageKitFile(imagekitFileId);
+      } catch (error) {
+        console.error('Delete ImageKit image error:', error);
+      }
+    }
 
     return NextResponse.json({ success: true, message: 'Deleted successfully' });
   } catch (error) {
@@ -146,7 +168,7 @@ export async function PUT(request: Request) {
     const status = formData.get('status') as string;
     const kategori = (formData.get('kategori') as string) || 'Umum';
     const penulis = formData.get('penulis') as string | null;
-    const imageFile = formData.get('image') as File | null;
+    const imageFile = getImageFile(formData);
     const instagram_url = formData.get('instagramUrl') as string | null;
 
     if (!id || !judul || !isi_berita) {
@@ -168,29 +190,27 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Data tidak ditemukan' }, { status: 404 });
     }
     
-    let imageUrl = doc.data()?.image || '';
+    const currentData = doc.data() || {};
+    let imageUrl = typeof currentData.image === 'string' ? currentData.image : '';
+    let imagekitFileId = typeof currentData.imagekit_file_id === 'string' ? currentData.imagekit_file_id : '';
+    let replacedImagekitFileId = '';
 
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+    if (imageFile) {
+      validateImage(imageFile);
+      const upload = await uploadImageKitImage(imageFile, slug);
+      replacedImagekitFileId = imagekitFileId;
+      imageUrl = upload.url;
+      imagekitFileId = upload.fileId;
 
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const ext = path.extname(imageFile.name);
-      const filename = `${slug}-${uniqueSuffix}${ext}`;
-      
-      const uploadDir = path.join(process.cwd(), 'public/upload/news');
-      await fs.mkdir(uploadDir, { recursive: true });
-      const filepath = path.join(uploadDir, filename);
-
-      await fs.writeFile(filepath, buffer);
-      
-      imageUrl = `/upload/news/${filename}`;
+      // The old file is removed only after the Firestore document points to
+      // the new URL, so an update failure never leaves a broken image link.
     }
 
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       Judul: judul,
       Slug: slug,
       image: imageUrl,
+      imagekit_file_id: imagekitFileId || null,
       isi_berita: isi_berita,
       status: status || 'draft',
       kategori: kategori,
@@ -202,6 +222,14 @@ export async function PUT(request: Request) {
     }
 
     await docRef.update(updateData);
+
+    if (imageFile && replacedImagekitFileId) {
+      try {
+        await deleteImageKitFile(replacedImagekitFileId);
+      } catch (error) {
+        console.error('Delete replaced ImageKit image error:', error);
+      }
+    }
 
     return NextResponse.json(
       { success: true, message: 'Data berhasil diupdate' },

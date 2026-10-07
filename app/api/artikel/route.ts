@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { adminDb, adminStorage } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 import { convertTimestamps } from '@/lib/firebase-utils';
-import { randomUUID } from 'crypto';
+import { deleteImageKitFile, uploadImageKitImage } from '@/lib/imagekit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -45,30 +45,7 @@ async function uploadArtikelImage(imageFile: File, slug: string) {
     throw new ApiError('Ukuran gambar maksimal 2MB', 400);
   }
 
-  const bytes = await imageFile.arrayBuffer();
-  const extension = imageFile.type === 'image/png'
-    ? 'png'
-    : imageFile.type === 'image/webp'
-      ? 'webp'
-      : 'jpg';
-  const filename = `artikel/${slug || 'artikel'}-${Date.now()}-${randomUUID()}.${extension}`;
-  const downloadToken = randomUUID();
-  const bucket = adminStorage.bucket();
-  const file = bucket.file(filename);
-
-  await file.save(Buffer.from(bytes), {
-    contentType: imageFile.type,
-    metadata: {
-      metadata: {
-        firebaseStorageDownloadTokens: downloadToken,
-      },
-    },
-  });
-
-  // Firebase Storage buckets normally use Uniform Bucket-Level Access. Calling
-  // makePublic() in that setup fails and used to abort the entire article POST.
-  // A Firebase download token keeps the object accessible without changing ACLs.
-  return `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(filename)}?alt=media&token=${downloadToken}`;
+  return uploadImageKitImage(imageFile, slug);
 }
 
 export async function GET() {
@@ -117,9 +94,12 @@ export async function POST(request: Request) {
 
     const slug = judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     let imageUrl = '';
+    let imagekitFileId = '';
 
     if (imageFile && imageFile.name) {
-      imageUrl = await uploadArtikelImage(imageFile, slug);
+      const upload = await uploadArtikelImage(imageFile, slug);
+      imageUrl = upload.url;
+      imagekitFileId = upload.fileId;
     }
 
     const valueJson = imageUrl ? JSON.stringify({ image: imageUrl }) : null;
@@ -135,6 +115,7 @@ export async function POST(request: Request) {
       penulis: 'Admin', // In real app, fetch from users collection
       kategori: kategori,
       value: valueJson,
+      imagekit_file_id: imagekitFileId || null,
       instagram_url: instagramUrl || null,
       created_at: tanggal,
       updated_at: tanggal
@@ -163,7 +144,19 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    await adminDb.collection('artikel').doc(id).delete();
+    const docRef = adminDb.collection('artikel').doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) return NextResponse.json({ error: 'Data tidak ditemukan' }, { status: 404 });
+
+    const imagekitFileId = (doc.data() as ArticleData | undefined)?.imagekit_file_id;
+    await docRef.delete();
+    if (typeof imagekitFileId === 'string' && imagekitFileId) {
+      try {
+        await deleteImageKitFile(imagekitFileId);
+      } catch (error) {
+        console.error('Delete ImageKit article image error:', error);
+      }
+    }
 
     return NextResponse.json({ success: true, message: 'Deleted successfully' });
   } catch (error: unknown) {
@@ -204,11 +197,16 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Data tidak ditemukan' }, { status: 404 });
     }
     
-    let valueJson = (docSnap.data() as ArticleData | undefined)?.value ?? null;
+    const currentData = (docSnap.data() as ArticleData | undefined) ?? {};
+    let valueJson = currentData.value ?? null;
+    let imagekitFileId = typeof currentData.imagekit_file_id === 'string' ? currentData.imagekit_file_id : '';
+    let replacedImagekitFileId = '';
 
     if (imageFile && imageFile.name) {
-      const imageUrl = await uploadArtikelImage(imageFile, slug);
-      valueJson = JSON.stringify({ image: imageUrl });
+      const upload = await uploadArtikelImage(imageFile, slug);
+      valueJson = JSON.stringify({ image: upload.url });
+      replacedImagekitFileId = imagekitFileId;
+      imagekitFileId = upload.fileId;
     }
 
     await docRef.update({
@@ -218,9 +216,18 @@ export async function PUT(request: Request) {
       status: status || 'draft',
       kategori: kategori,
       value: valueJson,
+      imagekit_file_id: imagekitFileId || null,
       instagram_url: instagramUrl || null,
       updated_at: new Date().toISOString()
     });
+
+    if (imageFile && replacedImagekitFileId) {
+      try {
+        await deleteImageKitFile(replacedImagekitFileId);
+      } catch (error) {
+        console.error('Delete replaced ImageKit article image error:', error);
+      }
+    }
 
     return NextResponse.json(
       { success: true, message: 'Data berhasil diupdate' },
