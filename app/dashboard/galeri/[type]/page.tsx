@@ -37,6 +37,7 @@ export default function GaleriCMSPage({ params }: PageProps) {
   const [data, setData] = useState<GalleryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [loadError, setLoadError] = useState('');
   
   // Form State controlled UI toggles
   const [formData, setFormData] = useState({
@@ -56,12 +57,16 @@ export default function GaleriCMSPage({ params }: PageProps) {
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setLoadError('');
     try {
       const res = await fetch(`/api/galeri/${type}`);
       const json = await res.json();
-      if (json.data) setData(json.data);
+      if (!res.ok) throw new Error(json.error || 'Gagal mengambil data galeri');
+      setData(Array.isArray(json.data) ? json.data : []);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setData([]);
+      setLoadError(error instanceof Error ? error.message : 'Gagal mengambil data galeri');
     } finally {
       setIsLoading(false);
     }
@@ -217,6 +222,16 @@ export default function GaleriCMSPage({ params }: PageProps) {
                       <div className="w-8 h-8 border-2 border-slate-700 border-t-cyan-500 rounded-full animate-spin"></div>
                       <span className="text-slate-400 font-medium">Memuat data galeri...</span>
                     </div>
+                  </td>
+                </tr>
+              ) : loadError ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-16 text-center text-rose-300">
+                    <p className="font-semibold">Data galeri tidak dapat dimuat.</p>
+                    <p className="mt-1 text-sm text-slate-400">{loadError}</p>
+                    <button type="button" onClick={() => void fetchData()} className="mt-4 rounded-lg bg-slate-800 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700">
+                      Coba lagi
+                    </button>
                   </td>
                 </tr>
               ) : data.filter(item => (item.Judul || '').toLowerCase().includes(searchQuery.toLowerCase())).map((row) => {

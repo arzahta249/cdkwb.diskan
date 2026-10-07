@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { adminDb } from '@/lib/firebase-admin';
-import { getStorage } from 'firebase-admin/storage';
+import { adminDb, adminStorage } from '@/lib/firebase-admin';
 import { convertTimestamps } from '@/lib/firebase-utils';
 import { randomUUID } from 'crypto';
 
@@ -54,7 +53,7 @@ async function uploadArtikelImage(imageFile: File, slug: string) {
       : 'jpg';
   const filename = `artikel/${slug || 'artikel'}-${Date.now()}-${randomUUID()}.${extension}`;
   const downloadToken = randomUUID();
-  const bucket = getStorage().bucket();
+  const bucket = adminStorage.bucket();
   const file = bucket.file(filename);
 
   await file.save(Buffer.from(bytes), {

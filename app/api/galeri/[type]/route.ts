@@ -1,8 +1,7 @@
 import { randomUUID } from 'crypto';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { getStorage } from 'firebase-admin/storage';
-import { adminDb } from '@/lib/firebase-admin';
+import { adminDb, adminStorage } from '@/lib/firebase-admin';
 import { convertTimestamps } from '@/lib/firebase-utils';
 
 export const runtime = 'nodejs';
@@ -63,7 +62,7 @@ async function uploadFile(file: File, type: GalleryType) {
   const extension = file.name.includes('.') ? file.name.slice(file.name.lastIndexOf('.')).toLowerCase() : '';
   const filename = `galeri/${type}/${Date.now()}-${randomUUID()}${extension}`;
   const token = randomUUID();
-  const bucket = getStorage().bucket();
+  const bucket = adminStorage.bucket();
 
   await bucket.file(filename).save(Buffer.from(await file.arrayBuffer()), {
     contentType: file.type || 'application/octet-stream',

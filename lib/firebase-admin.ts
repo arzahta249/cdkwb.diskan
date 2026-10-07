@@ -1,59 +1,76 @@
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 
-if (!getApps().length) {
-  try {
-    let pk = process.env.FIREBASE_PRIVATE_KEY || '';
-    
-    // 1. If it's wrapped in quotes, remove them
-    if (pk.startsWith('"') && pk.endsWith('"')) {
-      pk = pk.slice(1, -1);
-    }
-    
-    // 2. If user copy-pasted the entire JSON file instead of just the key
-    if (pk.startsWith('{')) {
-      try {
-        const parsed = JSON.parse(pk);
-        if (parsed.private_key) pk = parsed.private_key;
-        else if (parsed.privateKey) pk = parsed.privateKey;
-      } catch (e) {
-        console.warn('Failed to parse FIREBASE_PRIVATE_KEY as JSON even though it starts with {');
-      }
-    }
+function normalizePrivateKey(value: string) {
+  let privateKey = value.trim();
 
-    // 3. Replace literal escaped newlines with actual newlines
-    pk = pk.replace(/\\n/g, '\n');
-
-    const serviceAccount = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: pk,
-    };
-    
-    initializeApp({
-      credential: cert(serviceAccount),
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || `${process.env.FIREBASE_PROJECT_ID}.appspot.com`
-    });
-    console.log('Firebase Admin Initialized Successfully!');
-  } catch (error) {
-    console.error('Firebase admin initialization error:', error);
+  if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+    privateKey = privateKey.slice(1, -1);
   }
+
+  // Support an entire service-account JSON accidentally pasted into the ENV value.
+  if (privateKey.startsWith('{')) {
+    try {
+      const account = JSON.parse(privateKey) as { private_key?: unknown; privateKey?: unknown };
+      privateKey = typeof account.private_key === 'string'
+        ? account.private_key
+        : typeof account.privateKey === 'string'
+          ? account.privateKey
+          : privateKey;
+    } catch {
+      // The validation below returns a precise configuration error.
+    }
+  }
+
+  return privateKey.replace(/\\n/g, '\n');
 }
 
-export let adminDb: any;
-export let adminAuth: any;
-export let adminStorage: any;
+function getFirebaseAdminApp() {
+  if (getApps().length) return getApp();
+
+  const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
+  const privateKey = normalizePrivateKey(process.env.FIREBASE_PRIVATE_KEY ?? '');
+  const missing = [
+    !projectId && 'FIREBASE_PROJECT_ID',
+    !clientEmail && 'FIREBASE_CLIENT_EMAIL',
+    !privateKey && 'FIREBASE_PRIVATE_KEY',
+  ].filter(Boolean);
+
+  if (missing.length) {
+    throw new Error(`Konfigurasi Firebase belum lengkap: ${missing.join(', ')}.`);
+  }
+
+  const storageBucket = process.env.FIREBASE_STORAGE_BUCKET?.trim()
+    || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET?.trim()
+    || `${projectId}.firebasestorage.app`;
+
+  return initializeApp({
+    credential: cert({ projectId, clientEmail, privateKey }),
+    storageBucket,
+  });
+}
+
+// Initialize once and retain the original failure. Previously this error was
+// swallowed, causing every Firestore operation to look like an unrelated
+// "kategori tidak ditemukan" or empty-data issue.
+let initializationError: Error | null = null;
+let app: ReturnType<typeof getFirebaseAdminApp> | null = null;
 
 try {
-  adminDb = getFirestore();
-  adminAuth = getAuth();
-  adminStorage = getStorage();
-} catch (error: any) {
-  // Safe fallback to prevent Next.js framework crashes (e.g. when accessing .then on a Proxy)
-  const throwError = () => { throw new Error('Firebase Admin is not initialized properly: ' + (error?.message || error)); };
-  adminDb = { collection: throwError };
-  adminAuth = { verifyIdToken: throwError };
-  adminStorage = { bucket: throwError };
+  app = getFirebaseAdminApp();
+  console.info('Firebase Admin initialized.');
+} catch (error) {
+  initializationError = error instanceof Error ? error : new Error(String(error));
+  console.error('Firebase Admin initialization failed:', initializationError.message);
 }
+
+function unavailable(service: string): never {
+  throw new Error(`Firebase ${service} tidak siap: ${initializationError?.message ?? 'inisialisasi gagal'}`);
+}
+
+export const adminDb = app ? getFirestore(app) : { collection: () => unavailable('Firestore') };
+export const adminAuth = app ? getAuth(app) : { verifyIdToken: () => unavailable('Authentication') };
+export const adminStorage = app ? getStorage(app) : { bucket: () => unavailable('Storage') };
