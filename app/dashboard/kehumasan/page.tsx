@@ -22,7 +22,7 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Kerjasama {
-  id: number;
+  id: number | string;
   nama_mitra: string;
   singkatan: string;
   kategori: 'akademik' | 'teknis' | 'pokmaswas';
@@ -43,7 +43,7 @@ interface Kerjasama {
 }
 
 interface Dokumen {
-  id: number;
+  id: number | string;
   judul: string;
   deskripsi: string;
   file_url: string;
@@ -540,7 +540,7 @@ export default function KehumasanDashboard() {
   const [showKerjasamaModal, setShowKerjasamaModal] = useState(false);
   const [editDok, setEditDok] = useState<Dokumen | null>(null);
   const [showDokModal, setShowDokModal] = useState(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | string | null>(null);
 
   const fetchKerjasama = async () => {
     setLoadingKerjasama(true);
@@ -573,7 +573,7 @@ export default function KehumasanDashboard() {
     fetchDokumen();
   }, []);
 
-  const handleDeleteKerjasama = async (id: number, name: string) => {
+  const handleDeleteKerjasama = async (id: number | string, name: string) => {
     if (!confirm(`Hapus data kemitraan "${name}"?`)) return;
     setDeletingId(id);
     try {
@@ -589,7 +589,7 @@ export default function KehumasanDashboard() {
     }
   };
 
-  const handleDeleteDok = async (id: number) => {
+  const handleDeleteDok = async (id: number | string) => {
     if (!confirm('Hapus dokumen ini?')) return;
     setDeletingId(id);
     try {

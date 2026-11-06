@@ -1,27 +1,33 @@
 import { NextResponse } from 'next/server';
-import { getApps } from 'firebase-admin/app';
+import { getApps, initializeApp, cert } from 'firebase-admin/app';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  let pk = process.env.FIREBASE_PRIVATE_KEY || '';
+  const pk = process.env.FIREBASE_PRIVATE_KEY || '';
   
   // Deteksi format key untuk debugging
-  let initError = null;
+  let initError: string | null = null;
   try {
-    const serviceAccount = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: pk,
-    };
-    
-    // We import initializeApp dynamically to avoid conflicting with the main one
-    const admin = require('firebase-admin/app');
-    if (admin.getApps().length === 0) {
-      admin.initializeApp({
-        credential: admin.cert(serviceAccount)
+    if (getApps().length === 0 && process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && pk) {
+      let normalizedKey = pk.trim();
+      if (normalizedKey.startsWith('"') && normalizedKey.endsWith('"')) {
+        normalizedKey = normalizedKey.slice(1, -1);
+      }
+      normalizedKey = normalizedKey.replace(/\\n/g, '\n');
+
+      const serviceAccount = {
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: normalizedKey,
+      };
+      
+      initializeApp({
+        credential: cert(serviceAccount)
       });
     }
-  } catch (error: any) {
-    initError = error.message;
+  } catch (error: unknown) {
+    initError = error instanceof Error ? error.message : String(error);
   }
 
   const debugInfo = {

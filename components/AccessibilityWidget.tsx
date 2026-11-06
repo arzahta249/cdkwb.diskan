@@ -62,7 +62,7 @@ export function AccessibilityWidget() {
       }
 
       timeoutRef.current = setTimeout(() => {
-        let elToRead: HTMLElement = target;
+        const elToRead: HTMLElement = target;
         const textToRead = elToRead.innerText || elToRead.textContent;
         
         if (textToRead && textToRead.trim().length > 1) {

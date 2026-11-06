@@ -118,10 +118,6 @@ export default async function NewsListPage({
     rest = filtered.filter((i: any) => i.ID_berita !== featured.ID_berita);
   }
 
-  // Split rest: first 4 go into 2-col grid, remainder into list style
-  const gridItems = rest.slice(0, 4);
-  const listItems = rest.slice(4);
-
   const totalPages = Math.ceil(rest.length / PAGE_SIZE);
 
   // For pagination we re-paginate 'rest'

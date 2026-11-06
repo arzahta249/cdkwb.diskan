@@ -90,7 +90,7 @@ export default async function NewsDashboardPage() {
             <tbody>
               {news.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <FileText className="w-12 h-12 mb-3 opacity-20" />
                       <p>Belum ada data berita yang ditambahkan.</p>

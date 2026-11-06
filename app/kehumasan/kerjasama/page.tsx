@@ -21,7 +21,12 @@ import {
   Calendar,
   Clock,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  Edit2,
+  Trash2,
+  Plus,
+  Loader2,
+  Check
 } from 'lucide-react';
 
 interface PartnerItem {
@@ -279,21 +284,51 @@ export default function KerjasamaTablePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activePartnerModal, setActivePartnerModal] = useState<PartnerItem | null>(null);
+  const [editingPartner, setEditingPartner] = useState<PartnerItem | null>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const loadData = async () => {
+    try {
+      const res = await fetch('/api/kerjasama');
+      const d = await res.json();
+      if (d.success && Array.isArray(d.data) && d.data.length > 0) {
+        setPartners(d.data.map((r: any, idx: number) => mapDbToPartner(r, idx)));
+      }
+    } catch (e) {
+      console.error('Failed to fetch kerjasama from API:', e);
+    }
+  };
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const res = await fetch('/api/kerjasama');
-        const d = await res.json();
-        if (d.success && Array.isArray(d.data) && d.data.length > 0) {
-          setPartners(d.data.map((r: any, idx: number) => mapDbToPartner(r, idx)));
-        }
-      } catch (e) {
-        console.error('Failed to fetch kerjasama from API:', e);
-      }
-    }
     loadData();
   }, []);
+
+  const handleDelete = async (partner: PartnerItem) => {
+    if (!confirm(`Apakah Anda yakin ingin menghapus data kemitraan "${partner.name}"?`)) {
+      return;
+    }
+    setDeletingId(partner.id);
+    try {
+      const res = await fetch(`/api/kerjasama?id=${encodeURIComponent(partner.id)}`, {
+        method: 'DELETE'
+      });
+      const d = await res.json();
+      if (d.success) {
+        if (activePartnerModal?.id === partner.id) {
+          setActivePartnerModal(null);
+        }
+        await loadData();
+      } else {
+        alert(d.error || 'Gagal menghapus data kerjasama.');
+      }
+    } catch (err) {
+      console.error('Error deleting partner:', err);
+      alert('Terjadi kesalahan saat menghapus data kerjasama.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const filteredPartners = useMemo(() => {
     return partners.filter((partner) => {
@@ -343,6 +378,14 @@ export default function KerjasamaTablePage() {
 
             {/* Quick Actions */}
             <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsAddingNew(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-colors shadow-2xs cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Tambah Kerjasama
+              </button>
               <Link
                 href="https://wa.me/628971574040?text=Halo%20Humas%20CDKWB,%20saya%20ingin%20berkonsultasi%20mengenai%20pengajuan%20kerjasama/MoU"
                 target="_blank"
@@ -512,14 +555,33 @@ export default function KerjasamaTablePage() {
 
                       {/* Aksi */}
                       <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                        <button
-                          onClick={() => setActivePartnerModal(item)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-slate-100 hover:bg-indigo-600 text-slate-700 hover:text-white font-semibold transition-colors cursor-pointer text-[11px]"
-                          title="Lihat Detail PKS"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Detail</span>
-                        </button>
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => setActivePartnerModal(item)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-slate-100 hover:bg-indigo-600 text-slate-700 hover:text-white font-semibold transition-colors cursor-pointer text-[11px]"
+                            title="Lihat Detail PKS"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Detail</span>
+                          </button>
+                          <button
+                            onClick={() => setEditingPartner(item)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white font-semibold transition-colors cursor-pointer text-[11px] border border-amber-200 hover:border-amber-600"
+                            title="Edit Data PKS"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item)}
+                            disabled={deletingId === item.id}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white font-semibold transition-colors cursor-pointer text-[11px] border border-rose-200 hover:border-rose-600 disabled:opacity-50"
+                            title="Hapus Data PKS"
+                          >
+                            {deletingId === item.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            <span>Hapus</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -670,8 +732,32 @@ export default function KerjasamaTablePage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end">
+            <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const item = activePartnerModal;
+                    setActivePartnerModal(null);
+                    setEditingPartner(item);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  Edit Data
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(activePartnerModal)}
+                  disabled={deletingId === activePartnerModal.id}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
+                >
+                  {deletingId === activePartnerModal.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                  Hapus Data
+                </button>
+              </div>
               <button
+                type="button"
                 onClick={() => setActivePartnerModal(null)}
                 className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
               >
@@ -682,7 +768,312 @@ export default function KerjasamaTablePage() {
         </div>
       )}
 
+      {/* ── EDIT / CREATE MODAL ───────────────────────────────────────────── */}
+      {(editingPartner || isAddingNew) && (
+        <PartnerModalForm
+          partner={editingPartner}
+          onClose={() => {
+            setEditingPartner(null);
+            setIsAddingNew(false);
+          }}
+          onSaved={() => {
+            loadData();
+          }}
+        />
+      )}
+
       <Footer />
+    </div>
+  );
+}
+
+function PartnerModalForm({
+  partner,
+  onClose,
+  onSaved,
+}: {
+  partner: PartnerItem | null;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const isEdit = !!partner;
+  const [form, setForm] = useState({
+    nama_mitra: partner?.name ?? '',
+    singkatan: partner?.shortName ?? '',
+    kategori: partner?.category ?? 'akademik',
+    nomor_pks_mitra: partner?.pksNumberPrimary ?? '',
+    nomor_pks_dinas: partner?.pksNumberSecondary ?? '',
+    tanggal_pks: partner?.signDate ?? '',
+    jangka_waktu: partner?.duration ?? '',
+    status: partner?.status ?? 'aktif',
+    level: partner?.level ?? 'Provinsi Jawa Tengah',
+    penandatangan: partner?.signatory ?? '',
+    ringkasan: partner?.summary ?? '',
+    ruang_lingkup_raw: partner?.scope ? partner.scope.join('\n') : '',
+    prodi_terlibat: partner?.prodiList ? partner.prodiList.join(', ') : '',
+    keluaran_program: partner?.concreteOutputs ? partner.concreteOutputs.join('\n') : '',
+    pendanaan: partner?.funding ?? '',
+    file_dokumen_url: '',
+    urutan: partner?.no ?? 0,
+  });
+
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSave = async () => {
+    if (!form.nama_mitra.trim() || !form.nomor_pks_mitra.trim() || !form.tanggal_pks.trim() || !form.jangka_waktu.trim()) {
+      setError('Nama Mitra, Nomor PKS, Tanggal, dan Jangka Waktu wajib diisi.');
+      return;
+    }
+
+    setSaving(true);
+    setError('');
+
+    const scopeArray = form.ruang_lingkup_raw
+      .split('\n')
+      .map((s: string) => s.trim())
+      .filter(Boolean);
+
+    const outputsArray = form.keluaran_program
+      .split('\n')
+      .map((s: string) => s.trim())
+      .filter(Boolean);
+
+    try {
+      const payload = {
+        ...form,
+        ruang_lingkup: scopeArray,
+        keluaran_program: outputsArray.length > 1 ? outputsArray : form.keluaran_program,
+        ...(isEdit ? { id: partner!.id } : {})
+      };
+
+      const res = await fetch('/api/kerjasama', {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error ?? 'Gagal menyimpan data kerjasama');
+      onSaved();
+      onClose();
+    } catch (e: any) {
+      setError(e.message ?? 'Terjadi kesalahan saat menyimpan.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto">
+      <div className="bg-[#0f1629] border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl my-6 flex flex-col max-h-[90vh]">
+        {/* Header */}
+        <div className="flex items-center justify-between p-5 border-b border-slate-800 shrink-0">
+          <div>
+            <h3 className="text-white font-bold text-lg">
+              {isEdit ? 'Edit Data Kerjasama' : 'Tambah Mitra Kerjasama Baru'}
+            </h3>
+            <p className="text-xs text-slate-400">Kelola rincian PKS dan informasi kemitraan resmi</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable Form Body */}
+        <div className="p-5 space-y-4 overflow-y-auto flex-1 text-xs">
+          {error && (
+            <div className="bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs px-4 py-3 rounded-xl">
+              {error}
+            </div>
+          )}
+
+          {/* Nama Mitra & Singkatan */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2">
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Nama Instansi / Mitra *</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.nama_mitra} 
+                onChange={e => setForm(f => ({ ...f, nama_mitra: e.target.value }))} 
+                placeholder="Fakultas Perikanan dan Ilmu Kelautan, UPS Tegal" 
+              />
+            </div>
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Nama Pendek / Singkatan</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.singkatan} 
+                onChange={e => setForm(f => ({ ...f, singkatan: e.target.value }))} 
+                placeholder="FPIK UPS Tegal" 
+              />
+            </div>
+          </div>
+
+          {/* Kategori & Status & Level */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Kategori / Jenis</label>
+              <select 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.kategori} 
+                onChange={e => setForm(f => ({ ...f, kategori: e.target.value as any }))}
+              >
+                <option value="akademik">Akademik / Perguruan Tinggi</option>
+                <option value="teknis">Teknis / NGO / Yayasan</option>
+                <option value="pokmaswas">Masyarakat / Pokmaswas</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Status Kerjasama</label>
+              <select 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.status} 
+                onChange={e => setForm(f => ({ ...f, status: e.target.value as any }))}
+              >
+                <option value="aktif">Aktif Berjalan</option>
+                <option value="perpanjangan">Evaluasi / Perpanjangan</option>
+                <option value="tetap">SK Berjalan / Komunitas</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Tingkat / Level</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.level} 
+                onChange={e => setForm(f => ({ ...f, level: e.target.value }))} 
+                placeholder="Provinsi Jawa Tengah" 
+              />
+            </div>
+          </div>
+
+          {/* Nomor PKS Mitra & Dinas */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Nomor PKS / SK Mitra *</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white font-mono focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.nomor_pks_mitra} 
+                onChange={e => setForm(f => ({ ...f, nomor_pks_mitra: e.target.value }))} 
+                placeholder="444/K/L-5/FPIK-UPS/XII/2024" 
+              />
+            </div>
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Nomor PKS Dinas (DKP Jateng)</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white font-mono focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.nomor_pks_dinas} 
+                onChange={e => setForm(f => ({ ...f, nomor_pks_dinas: e.target.value }))} 
+                placeholder="019.5/8689/XII/2024 (Opsional)" 
+              />
+            </div>
+          </div>
+
+          {/* Tanggal & Jangka Waktu */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Tanggal Penandatanganan *</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.tanggal_pks} 
+                onChange={e => setForm(f => ({ ...f, tanggal_pks: e.target.value }))} 
+                placeholder="15 Des 2024" 
+              />
+            </div>
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Jangka Waktu / Masa Berlaku *</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.jangka_waktu} 
+                onChange={e => setForm(f => ({ ...f, jangka_waktu: e.target.value }))} 
+                placeholder="4 Tahun (2024 — 2028)" 
+              />
+            </div>
+          </div>
+
+          {/* Penandatangan */}
+          <div>
+            <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Pihak Penandatangan</label>
+            <input 
+              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+              value={form.penandatangan} 
+              onChange={e => setForm(f => ({ ...f, penandatangan: e.target.value }))} 
+              placeholder="Ir. Fendiawan Tiskiantoro, M.Si (Kepala DKP Jateng) & Dekan Mitra" 
+            />
+          </div>
+
+          {/* Ringkasan */}
+          <div>
+            <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Ringkasan Kerjasama</label>
+            <textarea 
+              rows={2}
+              className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors resize-none"
+              value={form.ringkasan} 
+              onChange={e => setForm(f => ({ ...f, ringkasan: e.target.value }))} 
+              placeholder="Program Pengembangan Sumberdaya Kelautan dan Perikanan..." 
+            />
+          </div>
+
+          {/* Ruang Lingkup (multiline) */}
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-slate-400 font-semibold uppercase tracking-wider">Ruang Lingkup & Tujuan (Satu per baris)</label>
+              <span className="text-[10px] text-slate-500">Tekan Enter untuk butir baru</span>
+            </div>
+            <textarea 
+              rows={4}
+              className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 transition-colors font-mono text-[11px]"
+              value={form.ruang_lingkup_raw} 
+              onChange={e => setForm(f => ({ ...f, ruang_lingkup_raw: e.target.value }))} 
+              placeholder={"Peningkatan mutu dan SDM\nPenyelenggaraan riset terapan\nPertukaran data dan publikasi"} 
+            />
+          </div>
+
+          {/* Prodi & Pendanaan */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Prodi Terlibat (Pisahkan koma)</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.prodi_terlibat} 
+                onChange={e => setForm(f => ({ ...f, prodi_terlibat: e.target.value }))} 
+                placeholder="S1 Ilmu Kelautan, Budidaya Perairan" 
+              />
+            </div>
+            <div>
+              <label className="text-slate-400 font-semibold uppercase tracking-wider mb-1 block">Nilai Pendanaan / Hibah</label>
+              <input 
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                value={form.pendanaan} 
+                onChange={e => setForm(f => ({ ...f, pendanaan: e.target.value }))} 
+                placeholder="± Rp 200.000.000 / Tahun (Opsional)" 
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex gap-3 p-5 border-t border-slate-800 shrink-0">
+          <button 
+            type="button" 
+            onClick={onClose} 
+            className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors text-xs font-semibold cursor-pointer"
+          >
+            Batal
+          </button>
+          <button 
+            type="button" 
+            onClick={handleSave} 
+            disabled={saving} 
+            className="flex-1 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-900/40"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+            {saving ? 'Menyimpan...' : (isEdit ? 'Simpan Perubahan' : 'Tambah Kerjasama')}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

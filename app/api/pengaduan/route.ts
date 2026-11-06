@@ -1,45 +1,48 @@
 import { NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import fs from 'fs/promises';
 import path from 'path';
 import { sendEmail } from '@/lib/email';
 import { sendCitizenConfirmation, sendAdminNewAlert } from '@/lib/whatsapp';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const q = searchParams.get('q') || '';
+    const q = (searchParams.get('q') || '').toLowerCase();
     const status = searchParams.get('status') || '';
     const kategori = searchParams.get('kategori') || '';
     const ticket = searchParams.get('ticket') || '';
 
-    let query = 'SELECT * FROM pengaduan WHERE 1=1';
-    const params: any[] = [];
+    const snapshot = await adminDb.collection('pengaduan').get();
+    let rows: any[] = snapshot.docs.map((doc: any) => ({
+      id: doc.id,
+      ...convertTimestamps(doc.data())
+    }));
 
     if (ticket) {
-      query += ' AND nomor_tiket = ?';
-      params.push(ticket);
+      rows = rows.filter((item: any) => item.id === ticket || item.nomor_tiket === ticket);
     }
 
     if (status && status !== 'ALL') {
-      query += ' AND status = ?';
-      params.push(status);
+      rows = rows.filter((item: any) => item.status === status);
     }
 
     if (kategori && kategori !== 'ALL') {
-      query += ' AND kategori = ?';
-      params.push(kategori);
+      rows = rows.filter((item: any) => item.kategori === kategori);
     }
 
     if (q) {
-      query += ' AND (nomor_tiket LIKE ? OR nama_pelapor LIKE ? OR deskripsi LIKE ? OR lokasi LIKE ?)';
-      const searchPattern = `%${q}%`;
-      params.push(searchPattern, searchPattern, searchPattern, searchPattern);
+      rows = rows.filter((item: any) => {
+        const text = `${item.nomor_tiket || ''} ${item.nama_pelapor || ''} ${item.deskripsi || ''} ${item.lokasi || ''}`.toLowerCase();
+        return text.includes(q);
+      });
     }
 
-    query += ' ORDER BY created_at DESC';
-
-    const [rows]: any = await pool.query(query, params);
+    rows.sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
 
     // Calculate SLA warning status for active items
     const now = new Date();
@@ -108,74 +111,77 @@ export async function POST(request: Request) {
     const nomor_tiket = `TKT-${dateStr}-${randomCode}`;
     const displayName = is_anonim ? 'Anonim' : nama_pelapor;
 
-    const [result]: any = await pool.query(
-      `INSERT INTO pengaduan 
-      (nomor_tiket, nama_pelapor, email_pelapor, telepon_pelapor, kategori, lokasi, deskripsi, lampiran, is_anonim, status) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')`,
-      [
-        nomor_tiket,
-        displayName,
-        email_pelapor,
-        telepon_pelapor,
-        kategori,
-        lokasi,
-        deskripsi,
-        lampiranUrl,
-        is_anonim
-      ]
-    );
+    const newDoc = {
+      nomor_tiket,
+      nama_pelapor: displayName,
+      email_pelapor,
+      telepon_pelapor,
+      kategori,
+      lokasi,
+      deskripsi,
+      lampiran: lampiranUrl,
+      is_anonim,
+      status: 'PENDING',
+      created_at: new Date().toISOString()
+    };
+
+    const docRef = await adminDb.collection('pengaduan').add(newDoc);
 
     // Kirim notifikasi email ke Admin secara asynchronous
     const notifPromises = [];
 
     // 1. Email Admin
     try {
-      const [adminRows]: any = await pool.query("SELECT Email FROM user WHERE role = 'admin' AND Email IS NOT NULL AND Email != ''");
-      if (adminRows && adminRows.length > 0) {
-        const emailList = adminRows.map((row: any) => row.Email);
+      const adminSnap = await adminDb.collection('user').where('role', '==', 'admin').get();
+      if (!adminSnap.empty) {
+        const emailList = adminSnap.docs
+          .map((row: any) => row.data().Email)
+          .filter(Boolean);
         
-        const emailHtml = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
-            <div style="background-color: #0b3b60; color: white; padding: 20px; text-align: center;">
-              <h2 style="margin: 0;">Pemberitahuan Pengaduan Baru</h2>
-              <p style="margin: 5px 0 0; opacity: 0.8;">Tiket #${nomor_tiket}</p>
-            </div>
-            <div style="padding: 20px; background-color: #f9fafb;">
-              <p>Halo Admin,</p>
-              <p>Terdapat pengaduan baru yang masuk melalui portal layanan masyarakat. Berikut adalah rinciannya:</p>
-              <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                <tr>
-                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; width: 130px; font-weight: bold; color: #4b5563;">Kategori</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${kategori}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #4b5563;">Pelapor</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${is_anonim ? 'Anonim' : nama_pelapor}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #4b5563;">Lokasi</td>
-                  <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${lokasi}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px; font-weight: bold; color: #4b5563; vertical-align: top;">Deskripsi</td>
-                  <td style="padding: 10px; color: #111827;">${deskripsi}</td>
-                </tr>
-              </table>
-              <div style="margin-top: 25px; text-align: center;">
-                <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/dashboard/pengaduan" style="display: inline-block; padding: 12px 24px; background-color: #0b3b60; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Cek di Dasbor</a>
+        if (emailList.length > 0) {
+          const emailHtml = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+              <div style="background-color: #0b3b60; color: white; padding: 20px; text-align: center;">
+                <h2 style="margin: 0;">Pemberitahuan Pengaduan Baru</h2>
+                <p style="margin: 5px 0 0; opacity: 0.8;">Tiket #${nomor_tiket}</p>
+              </div>
+              <div style="padding: 20px; background-color: #f9fafb;">
+                <p>Halo Admin,</p>
+                <p>Terdapat pengaduan baru yang masuk melalui portal layanan masyarakat. Berikut adalah rinciannya:</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                  <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; width: 130px; font-weight: bold; color: #4b5563;">Kategori</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${kategori}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #4b5563;">Pelapor</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${is_anonim ? 'Anonim' : nama_pelapor}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold; color: #4b5563;">Lokasi</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; color: #111827;">${lokasi}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; font-weight: bold; color: #4b5563; vertical-align: top;">Deskripsi</td>
+                    <td style="padding: 10px; color: #111827;">${deskripsi}</td>
+                  </tr>
+                </table>
+                <div style="margin-top: 25px; text-align: center;">
+                  <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/dashboard/aduan" style="display: inline-block; padding: 12px 24px; background-color: #0b3b60; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Cek di Dasbor</a>
+                </div>
               </div>
             </div>
-          </div>
-        `;
+          `;
 
-        notifPromises.push(
-          sendEmail({
-            to: emailList,
-            subject: `[Pengaduan Baru] Tiket ${nomor_tiket} - ${kategori}`,
-            html: emailHtml,
-            replyTo: email_pelapor || undefined,
-          }).catch(err => console.error('Gagal mengirim email ke admin:', err))
-        );
+          notifPromises.push(
+            sendEmail({
+              to: emailList,
+              subject: `[Pengaduan Baru] Tiket ${nomor_tiket} - ${kategori}`,
+              html: emailHtml,
+              replyTo: email_pelapor || undefined,
+            }).catch(err => console.error('Gagal mengirim email ke admin:', err))
+          );
+        }
       }
     } catch (err) {
       console.error('Gagal mengambil email admin dari database:', err);
@@ -241,7 +247,7 @@ export async function POST(request: Request) {
         success: true,
         message: 'Pengaduan berhasil dikirim',
         nomor_tiket,
-        id: result.insertId
+        id: docRef.id
       },
       { status: 201 }
     );

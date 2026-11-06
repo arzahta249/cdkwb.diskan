@@ -1,21 +1,23 @@
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import EditForm from './FormEdit';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 async function getNewsById(id: string) {
   try {
-    const [rows]: any = await pool.query(
-      `SELECT b.ID_berita, b.Judul, b.Slug, b.image, b.isi_berita, b.status, b.kategori, b.instagram_url, u.nama as penulis
-       FROM berita b 
-       LEFT JOIN user u ON b.id_penulis = u.ID_user
-       WHERE b.ID_berita = ?`,
-      [id]
-    );
-    return rows[0] || null;
+    const docSnap = await adminDb.collection('berita').doc(id).get();
+    if (!docSnap.exists) return null;
+    const data = convertTimestamps(docSnap.data());
+    return {
+      ID_berita: docSnap.id,
+      ...data,
+      penulis: data?.penulis || 'Admin'
+    };
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching news by ID:', error);
     return null;
   }
 }

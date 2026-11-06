@@ -41,7 +41,7 @@ async function getNewsBySlug(slug: string): Promise<any> {
   }
 }
 
-export default async function NewsDetailPage({ params }: { params: { slug: string } }) {
+export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const news = await getNewsBySlug(resolvedParams.slug);
 

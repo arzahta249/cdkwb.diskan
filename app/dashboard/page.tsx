@@ -3,6 +3,9 @@ import { convertTimestamps } from '@/lib/firebase-utils';
 import { Activity, Users, FileText, AlertCircle, Waves, Bell, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function DashboardHome() {
   let totalPengguna = 0;
   let totalBerita = 0;

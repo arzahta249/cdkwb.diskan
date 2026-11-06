@@ -1,8 +1,28 @@
 import { NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { adminDb } from '@/lib/firebase-admin';
+import { convertTimestamps } from '@/lib/firebase-utils';
 import fs from 'fs/promises';
 import path from 'path';
 import { sendCitizenStatusUpdate } from '@/lib/whatsapp';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+async function findPengaduanDoc(id: string) {
+  const docRef = adminDb.collection('pengaduan').doc(id);
+  const snap = await docRef.get();
+  if (snap.exists) {
+    return { ref: docRef, data: { id: snap.id, ...convertTimestamps(snap.data()) } };
+  }
+
+  const querySnap = await adminDb.collection('pengaduan').where('nomor_tiket', '==', id).limit(1).get();
+  if (!querySnap.empty) {
+    const doc = querySnap.docs[0];
+    return { ref: doc.ref, data: { id: doc.id, ...convertTimestamps(doc.data()) } };
+  }
+
+  return null;
+}
 
 export async function GET(
   request: Request,
@@ -10,16 +30,13 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const [rows]: any = await pool.query(
-      'SELECT * FROM pengaduan WHERE id = ? OR nomor_tiket = ?',
-      [id, id]
-    );
+    const found = await findPengaduanDoc(id);
 
-    if (rows.length === 0) {
+    if (!found) {
       return NextResponse.json({ error: 'Pengaduan tidak ditemukan' }, { status: 404 });
     }
 
-    const item = rows[0];
+    const item = found.data;
     const now = new Date();
     let isOverdue = false;
     if (item.sla_deadline && item.status !== 'SELESAI' && item.status !== 'DITUTUP' && item.status !== 'DITOLAK') {
@@ -51,7 +68,7 @@ export async function PATCH(
     const contentType = request.headers.get('content-type') || '';
 
     let action = '';
-    let bodyData: any = {};
+    const bodyData: any = {};
     let proofFile: File | null = null;
 
     if (contentType.includes('multipart/form-data')) {
@@ -65,22 +82,19 @@ export async function PATCH(
         }
       });
     } else {
-      bodyData = await request.json();
-      action = bodyData.action;
+      const jsonBody = await request.json();
+      action = jsonBody.action;
+      Object.assign(bodyData, jsonBody);
     }
 
     // Verify existing ticket
-    const [existing]: any = await pool.query(
-      'SELECT * FROM pengaduan WHERE id = ? OR nomor_tiket = ?',
-      [id, id]
-    );
+    const found = await findPengaduanDoc(id);
 
-    if (existing.length === 0) {
+    if (!found) {
       return NextResponse.json({ error: 'Pengaduan tidak ditemukan' }, { status: 404 });
     }
 
-    const currentTicket = existing[0];
-    const ticketId = currentTicket.id;
+    const { ref: docRef, data: currentTicket } = found;
 
     if (action === 'VERIFY_DISPOSIT') {
       const { petugas_bidang, sla_days } = bodyData;
@@ -89,10 +103,11 @@ export async function PATCH(
       slaDate.setDate(slaDate.getDate() + days);
       const slaFormatted = slaDate.toISOString().slice(0, 19).replace('T', ' ');
 
-      await pool.query(
-        `UPDATE pengaduan SET status = 'DIDISPOSISI', petugas_bidang = ?, sla_deadline = ? WHERE id = ?`,
-        [petugas_bidang || 'Bidang Teknis', slaFormatted, ticketId]
-      );
+      await docRef.update({
+        status: 'DIDISPOSISI',
+        petugas_bidang: petugas_bidang || 'Bidang Teknis',
+        sla_deadline: slaFormatted
+      });
 
       sendCitizenStatusUpdate({
         nomor_tiket: currentTicket.nomor_tiket,
@@ -111,10 +126,10 @@ export async function PATCH(
         return NextResponse.json({ error: 'Alasan penolakan wajib diisi' }, { status: 400 });
       }
 
-      await pool.query(
-        `UPDATE pengaduan SET status = 'DITOLAK', alasan_penolakan = ? WHERE id = ?`,
-        [alasan_penolakan, ticketId]
-      );
+      await docRef.update({
+        status: 'DITOLAK',
+        alasan_penolakan
+      });
 
       sendCitizenStatusUpdate({
         nomor_tiket: currentTicket.nomor_tiket,
@@ -128,10 +143,9 @@ export async function PATCH(
     }
 
     if (action === 'START_PROCESSING') {
-      await pool.query(
-        `UPDATE pengaduan SET status = 'DIPROSES' WHERE id = ?`,
-        [ticketId]
-      );
+      await docRef.update({
+        status: 'DIPROSES'
+      });
 
       sendCitizenStatusUpdate({
         nomor_tiket: currentTicket.nomor_tiket,
@@ -168,10 +182,11 @@ export async function PATCH(
         proofUrl = `/upload/pengaduan/bukti/${filename}`;
       }
 
-      await pool.query(
-        `UPDATE pengaduan SET status = 'SELESAI', hasil_penyelesaian = ?, bukti_penyelesaian = ? WHERE id = ?`,
-        [hasil_penyelesaian, proofUrl, ticketId]
-      );
+      await docRef.update({
+        status: 'SELESAI',
+        hasil_penyelesaian,
+        bukti_penyelesaian: proofUrl
+      });
 
       sendCitizenStatusUpdate({
         nomor_tiket: currentTicket.nomor_tiket,
@@ -188,19 +203,19 @@ export async function PATCH(
       const { rating_kepuasan, feedback_kepuasan } = bodyData;
       const ratingInt = parseInt(rating_kepuasan || '5', 10);
 
-      await pool.query(
-        `UPDATE pengaduan SET rating_kepuasan = ?, feedback_kepuasan = ?, status = 'DITUTUP' WHERE id = ?`,
-        [ratingInt, feedback_kepuasan || '', ticketId]
-      );
+      await docRef.update({
+        rating_kepuasan: ratingInt,
+        feedback_kepuasan: feedback_kepuasan || '',
+        status: 'DITUTUP'
+      });
 
       return NextResponse.json({ success: true, message: 'Rating & feedback kepuasan berhasil disimpan' });
     }
 
     if (action === 'CLOSE_TICKET') {
-      await pool.query(
-        `UPDATE pengaduan SET status = 'DITUTUP' WHERE id = ?`,
-        [ticketId]
-      );
+      await docRef.update({
+        status: 'DITUTUP'
+      });
 
       return NextResponse.json({ success: true, message: 'Tiket berhasil ditutup & diarsipkan' });
     }

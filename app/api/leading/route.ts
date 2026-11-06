@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { cookies } from 'next/headers';
+import { adminDb } from '@/lib/firebase-admin';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function PATCH(request: Request) {
   try {
-    // Check custom auth token used by this app
-    const cookieHeader = request.headers.get('cookie') || '';
-    if (!cookieHeader.includes('auth_token=')) {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value;
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -19,14 +23,12 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
     }
 
-    const table = type === 'berita' ? 'berita' : 'artikel';
-    const idField = type === 'berita' ? 'ID_berita' : 'ID_artikel';
+    const collectionName = type === 'berita' ? 'berita' : 'artikel';
     const leadingValue = is_leading ? 1 : 0;
 
-    await pool.query(
-      `UPDATE ${table} SET is_leading = ? WHERE ${idField} = ?`,
-      [leadingValue, id]
-    );
+    await adminDb.collection(collectionName).doc(String(id)).update({
+      is_leading: leadingValue
+    });
 
     return NextResponse.json({ success: true, message: 'Status leading page berhasil diperbarui' });
   } catch (error) {
